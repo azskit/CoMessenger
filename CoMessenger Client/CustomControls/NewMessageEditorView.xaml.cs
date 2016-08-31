@@ -230,26 +230,26 @@ namespace COMessengerClient.ChatFace
             return false;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            SolidColorBrush brush = ((Button)sender).Background as SolidColorBrush;
+        //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        //private void Button_Click(object sender, RoutedEventArgs e)
+        //{
+        //    SolidColorBrush brush = ((Button)sender).Background as SolidColorBrush;
 
-            SetColor(brush.Color, EditingCommandsExtended.SelectBackgroundColor);
-        }
+        //    SetColor(brush.Color, EditingCommandsExtended.SelectBackgroundColor);
+        //}
 
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode"), Obsolete]
-        private void btnInsertPic_Click(object sender, RoutedEventArgs e)
-        {
-            var dlg = new OpenFileDialog { InitialDirectory = @"c:\" };// fusk damn 'My Documents'
-            if (!(bool)dlg.ShowDialog()) return;
+        //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode"), Obsolete]
+        //private void btnInsertPic_Click(object sender, RoutedEventArgs e)
+        //{
+        //    var dlg = new OpenFileDialog { InitialDirectory = @"c:\" };// fusk damn 'My Documents'
+        //    if (!(bool)dlg.ShowDialog()) return;
 
-            var old = Clipboard.ContainsText(TextDataFormat.Rtf) ? Clipboard.GetText(TextDataFormat.Rtf) : null;
-            Clipboard.SetImage(new BitmapImage(new Uri(dlg.FileName, UriKind.RelativeOrAbsolute)));
-            NewMessageTextBox.Paste();
-            if (old != null) Clipboard.SetText(old, TextDataFormat.Rtf);
-        }
+        //    var old = Clipboard.ContainsText(TextDataFormat.Rtf) ? Clipboard.GetText(TextDataFormat.Rtf) : null;
+        //    Clipboard.SetImage(new BitmapImage(new Uri(dlg.FileName, UriKind.RelativeOrAbsolute)));
+        //    NewMessageTextBox.Paste();
+        //    if (old != null) Clipboard.SetText(old, TextDataFormat.Rtf);
+        //}
 
         private void AddHyperlink(object sender, RoutedEventArgs e)
         {
