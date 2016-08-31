@@ -1,0 +1,95 @@
+﻿<UserControl x:Class="COMessengerClient.CustomControls.UserListBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:application="clr-namespace:COMessengerClient"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:converters="clr-namespace:COMessengerClient.CustomControls.CustomConverters"
+             xmlns:props="clr-namespace:COMessengerClient.Properties"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="visibilityConverter" />
+        <converters:NullImageConverter x:Key="nullImageConverter"/>
+    </UserControl.Resources>
+
+
+    <Grid>
+
+
+
+        <!--<ListBox ItemsSource="{Binding Source={x:Static application:App.ThisApp}, Path=UsersList}" >-->
+        <ListBox ItemsSource="{Binding Path=Participants}" VirtualizingStackPanel.IsVirtualizing="True" BorderThickness="0">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Style.Triggers>
+                    </Style.Triggers>
+
+                    <EventSetter Event="MouseDoubleClick" Handler="listViewItem_MouseDoubleClick" />
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Height="{Binding Source={x:Static props:Settings.Default}, Path=ContactListRowHeight}" Margin="1" Orientation="Horizontal" Background="Transparent" Loaded="StackPanel_Loaded">
+                        <!--Аватар-->
+                        <Ellipse Stroke="#48808080"                                  
+                                 StrokeThickness="0.5" 
+                                 Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type StackPanel}},Path=ActualHeight}"
+                                 VerticalAlignment="Stretch" 
+                                 HorizontalAlignment="Stretch" 
+                                 Visibility="{Binding Path=ViewModel.HasAvatar, Converter={StaticResource visibilityConverter}}">
+                            <Ellipse.Fill>
+                                <ImageBrush ImageSource="{Binding Peer.Avatar, Converter={StaticResource nullImageConverter}}"></ImageBrush>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <!--Индикатор статуса-->
+                        <Border UseLayoutRounding="False"
+                                SnapsToDevicePixels="False"
+                                Height="15" Width="{Binding RelativeSource={RelativeSource Mode=Self},Path=ActualHeight}"
+                                CornerRadius="5" 
+                                BorderBrush="#48000000"
+                                 BorderThickness="1" Margin="2" 
+                                 VerticalAlignment="Center"  >
+                            <Border  Margin="1"
+                                 BorderThickness="0" 
+                                 
+                                 CornerRadius="4" 
+                                 VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TargetUpdated="StatusUpdated">
+                                <Border.Background>
+                                    <SolidColorBrush Color="{Binding ViewModel.StatusColor, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                                </Border.Background>
+
+                                <!--Индикатор непрочитанных сообщений-->
+                                <Border Background="Orange" 
+                                        VerticalAlignment="Stretch" 
+                                        HorizontalAlignment="Stretch" 
+                                        CornerRadius="4"
+                                        BorderThickness="0" 
+                                        Name="indicator"
+                                        Visibility="{Binding Path=ViewModel.HasUnreadMessages, Converter={StaticResource visibilityConverter}, Mode=TwoWay}">
+                                    <Border.Style>
+                                        <Style>
+                                            <Style.Triggers>
+                                                <Trigger Property="Control.IsVisible" Value="True">
+                                                    <Trigger.EnterActions>
+                                                        <BeginStoryboard Name="startBlinking" Storyboard="{StaticResource Blinking}"/>
+                                                    </Trigger.EnterActions>
+                                                    <Trigger.ExitActions>
+                                                        <StopStoryboard BeginStoryboardName="startBlinking"/>
+                                                    </Trigger.ExitActions>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                </Border>
+                            </Border>
+                        </Border>
+                        <!--Собственно - имя контакта-->
+                        <TextBlock VerticalAlignment="Center" Text="{Binding Peer.DisplayName}"/>
+                        <TextBlock VerticalAlignment="Center" Text="{Binding Path=ViewModel.HasUnreadMessages}"/>
+                        </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>

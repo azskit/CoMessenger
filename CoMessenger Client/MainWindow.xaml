@@ -1,0 +1,24 @@
+﻿<Window x:Class="COMessengerClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+        <RichTextBox Name="ChatBox" AcceptsReturn="True" Grid.Row="0"/>
+        <RichTextBox Name="NewMessageBox" AcceptsReturn="True" Grid.Row="1" KeyDown="NewMessageBox_KeyDown" />
+        <Grid Name="editbuttons" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button Name="cmdItalic" Content ="Italic" Grid.Column="0" Click="cmdFormatting_Click"></Button>
+            <Button Name="cmdBold" Content ="Bold"  Grid.Column="1" Click="cmdFormatting_Click"></Button>
+            <Button Name="cmdUnder" Content ="Underlined" Grid.Column="2" Click="cmdFormatting_Click"></Button>
+        </Grid>
+    </Grid>
+</Window>

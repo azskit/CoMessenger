@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="COMessengerClient.CustomControls.FlatTabControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="300">
+    
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!--Плоские кнопки и комбобоксы-->
+                <ResourceDictionary Source="..\Styles\FlatControls.xaml"></ResourceDictionary>
+                <!--Источники данных для комбобоксов-->
+                <ResourceDictionary Source="..\SystemCollections.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
+    </UserControl.Resources>
+    
+    
+    <Grid>
+
+
+        <TabControl x:Name="tc" Margin="5" SelectedIndex="0" Style="{StaticResource FlatTabControl}" ItemContainerStyle="{StaticResource FlatTabItems}"
+            Background="CadetBlue">
+            <TabItem Header="Tab 1" Background="CadetBlue">
+                <Canvas Background="AliceBlue"/>
+            </TabItem>
+            <TabItem Header="Tab 2" Background="CadetBlue">
+                <Canvas Background="Lavender"/>
+            </TabItem>
+            <TabItem Header="Tab 3" IsEnabled="False"
+          ToolTip="I'm disabled.">
+                <Canvas Background="PaleGreen"/>
+            </TabItem>
+            <TabItem Header="Tab 4" Background="CadetBlue">
+                <Canvas Background="Cornsilk"/>
+            </TabItem>
+            <TabItem Header="Tab 5" Background="CadetBlue">
+                <Canvas Background="WhiteSmoke"/>
+            </TabItem>
+        </TabControl>
+
+    </Grid>
+</UserControl>

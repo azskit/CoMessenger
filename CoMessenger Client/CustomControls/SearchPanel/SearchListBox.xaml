@@ -1,0 +1,66 @@
+﻿<UserControl x:Class="COMessengerClient.CustomControls.SearchPanel.SearchListBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:converters="clr-namespace:COMessengerClient.CustomControls.CustomConverters"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+
+    <UserControl.Resources>
+        <converters:StringToVisibilityConverter x:Key="strVisibilityConverter" />
+    </UserControl.Resources>
+
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <!--Поиск-->
+        <TextBox Grid.Row="0" Name="SearchTextBox" KeyDown="SearchTextBox_KeyDown">
+        </TextBox>
+
+
+        <!--<ListBox ItemsSource="{Binding Source={x:Static application:App.ThisApp}, Path=UsersList}" >-->
+        <!--<ListBox ItemsSource="{Binding Path=Participants}" VirtualizingStackPanel.IsVirtualizing="True" BorderThickness="0">-->
+        <ListBox Grid.Row="1" 
+                 Name="SearchList"  
+                 ItemsSource="{Binding Path=FoundMessages}"
+                 VirtualizingStackPanel.IsVirtualizing="True" 
+                 ScrollViewer.CanContentScroll="False"
+                 BorderThickness="0">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Style.Triggers>
+                    </Style.Triggers>
+
+                    <EventSetter Event="MouseDoubleClick" Handler="DoubleClicked" />
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="1" Orientation="Vertical" Background="Transparent" TextBlock.Foreground="{Binding ItemColor}">
+                        <TextBlock Text="{Binding LocalMessageTime}"></TextBlock>
+                        <TextBlock Text="{Binding Header}"></TextBlock>
+                        <TextBlock Text="{Binding Text}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StatusBar Grid.Row="2">
+            <TextBlock Text="{Binding Path=Status, FallbackValue=StatusBar}" ></TextBlock>
+            <StackPanel Visibility="{Binding Path=Status, Converter={StaticResource strVisibilityConverter}}" Width="100">
+                <ProgressBar Minimum="0" 
+                             Maximum="{Binding Path=TotalMaximum, FallbackValue=100}" 
+                             Value="{Binding Path=TotalValue, FallbackValue=10}" HorizontalAlignment="Stretch"
+                             Height="9"/>
+                <ProgressBar Minimum="0" 
+                             Maximum="{Binding Path=CurrentMaximum, FallbackValue=100}" 
+                             Value="{Binding Path=CurrentValue, FallbackValue=10}" HorizontalAlignment="Stretch"
+                             Height="9"/>
+            </StackPanel>
+        </StatusBar>
+    </Grid>
+</UserControl>

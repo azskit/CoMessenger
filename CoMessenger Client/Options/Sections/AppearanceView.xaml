@@ -1,0 +1,171 @@
+﻿<UserControl x:Class="COMessengerClient.Options.Sections.AppearanceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:custom="clr-namespace:COMessengerClient.CustomControls" 
+             xmlns:props="clr-namespace:COMessengerClient.Properties"
+             xmlns:converters="clr-namespace:COMessengerClient.CustomControls.CustomConverters"
+             mc:Ignorable="d"  d:DesignWidth="600">
+
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!--Источники данных для комбобоксов-->
+                <ResourceDictionary Source="..\..\SystemCollections.xaml"></ResourceDictionary>
+                <!--Плоские кнопки-->
+                <ResourceDictionary Source="..\..\Styles\FlatControls.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:BoolToVisibilityConverter x:Key="visibilityConverter" />
+        </ResourceDictionary>
+
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!--Текст окна ввода-->
+            <Label Grid.Column="0" Grid.Row="0"  Margin="3" Content="{Binding Path=Locally.LocaleStrings[Editor default font], FallbackValue=Editor default font}" DockPanel.Dock="Left"></Label>
+            <Grid Grid.Column="1" Grid.Row="0"  Margin="3" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <!--Цвет текста-->
+                <custom:ColorPicker  Grid.Column="2"  Margin="2"
+                                    SelectedColor        ="{Binding Source={x:Static props:Settings.Default}, Path=NewMessageFont.FontColor, Mode=TwoWay}"
+                                    ToolTip              ="Цвет текста"/>
+
+                <!--Размер текста-->
+                <ComboBox  Grid.Column="1"  Margin="2"
+                          Style               ="{StaticResource ComboBoxFlatStyle}"
+                          IsEditable          ="True"
+                          Text                ="{Binding Source={x:Static props:Settings.Default}, Path=NewMessageFont.Size, Mode=TwoWay}"
+                          IsTextSearchEnabled ="False"        
+                          >
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel VirtualizingStackPanel.IsVirtualizing="True" Orientation="Horizontal">
+                                <TextBlock Text="{Binding}" ToolTip="{Binding}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                    <ComboBox.ItemsSource>
+                        <Binding Source="{StaticResource systemFontSizes}" />
+                    </ComboBox.ItemsSource>
+                </ComboBox>
+                <!--Шрифт-->
+                <ComboBox  Grid.Column="0"  Margin="2"
+                          Style               ="{StaticResource ComboBoxFlatStyle}"
+                          SelectedItem        ="{Binding Source={x:Static props:Settings.Default}, Path=NewMessageFont.Family, Mode=TwoWay}"
+                          IsEditable          ="False"
+                          IsSynchronizedWithCurrentItem="False"
+                          IsTextSearchEnabled ="True">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel VirtualizingStackPanel.IsVirtualizing="True">
+                                <TextBlock Text="{Binding Source}" ToolTip="{Binding Source}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                    <ComboBox.ItemsSource>
+                        <Binding Source="{StaticResource systemFontFamilies}"/>
+                    </ComboBox.ItemsSource>
+                </ComboBox>
+            </Grid>
+
+            <!--Текст окна сообщений-->
+            <Label Grid.Column="0" Grid.Row="1"  Margin="3" Content="{Binding Path=Locally.LocaleStrings[Incoming messages default font], FallbackValue=Incoming messages default font}"></Label>
+            <Grid Grid.Column="1" Grid.Row="1"  Margin="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!--Цвет текста-->
+                <custom:ColorPicker Grid.Column="2" Margin="2"
+                                    SelectedColor        ="{Binding Source={x:Static props:Settings.Default}, Path=ChatBoxFont.FontColor, Mode=TwoWay}"
+                                    ToolTip              ="Цвет текста"/>
+                <!--Размер текста-->
+                <ComboBox Grid.Column="1" Margin="2"
+                          Style               ="{StaticResource ComboBoxFlatStyle}"
+                          IsEditable          ="True"
+                          Text                ="{Binding Source={x:Static props:Settings.Default}, Path=ChatBoxFont.Size, Mode=TwoWay}"
+                          IsTextSearchEnabled ="False"        
+                          >
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel VirtualizingStackPanel.IsVirtualizing="True" Orientation="Horizontal">
+                                <TextBlock Text="{Binding}" ToolTip="{Binding}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                    <ComboBox.ItemsSource>
+                        <Binding Source="{StaticResource systemFontSizes}" />
+                    </ComboBox.ItemsSource>
+                </ComboBox>
+                <!--Шрифт-->
+                <ComboBox Grid.Column="0" Margin="2"
+                          Style               ="{StaticResource ComboBoxFlatStyle}" 
+                          SelectedItem        ="{Binding Source={x:Static props:Settings.Default}, Path=ChatBoxFont.Family, Mode=TwoWay}"
+                          IsEditable          ="False"
+                          IsSynchronizedWithCurrentItem="False"
+                          IsTextSearchEnabled ="True">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel VirtualizingStackPanel.IsVirtualizing="True">
+                                <TextBlock Text="{Binding Source}" ToolTip="{Binding Source}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                    <ComboBox.ItemsSource>
+                        <Binding Source="{StaticResource systemFontFamilies}"/>
+                    </ComboBox.ItemsSource>
+                </ComboBox>
+            </Grid>
+
+            <!--Язык интерфейса-->
+            <Label  Grid.Column="0" Grid.Row="2"  Margin="3" Content="{Binding Path=Locally.LocaleStrings[Language], FallbackValue=Language}"></Label>
+            <custom:LanguageSelection   Margin="3" Grid.Column="1" Grid.Row="2"/>
+
+            <!--Фон сообщений-->
+            <Label  Grid.Column="0" Grid.Row="3"  Margin="3" Content="{Binding Path=Locally.LocaleStrings[Incoming Message Background Color], FallbackValue=Incoming Message Background Color}"></Label>
+            <StackPanel Orientation="Horizontal" Margin="3" Grid.Column="1" Grid.Row="3">
+                <custom:ColorPicker  Margin="2"
+                                    SelectedColor        ="{Binding Source={x:Static props:Settings.Default}, Path=IncomingMessageBackgroundColor1, Mode=TwoWay}"
+                                    ToolTip              ="{Binding Path=Locally.LocaleStrings[Begin Color], FallbackValue=Begin Color}"/>
+                <custom:ColorPicker Margin="2"
+                                    SelectedColor        ="{Binding Source={x:Static props:Settings.Default}, Path=IncomingMessageBackgroundColor2, Mode=TwoWay}"
+                                    ToolTip              ="{Binding Path=Locally.LocaleStrings[End Color], FallbackValue=End Color}"/>
+            </StackPanel>
+
+            <!--Отступы-->
+            <Label  Grid.Column="0" Grid.Row="4"  Margin="3" Content="{Binding Path=Locally.LocaleStrings[Incomung Messages Padding], FallbackValue=Incomung Messages Padding}"></Label>
+            <StackPanel Orientation="Horizontal" Margin="3" Grid.Column="1" Grid.Row="4">
+                <TextBox Text="{Binding Source={x:Static props:Settings.Default}, Path=IncomePadding, Mode=TwoWay}"/>
+            </StackPanel>
+
+            <!--<Ellipse Height="50" Name="ellipse1" Stroke="Black" Width="50" >
+                <Ellipse.Fill>
+                    <ImageBrush ImageSource="C:\Users\Юля\OneDrive\C Sharp\Projects\SimpleChat DOTNET4\CoMessenger Client\Resources\Images\MaleDefaultAvatar.png"></ImageBrush>
+                </Ellipse.Fill>
+            </Ellipse>-->
+        </Grid>
+
+    </Grid>
+</UserControl>

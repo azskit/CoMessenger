@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfLocalizationEntry xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                          >
+  <LocalizationEntry Remark="Credentional Form">
+    <Original>Use current logged in user account</Original>
+    <Translation>Использовать текущую учетную запись</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Credentional Form">
+    <Original>Login</Original>
+    <Translation>Логин</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Credentional Form">
+    <Original>Password</Original>
+    <Translation>Пароль</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Status">
+    <Original>Disconnected</Original>
+    <Translation>Отключен от сервера</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>Connecting to {0}:{1}</Original>
+    <Translation>Подключение к {0}:{1} ...</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>Connected to {0}:{1}</Original>
+    <Translation>Подключен {0}:{1}</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>Error occurred - {0}</Original>
+    <Translation>Ошибка - {0}</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>User {0} is not registered on server {1}</Original>
+    <Translation>Пользователь {0} не зарегистрирован на сервере {1}</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>{1}: Wrong password for user {0}</Original>
+    <Translation>{1}: Неверный пароль пользователя {0}</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>Domain {0} couldn't be contacted</Original>
+    <Translation>Не удалось подключится к домену {0}</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>Error occurred during connection to {0}:{1} - {2}</Original>
+    <Translation>Ошибка при подключении к {0}:{1} - {2}</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Tooltip">
+    <Original>Enter username in format DOMAIN\User or user@domain</Original>
+    <Translation>Введите логин в формате DOMAIN\User или user@domain</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="LogOnScreen">
+    <Original>Sign in</Original>
+    <Translation>Выполнить вход</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="LogOnScreen">
+    <Original>Sign out</Original>
+    <Translation>Выйти из учетной записи</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="LogOnScreen">
+    <Original>Welcome</Original>
+    <Translation>Добро пожаловать</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Menu">
+    <Original>Messenger</Original>
+    <Translation>Мессенджер</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Menu">
+    <Original>Options</Original>
+    <Translation>Настройки</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Options">
+    <Original>Appearance</Original>
+    <Translation>Внешний вид</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Options">
+    <Original>Connection</Original>
+    <Translation>Соединение</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Options">
+    <Original>Other</Original>
+    <Translation>Прочие</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Options">
+    <Original>Editor default font</Original>
+    <Translation>Шрифт редактора по умолчанию</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Options">
+    <Original>Incoming messages default font</Original>
+    <Translation>Шрифт входящих сообщений по умолчанию</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Options">
+    <Original>Language</Original>
+    <Translation>Язык интерфейса</Translation>
+  </LocalizationEntry>
+</ArrayOfLocalizationEntry>

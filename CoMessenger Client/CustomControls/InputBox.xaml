@@ -1,0 +1,27 @@
+﻿<Window x:Class="COMessengerClient.CustomControls.InputBox"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="InputBox"
+        
+        MinHeight="120" MinWidth="200"
+        
+        >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Name="Question">Укажите новый пароль!</TextBlock>
+        <TextBox Name="Input" Grid.Row="1"/>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button IsDefault="True" MinWidth="50" Click="Button_Click" HorizontalAlignment="Center" VerticalAlignment="Center">OK</Button>
+            <Button IsCancel="True" MinWidth="50" Grid.Column="1" Click="Button_Click" HorizontalAlignment="Center" VerticalAlignment="Center">Отмена</Button>
+        </Grid>
+        
+    </Grid>
+</Window>

@@ -1,0 +1,124 @@
+﻿<UserControl x:Class="COMessengerClient.SettingsPanel.SettingsPanelView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:props="clr-namespace:COMessengerClient.Properties"
+             xmlns:custom="clr-namespace:COMessengerClient.CustomControls" 
+             xmlns:application="clr-namespace:COMessengerClient" 
+             xmlns:converters="clr-namespace:COMessengerClient.CustomControls.CustomConverters"
+             xmlns:validation="clr-namespace:COMessengerClient.CustomControls.CustomValidationRules"
+             xmlns:sections="clr-namespace:COMessengerClient.Options.Sections"
+             mc:Ignorable="d" 
+             
+             DataContext="{x:Static application:App.ThisApp}"
+             
+             d:DesignHeight="400" d:DesignWidth="600">
+    <!--Ресурсы-->
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!--Источники данных для комбобоксов-->
+                <ResourceDictionary Source="..\SystemCollections.xaml"></ResourceDictionary>
+                <!--Плоские кнопки-->
+                <ResourceDictionary Source="..\Styles\FlatControls.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+            <!--<Style TargetType="Label">
+                <Setter Property="Width" Value="150"/>
+            </Style>-->
+            <Style TargetType="DockPanel">
+                <Setter Property="Margin" Value="2"/>
+            </Style>
+            <converters:BoolToVisibilityConverter x:Key="visibilityConverter" />
+            <converters:ServerPortConverter       x:Key="serverPortConverter" />
+        </ResourceDictionary>
+
+    </UserControl.Resources>
+
+    <Grid>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" MinWidth="150"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <!--Список разделов настроек-->
+            
+            <ListBox Margin="5">
+                <ListBoxItem Margin="2" IsSelected="True" Name="AppearanceSection">
+                    <Label Content="{Binding Path=Locally.LocaleStrings[Appearance], FallbackValue=Appearance}"/>
+                </ListBoxItem>
+                <ListBoxItem Margin="2" IsSelected="False" Name="ConnectionSection">
+                    <Label Content="{Binding Path=Locally.LocaleStrings[Connection], FallbackValue=Connection}"/>
+                </ListBoxItem>
+                <ListBoxItem Margin="2" IsSelected="False" Name="ContactList">
+                    <Label Content="{Binding Path=Locally.LocaleStrings[Contact List], FallbackValue=Contact List}"/>
+                </ListBoxItem>
+                <ListBoxItem Margin="2" IsSelected="False" Name="OtherSection">
+                    <Label Content="{Binding Path=Locally.LocaleStrings[Other], FallbackValue=Other}"/>
+                </ListBoxItem>
+            </ListBox>
+
+            <!--Внешний вид-->
+            <sections:AppearanceView Grid.Column="1" Visibility="{Binding ElementName=AppearanceSection, Path=IsSelected, Converter={StaticResource visibilityConverter}}"></sections:AppearanceView>
+            
+            <!--Контакт лист-->
+            <sections:ContactListView Grid.Column="1" Visibility="{Binding ElementName=ContactList, Path=IsSelected, Converter={StaticResource visibilityConverter}}"></sections:ContactListView>
+
+            <!--Соединение-->
+            <Grid Grid.Column="1" Visibility="{Binding ElementName=ConnectionSection, Path=IsSelected, Converter={StaticResource visibilityConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!--Сервер и порт-->
+                <Label Grid.Column="0" Grid.Row="0"  Margin="3" Content="{Binding Path=Locally.LocaleStrings[Server and port], FallbackValue=Server and port}"></Label>
+                <TextBox Name="ServerPort"  Grid.Column="1" Grid.Row="0"  Margin="3" DataContext="{Binding Source={x:Static props:Settings.Default}}">
+                    <TextBox.Text>
+                        <MultiBinding  Converter="{StaticResource serverPortConverter}" Mode="OneWayToSource" UpdateSourceTrigger="PropertyChanged">
+                            <Binding Path="Server"></Binding>
+                            <Binding Path="Port"></Binding>
+
+                            <MultiBinding.ValidationRules>
+                                <validation:ServerPortValidationRule/>
+                            </MultiBinding.ValidationRules>
+                        </MultiBinding>
+                    </TextBox.Text>
+                </TextBox>
+                
+                <!--Учетная запись-->
+                <custom:CredentialForm Grid.Row="1" Grid.ColumnSpan="2" Margin="3"/>
+                
+                <!--Подключаться автоматически при входе-->
+                <CheckBox  Grid.Row="2" Grid.ColumnSpan="2"  Margin="3">
+                    <CheckBox.IsChecked>
+                        <Binding Source="{x:Static props:Settings.Default}" Path="AutoSignIn" Mode="TwoWay"/>
+                    </CheckBox.IsChecked>
+                    <CheckBox.Content>
+                        <Label Grid.Column="0" Grid.Row="1" Content="{Binding Path=Locally.LocaleStrings[Auto sign in when program starting], FallbackValue=Auto sign in when program starting}"></Label>
+                    </CheckBox.Content>
+                </CheckBox>
+
+
+
+            </Grid>
+            
+            <!--<StackPanel Grid.Column="1"  Visibility="{Binding ElementName=ConnectionSection, Path=IsSelected, Converter={StaticResource visibilityConverter}, FallbackValue=Collapsed}">
+                <Label Content="Some Stuff"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1"  Visibility="{Binding ElementName=OtherSection, Path=IsSelected, Converter={StaticResource visibilityConverter}, FallbackValue=Collapsed}">
+                <Label Content="Some Other Stuff"/>
+            </StackPanel>-->
+
+
+        </Grid>
+    </Grid>
+</UserControl>

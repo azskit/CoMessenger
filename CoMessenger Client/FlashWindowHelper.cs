@@ -1,0 +1,168 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows;
+using System.Runtime.InteropServices;
+
+namespace COMessengerClient
+{
+
+    //Мигатель окон. Сперто с http://stackoverflow.com/questions/8924556/force-window-to-blink-when-a-particular-event-occurs-in-c-sharp-wpf
+    public class FlashWindowHelper
+    {
+        private IntPtr mainWindowHWnd;
+        private Application theApp;
+
+        public FlashWindowHelper(Application app)
+        {
+            this.theApp = app;
+        }
+
+        public void FlashApplicationWindow()
+        {
+            InitializeHandle();
+            Flash(this.mainWindowHWnd, 5);
+        }
+
+        public void StopFlashing()
+        {
+            InitializeHandle();
+
+            if (Win2000OrLater)
+            {
+                FLASHWINFO fi = CreateFlashInfoStruct(this.mainWindowHWnd, FLASHW_STOP, uint.MaxValue, 0);
+                NativeMethods.FlashWindowEx(ref fi);
+            }
+        }
+
+        private void InitializeHandle()
+        {
+            if (this.mainWindowHWnd == IntPtr.Zero)
+            {
+                // Delayed creation of Main Window IntPtr as Application.Current passed in to ctor does not have the MainWindow set at that time
+                var mainWindow = this.theApp.MainWindow;
+                this.mainWindowHWnd = new System.Windows.Interop.WindowInteropHelper(mainWindow).Handle;
+            }
+        }
+
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct FLASHWINFO
+        {
+            /// <summary>
+            /// The size of the structure in bytes.
+            /// </summary>
+            public uint cbSize;
+            /// <summary>
+            /// A Handle to the Window to be Flashed. The window can be either opened or minimized.
+            /// </summary>
+            public IntPtr hwnd;
+            /// <summary>
+            /// The Flash Status.
+            /// </summary>
+            public uint dwFlags;
+            /// <summary>
+            /// The number of times to Flash the window.
+            /// </summary>
+            public uint uCount;
+            /// <summary>
+            /// The rate at which the Window is to be flashed, in milliseconds. If Zero, the function uses the default cursor blink rate.
+            /// </summary>
+            public uint dwTimeout;
+        }
+
+        /// <summary>
+        /// Stop flashing. The system restores the window to its original stae.
+        /// </summary>
+        private const uint FLASHW_STOP = 0;
+
+        /// <summary>
+        /// Flash the window caption.
+        /// </summary>
+        private const uint FLASHW_CAPTION = 1;
+
+        /// <summary>
+        /// Flash the taskbar button.
+        /// </summary>
+        private const uint FLASHW_TRAY = 2;
+
+        /// <summary>
+        /// Flash both the window caption and taskbar button.
+        /// This is equivalent to setting the FLASHW_CAPTION | FLASHW_TRAY flags.
+        /// </summary>
+        private const uint FLASHW_ALL = 3;
+
+        /// <summary>
+        /// Flash continuously, until the FLASHW_STOP flag is set.
+        /// </summary>
+        private const uint FLASHW_TIMER = 4;
+
+        /// <summary>
+        /// Flash continuously until the window comes to the foreground.
+        /// </summary>
+        private const uint FLASHW_TIMERNOFG = 12;
+
+        /// <summary>
+        /// Flash the spacified Window (Form) until it recieves focus.
+        /// </summary>
+        /// <param name="descriptor"></param>
+        /// <returns></returns>
+        public static bool Flash(IntPtr descriptor)
+        {
+            // Make sure we're running under Windows 2000 or later
+            if (Win2000OrLater)
+            {
+                FLASHWINFO fi = CreateFlashInfoStruct(descriptor, FLASHW_ALL | FLASHW_TIMERNOFG, uint.MaxValue, 0);
+
+                return NativeMethods.FlashWindowEx(ref fi);
+            }
+            return false;
+        }
+
+        private static FLASHWINFO CreateFlashInfoStruct(IntPtr handle, uint flags, uint count, uint timeout)
+        {
+            FLASHWINFO fi = new FLASHWINFO();
+            fi.cbSize = Convert.ToUInt32(Marshal.SizeOf(fi));
+            fi.hwnd = handle;
+            fi.dwFlags = flags;
+            fi.uCount = count;
+            fi.dwTimeout = timeout;
+            return fi;
+        }
+
+        /// <summary>
+        /// Flash the specified Window (form) for the specified number of times
+        /// </summary>
+        /// <param name="hwnd">The handle of the Window to Flash.</param>
+        /// <param name="count">The number of times to Flash.</param>
+        /// <returns></returns>
+        private static bool Flash(IntPtr hwnd, uint count)
+        {
+            if (Win2000OrLater)
+            {
+                FLASHWINFO fi = CreateFlashInfoStruct(hwnd, FLASHW_ALL | FLASHW_TIMERNOFG, count, 0);
+
+                return NativeMethods.FlashWindowEx(ref fi);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// A boolean value indicating whether the application is running on Windows 2000 or later.
+        /// </summary>
+        private static bool Win2000OrLater
+        {
+            get { return Environment.OSVersion.Version.Major >= 5; }
+        }
+    }
+
+    internal static class NativeMethods
+    {
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool FlashWindowEx(ref FlashWindowHelper.FLASHWINFO pwfi);
+
+    }
+}

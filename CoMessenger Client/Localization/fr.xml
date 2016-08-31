@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ArrayOfLocalizationEntry >
+
+  <LocalizationEntry Remark="Credentional Form">
+    <Original>Use current logged in user account</Original>
+    <Translation>L'utilisation actuelle de compte d'utilisateur connecté</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Credentional Form">
+    <Original>Login</Original>
+    <Translation>Nom d'utilisateur</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Credentional Form">
+    <Original>Password</Original>
+    <Translation>Mot de passe</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Status">
+    <Original>Disconnected</Original>
+    <Translation>Déconnecté</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>Connecting to {0}:{1}</Original>
+    <Translation>La connexion à {0}:{1} ...</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>Connected to {0}:{1}</Original>
+    <Translation>Connecté à {0}:{1}</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>Error occurred - {0}</Original>
+    <Translation>Erreur est survenue - {0}</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>User {0} is not registered on server {1}</Original>
+    <Translation>L'utilisateur {0} n'est pas enregistré sur le serveur</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>{1}: Wrong password for user {0}</Original>
+    <Translation>{1}: Mauvais mot de passe pour l'utilisateur {0}</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>Domain {0} couldn't be contacted</Original>
+    <Translation>Domaine {0} ne pouvait pas être contacté</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>Error occurred during connection to {0}:{1} - {2}</Original>
+    <Translation>Une erreur est survenue lors de la connexion {0}:{1} - {2}</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Tooltip">
+    <Original>Enter username in format DOMAIN\User or user@domain</Original>
+    <Translation>Entrer le nom d'utilisateur dans le format DOMAIN\User ou user@domain</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="LogOnScreen">
+    <Original>Sign in</Original>
+    <Translation>Signe dans</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="LogOnScreen">
+    <Original>Sign out</Original>
+    <Translation>Se déconnecter</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="LogOnScreen">
+    <Original>Welcome</Original>
+    <Translation>Bienvenue</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Menu">
+    <Original>Messenger</Original>
+    <Translation>Messenger</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Menu">
+    <Original>Options</Original>
+    <Translation>Paramètres</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Options">
+    <Original>Appearance</Original>
+    <Translation>Apparence</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Options">
+    <Original>Connection</Original>
+    <Translation>Connexion</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Options">
+    <Original>Other</Original>
+    <Translation>D'autres</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Options">
+    <Original>Editor default font</Original>
+    <Translation>L'éditeur par défaut de la police</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Options">
+    <Original>Incoming messages default font</Original>
+    <Translation>Les messages entrants de la police par défaut</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Options">
+    <Original>Language</Original>
+    <Translation>La Langue De L'Interface</Translation>
+  </LocalizationEntry>
+  
+</ArrayOfLocalizationEntry>

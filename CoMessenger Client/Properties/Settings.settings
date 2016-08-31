@@ -1,0 +1,78 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="COMessengerClient.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="MainWindowSize" Type="COMessengerClient.Properties.WindowSize" Scope="User">
+      <Value Profile="(Default)">500,1000</Value>
+    </Setting>
+    <Setting Name="NewMessageFont" Type="COMessengerClient.Properties.FontInfo" Scope="User">
+      <Value Profile="(Default)">Verdana,13,96,96,96</Value>
+    </Setting>
+    <Setting Name="ChatBoxFont" Type="COMessengerClient.Properties.FontInfo" Scope="User">
+      <Value Profile="(Default)">Segoe UI,11,96,96,96</Value>
+    </Setting>
+    <Setting Name="UseCurrentWindowsAccount" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="UserCultureUIInfo" Type="System.Globalization.CultureInfo" Scope="User">
+      <Value Profile="(Default)">(Default)</Value>
+    </Setting>
+    <Setting Name="UserLogin" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="UserPassword" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="UserDomain" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Server" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Port" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AutoSignIn" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="IncomingMessageBackgroundColor1" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#FFF0F8FF</Value>
+    </Setting>
+    <Setting Name="IncomingMessageBackgroundColor2" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#FFF0F8FF</Value>
+    </Setting>
+    <Setting Name="IncomeLeftIndent" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">35</Value>
+    </Setting>
+    <Setting Name="IncomeRightIndent" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">20</Value>
+    </Setting>
+    <Setting Name="BothBottomIndent" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">15</Value>
+    </Setting>
+    <Setting Name="BothTopIndent" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="IncomePadding" Type="System.Windows.Thickness" Scope="User">
+      <Value Profile="(Default)">35,0,100,15</Value>
+    </Setting>
+    <Setting Name="ContactListRowHeight" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">15</Value>
+    </Setting>
+    <Setting Name="OutcomingMessageBackgroundColor1" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#1000FF00</Value>
+    </Setting>
+    <Setting Name="OutcomingMessageBackgroundColor2" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#1000FF00</Value>
+    </Setting>
+    <Setting Name="OutcomePadding" Type="System.Windows.Thickness" Scope="User">
+      <Value Profile="(Default)">100,0,20,15</Value>
+    </Setting>
+    <Setting Name="SavePassword" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="SoundFileNewMessage" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Sound\newmsg.wav</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

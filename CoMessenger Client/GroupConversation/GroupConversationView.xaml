@@ -1,0 +1,33 @@
+﻿<UserControl xmlns:my1="clr-namespace:COMessengerClient.CustomControls"  xmlns:my="clr-namespace:COMessengerClient.Conversation"  x:Class="COMessengerClient.GroupConversation.GroupConversationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:application="clr-namespace:COMessengerClient"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid Name="MainGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <!--<my:ConversationView x:Name="Conversation"/>-->
+        <!--<my:ConversationView />-->
+
+        <my1:UserListBox Grid.Column="1" />
+        
+        <!--<ListBox Grid.Column="1" ItemsSource="{Binding Path=Participants}">
+
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                        <StackPanel Margin="1" Orientation="Horizontal">
+                            <TextBlock Text="{Binding Status}"/>
+                            <TextBlock Text=" "></TextBlock>
+                            <TextBlock Text="{Binding DisplayName}"/>
+                        </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>-->
+
+    </Grid>
+</UserControl>

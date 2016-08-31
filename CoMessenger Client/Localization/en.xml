@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfLocalizationEntry xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                          xmlns:loc="http://azskit.ru/2016/Localization"
+                          >
+  <LocalizationEntry Remark="Credentional Form">
+    <Original>Use current logged in user account</Original>
+    <Translation>Use current logged in user account</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Credentional Form">
+    <Original>Login</Original>
+    <Translation>Login</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Credentional Form">
+    <Original>Password</Original>
+    <Translation>Password</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Status">
+    <Original>Disconnected</Original>
+    <Translation>Disconnected</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>Connecting to {0}:{1}</Original>
+    <Translation>Connecting to {0}:{1}</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>Connected to {0}:{1}</Original>
+    <Translation>Connected to {0}:{1}</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>Error occurred - {0}</Original>
+    <Translation>Error occurred - {0}</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>User {0} is not registered on server {1}</Original>
+    <Translation>User {0} is not registered on server {1}</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>{1}: Wrong password for user {0}</Original>
+    <Translation>{1}: Wrong password for user {0}</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>Domain {0} couldn't be contacted</Original>
+    <Translation>Domain {0} couldn't be contacted</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Status">
+    <Original>Error occurred during connection to {0}:{1} - {2}</Original>
+    <Translation>Error occurred during connection to {0}:{1} - {2}</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="Tooltip">
+    <Original>Enter username in format DOMAIN\User or user@domain</Original>
+    <Translation>Enter username in format DOMAIN\User or user@domain</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="LogOnScreen">
+    <Original>Sign in</Original>
+    <Translation>Sign in</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="LogOnScreen">
+    <Original>Sign out</Original>
+    <Translation>Sign out</Translation>
+  </LocalizationEntry>
+
+  <LocalizationEntry Remark="LogOnScreen">
+    <Original>Welcome</Original>
+    <Translation>Welcome</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Menu">
+    <Original>Messenger</Original>
+    <Translation>Messenger</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Menu">
+    <Original>Options</Original>
+    <Translation>Options</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Options">
+    <Original>Appearance</Original>
+    <Translation>Appearance</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Options">
+    <Original>Connection</Original>
+    <Translation>Connection</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Options">
+    <Original>Other</Original>
+    <Translation>Other</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Options">
+    <Original>Editor default font</Original>
+    <Translation>Editor default font</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Options">
+    <Original>Incoming messages default font</Original>
+    <Translation>Incoming messages default font</Translation>
+  </LocalizationEntry>
+  
+  <LocalizationEntry Remark="Options">
+    <Original>Language</Original>
+    <Translation>Language</Translation>
+  </LocalizationEntry>
+</ArrayOfLocalizationEntry>
