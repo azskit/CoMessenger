@@ -21,3 +21,5 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "COMessengerClient.Conversation.ConversationModel.#GetMessageBody(System.Windows.Documents.FlowDocument)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "COMessengerClient.ContactList.ContactListViewModel.#NewRoomName")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "COMessengerClient.ContactList.ContactListViewModel.#OnPropertyChanged(System.String)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly", MessageId = "Шрифт", Scope = "resource", Target = "COMessengerClient.Properties.UI.resources")]
+

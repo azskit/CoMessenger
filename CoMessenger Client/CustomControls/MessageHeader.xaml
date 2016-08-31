@@ -14,18 +14,21 @@
         <converters:BoolToVisibilityConverter x:Key="invisibilityConverter" />
         <converters:StringToVisibilityConverter x:Key="strVisibilityConverter" />
         <converters:UserDomainConverter         x:Key="userDomainConverter" />
+
+        <SolidColorBrush x:Key="ListItemHoverFill" Color="Red" />
+        <SolidColorBrush x:Key="ListItemSelectedFill" Color="Yellow" />
+        <SolidColorBrush x:Key="ListItemSelectedInactiveFill" Color="Red" />
+        <SolidColorBrush x:Key="ListItemSelectedHoverFill" Color="Green" />
     </UserControl.Resources>
-    <Grid Margin="0,0,0,-5">
+    <Grid Margin="0,0,0,0">
         <StackPanel Orientation="Horizontal">
 
 
 
-                <ListView Background="Transparent" Visibility="{Binding HasMultipleVersion, Converter={StaticResource invisibilityConverter}}" ItemsSource="{Binding Path=Versions}" Focusable="False" BorderThickness="0" Height="20" VerticalAlignment="Bottom">
-                <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                        <Setter Property="Focusable" Value="False" />
-                        </Style>
-                </ListView.ItemContainerStyle>
+                <ListView ItemContainerStyle="{StaticResource DisableHighlight}" Background="Transparent" Visibility="{Binding HasMultipleVersion, Converter={StaticResource invisibilityConverter}}" ItemsSource="{Binding Path=Versions}" Focusable="False" BorderThickness="0" Height="12" VerticalAlignment="Bottom">
+                    
+                <!--<ListView.ItemContainerStyle>
+                </ListView.ItemContainerStyle>-->
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal"/>
@@ -34,9 +37,9 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Border Margin="2,0,2,0" CornerRadius="0,3,3,3"
-                                 Height="10"
-                                 Width="{Binding RelativeSource={RelativeSource Mode=Self},Path=ActualHeight}"
-                                 BorderThickness="0.5"
+                                Height="10"
+                                Width="{Binding RelativeSource={RelativeSource Mode=Self},Path=ActualHeight}"
+                                BorderThickness="0.5"
                                 MouseDown="OnTogglerClicked"
                                 UseLayoutRounding="True"
                                 SnapsToDevicePixels="True"
@@ -65,7 +68,8 @@
                                 </Style>
                             </Border.Style>
                                 <Border.ToolTip>
-                                    <TextBlock Text="{Binding Path=ChangeTime, StringFormat='F', ConverterCulture={x:Static gl:CultureInfo.CurrentCulture}}" TextTrimming="CharacterEllipsis" />
+                                <!--<TextBlock Text="{Binding Path=ChangeTime, StringFormat='F', ConverterCulture={x:Static gl:CultureInfo.CurrentCulture}}" TextTrimming="CharacterEllipsis" />-->
+                                <TextBlock Text="{Binding Path=ChangeTime, StringFormat='F', ConverterCulture={x:Static gl:CultureInfo.InstalledUICulture}}" TextTrimming="CharacterEllipsis" />
                                 </Border.ToolTip>
                             </Border>
                     </DataTemplate>
@@ -73,16 +77,34 @@
             </ListView>
 
             <Button Name="EditButton" 
-                    Style="{StaticResource FlatButton}" 
-                    VerticalAlignment="Bottom" 
-                    Visibility="Hidden">
-                <Path Data="{StaticResource EditIcon}" 
-                    StrokeThickness="1"          
-                      SnapsToDevicePixels="True">
-                    <Path.Stroke>
+                    Height="10"
+                    Padding="0"
+                    Style="{StaticResource HighlightContentOnHover}"
+                    Visibility="Hidden"
+                    ToolTip="{Binding Path=Locally.LocaleStrings[Edit this message], FallbackValue=Edit this message}">
+                <!--<Border BorderThickness="0" Background="Red">
+                    <Path Data="{StaticResource EditIcon}" 
+                          StrokeThickness="1"          
+                          SnapsToDevicePixels="True">
+                        <Path.Stroke>
+                            <SolidColorBrush Color="{Binding Source={x:Static props:Settings.Default}, Path=ChatBoxFont.FontColor, Mode=OneWay}"/>
+                        </Path.Stroke>
+                    </Path>
+                </Border>-->
+
+                <Border Margin="2,0,2,0" CornerRadius="0,3,3,3"
+                                Height="10"
+                                Width="{Binding RelativeSource={RelativeSource Mode=Self},Path=ActualHeight}"
+                                BorderThickness="0.5"
+                                UseLayoutRounding="True"
+                                SnapsToDevicePixels="True"
+                                Background="Orange"
+                                 >
+                    <Border.BorderBrush>
                         <SolidColorBrush Color="{Binding Source={x:Static props:Settings.Default}, Path=ChatBoxFont.FontColor, Mode=OneWay}"/>
-                    </Path.Stroke>
-                </Path>
+                    </Border.BorderBrush>
+
+                </Border>
             </Button>
 
         </StackPanel>
