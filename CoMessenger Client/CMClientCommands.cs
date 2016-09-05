@@ -20,13 +20,13 @@ namespace COMessengerClient
         {
             var client = COMessengerClient.App.ThisApp.Client as CMClientClient;
 
-            e.CanExecute = (client.state == ClientState.Connected);
+            e.CanExecute = (client.State == ClientState.Connected);
         }
 
         private static void SignOut_Executed(Object sender, ExecutedRoutedEventArgs e)
         {
             App.ThisApp.Client.Disconnect();
-            App.ThisApp.History = null;
+            App.ThisApp.History.Close();
             App.ThisApp.Client.ViewModel.ConnectionStatus = String.Format(CultureInfo.CurrentCulture, App.ThisApp.Locally.LocaleStrings["Disconnected"]);
         }
 
@@ -39,7 +39,7 @@ namespace COMessengerClient
 
             e.CanExecute = (
                 //Состояние - не подключен
-                client.state != ClientState.Connecting && client.state != ClientState.Connected
+                client.State != ClientState.Connecting && client.State != ClientState.Connected
 
                 //Вход либо с текущей учеткой, либо если задан логин
              && (    COMessengerClient.Properties.Settings.Default.UseCurrentWindowsAccount
@@ -65,10 +65,10 @@ namespace COMessengerClient
             client.ViewModel.ConnectionStatus = String.Format(CultureInfo.CurrentUICulture, App.ThisApp.Locally.LocaleStrings["Connecting to {0}:{1}"], server, port.ToString(CultureInfo.InvariantCulture));
             client.AsynchronousConnectTo(server, port, new AsyncCallback((a) =>
             {
-                if (client.state == ClientState.Connected)
-                    client.ViewModel.ConnectionStatus = String.Format(CultureInfo.CurrentUICulture, App.ThisApp.Locally.LocaleStrings["Connected to {0}:{1}"], server, port.ToString(CultureInfo.InvariantCulture));
-                else if (client.state == ClientState.Error)
-                    client.ViewModel.ConnectionStatus = String.Format(CultureInfo.CurrentUICulture, App.ThisApp.Locally.LocaleStrings["Error occurred during connection to {0}:{1} - {2}"], server, port.ToString(CultureInfo.InvariantCulture), client.exception.Message);
+                //if (client.State == ClientState.Connected)
+                //    client.ViewModel.ConnectionStatus = String.Format(CultureInfo.CurrentUICulture, App.ThisApp.Locally.LocaleStrings["Connected to {0}:{1}"], server, port.ToString(CultureInfo.InvariantCulture));
+                //else if (client.State == ClientState.Error)
+                //    client.ViewModel.ConnectionStatus = String.Format(CultureInfo.CurrentUICulture, App.ThisApp.Locally.LocaleStrings["Error occurred during connection to {0}:{1} - {2}"], server, port.ToString(CultureInfo.InvariantCulture), client.exception.Message);
             }));
 
         }

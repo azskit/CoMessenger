@@ -58,9 +58,9 @@ namespace CorporateMessengerLibrary
 
     public class AuthorizationSuccessEventArgs : EventArgs
     {
-        public CoMessengerUser LoggedUser { get; set; }
+        public CMUser LoggedUser { get; set; }
 
-        public AuthorizationSuccessEventArgs(CoMessengerUser loggedUser)
+        public AuthorizationSuccessEventArgs(CMUser loggedUser)
         {
             LoggedUser = loggedUser;
         }
@@ -119,7 +119,7 @@ namespace CorporateMessengerLibrary
 
         public void ConnectTo(string server, int port)
         {
-            if (state == ClientState.Disconnected || state == ClientState.Error || state == ClientState.MarkedToKill)
+            if (State == ClientState.Disconnected || State == ClientState.Error || State == ClientState.MarkedToKill)
             {
                 this.Server = server;
                 this.Port = port;
@@ -129,22 +129,22 @@ namespace CorporateMessengerLibrary
                 //if (!canConnect)
                 //    return;
 
-                state = ClientState.Connecting;
+                State = ClientState.Connecting;
 
-                if (tcp == null)
+                if (Tcp == null)
                 {
-                    tcp = new TcpClient();
+                    Tcp = new TcpClient();
                 }
 
-                if (tcp.Connected)
+                if (Tcp.Connected)
                     throw new InvalidOperationException("Подключение уже установлено");
 
                 try
                 {
-                    tcp.Connect(server, port);
-                    tcp.NoDelay = true;
-                    cStream = tcp.GetStream();
-                    state = ClientState.Connected;
+                    Tcp.Connect(server, port);
+                    Tcp.NoDelay = true;
+                    CStream = Tcp.GetStream();
+                    State = ClientState.Connected;
 
                     SendKey();
 
@@ -154,12 +154,12 @@ namespace CorporateMessengerLibrary
                 }
                 catch (ArgumentOutOfRangeException e)
                 {
-                    state = ClientState.Error;
+                    State = ClientState.Error;
                     OnConnectionError(e);
                 }
                 catch (SocketException e)
                 {
-                    state = ClientState.Error;
+                    State = ClientState.Error;
                     OnConnectionError(e);
                 }
             }
@@ -223,7 +223,7 @@ namespace CorporateMessengerLibrary
                 this.Login = Environment.UserName;
                 this.Domain = Environment.UserDomainName;
 
-                AuthorizationMessage.Message = new CoMessengerUser()
+                AuthorizationMessage.Message = new CMUser()
                 {
                     UserId = System.Security.Principal.WindowsIdentity.GetCurrent().User.Value,
                     IsBuiltIn = false
@@ -235,9 +235,9 @@ namespace CorporateMessengerLibrary
                 //Доменная авторизация
                 if (!String.IsNullOrEmpty(credentials.Domain))
                 {
-                    AuthorizationMessage.Message = new CoMessengerUser()
+                    AuthorizationMessage.Message = new CMUser()
                     {
-                        Login = credentials.UserName,
+                        UserName = credentials.UserName,
                         Domain = credentials.Domain,
                         EncryptedPassword = CryptPassword(credentials.SecurePassword)
                     };
@@ -245,9 +245,9 @@ namespace CorporateMessengerLibrary
                 //Встроенная авторизация
                 else
                 {
-                    AuthorizationMessage.Message = new CoMessengerUser()
+                    AuthorizationMessage.Message = new CMUser()
                     {
-                        Login = credentials.UserName,
+                        UserName = credentials.UserName,
                         EncryptedPassword = CryptPassword(credentials.SecurePassword)
                     };
                 }
@@ -305,7 +305,7 @@ namespace CorporateMessengerLibrary
 
         private void QueueProcess()
         {
-            while (state == ClientState.Connected)
+            while (State == ClientState.Connected)
             {
                 ProcessQueue();
 
@@ -338,7 +338,7 @@ namespace CorporateMessengerLibrary
 
         private void StayAlive()
         {
-            while (_IsStayAlive && state == ClientState.Connected)
+            while (_IsStayAlive && State == ClientState.Connected)
             {
                 if (LastActivity.AddMilliseconds(15000) < DateTime.Now)
                     CheckAlive();
@@ -375,12 +375,12 @@ namespace CorporateMessengerLibrary
         /// </summary>
         private void NewMessageHandler()
         {
-            while (state == ClientState.Connected)
+            while (State == ClientState.Connected)
             {
                 NewMessageEvent.WaitOne();
 
                 //Заканчиваем работу
-                if (state != ClientState.Connected)
+                if (State != ClientState.Connected)
                     return;
 
 //#if DEBUG
@@ -389,7 +389,7 @@ namespace CorporateMessengerLibrary
 
                 while (InMessagesCount > 0)
                 {
-                    CMMessage NewCMMessage = GetInMessage();
+                    CMMessage NewCMMessage = RetrieveInMessage();
 //#if DEBUG
 //                    Debug.WriteLine("{0}: searchResult dequeued", DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.CurrentCulture));
 //#endif
@@ -413,7 +413,7 @@ namespace CorporateMessengerLibrary
 
                             //Trace.WriteLine("{0}: Авторизация успешна", DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.CurrentCulture));
 
-                            OnAuthorizationSuccess( new AuthorizationSuccessEventArgs((CoMessengerUser)NewCMMessage.Message));
+                            OnAuthorizationSuccess( new AuthorizationSuccessEventArgs((CMUser)NewCMMessage.Message));
 
                             break;
 
@@ -559,10 +559,10 @@ namespace CorporateMessengerLibrary
 
 
                 //Есть ли такой пользователь в списке?
-                if (App.ThisApp.ListOfConversations.ContainsKey(peer.PeerID))
+                if (App.ThisApp.ListOfConversations.ContainsKey(peer.PeerId))
                 {
-                    App.ThisApp.ListOfConversations[peer.PeerID].UpdatePeer(peer);
-                    App.ThisApp.ListOfConversations.RaiseCollectionChanged(App.ThisApp.ListOfConversations[peer.PeerID], App.ThisApp.ListOfConversations[peer.PeerID], App.ThisApp.ListOfConversations.IndexOf(peer.PeerID));
+                    App.ThisApp.ListOfConversations[peer.PeerId].UpdatePeer(peer);
+                    App.ThisApp.ListOfConversations.RaiseCollectionChanged(App.ThisApp.ListOfConversations[peer.PeerId], App.ThisApp.ListOfConversations[peer.PeerId], App.ThisApp.ListOfConversations.IndexOf(peer.PeerId));
                     //App.ThisApp.ListOfConversations.RaiseCollectionChanged();
                     //App.ThisApp.ListOfConversations[RoomID.PeerID] = new ClientPeer() { Peer = RoomID };
                 }
@@ -572,11 +572,11 @@ namespace CorporateMessengerLibrary
 
                     NewPeer.UpdatePeer(peer);
 
-                    App.ThisApp.ListOfConversations.Add(peer.PeerID, NewPeer);
+                    App.ThisApp.ListOfConversations.Add(peer.PeerId, NewPeer);
                 }
             }
-            if (App.ThisApp.CurrentUser.UserId == peer.PeerID)
-                App.ThisApp.CurrentPeer = App.ThisApp.ListOfConversations[peer.PeerID];
+            if (App.ThisApp.CurrentUser.UserId == peer.PeerId)
+                App.ThisApp.CurrentPeer = App.ThisApp.ListOfConversations[peer.PeerId];
             //}));
         }
         
@@ -595,7 +595,7 @@ namespace CorporateMessengerLibrary
                 RECEIVER = App.ThisApp.ListOfConversations[routedMessage.Receiver];
 
             //Trace.WriteLine(DateTime.Now.ToString("HH:mm:ss.ffff") + " Получатель найден");
-            if (RECEIVER.Peer.Type == PeerType.Room)
+            if (RECEIVER.Peer.PeerType == PeerType.Room)
             {
                 //lock (Receiver)
                 //{

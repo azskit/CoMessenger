@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Security;
 using System.Runtime.InteropServices;
+using System.Globalization;
 
 namespace CorporateMessengerLibrary
 {
@@ -23,20 +24,20 @@ namespace CorporateMessengerLibrary
 
     public class CMClientBase : IDisposable
     {
-        public TcpClient tcp;
+        public TcpClient Tcp { get; protected set; }
 
-        public NetworkStream cStream;
+        public NetworkStream CStream { get; protected set; }
 
-        public ClientState state;
+        public ClientState State { get; protected set; }
 
-        public Exception exception { get; set; }
+        //public Exception exception { get; set; }
 
-        public CoMessengerUser user;
+        public CMUser User { get; set; }
 
         private RSAParameters clientPublicKey;
         private RSACryptoServiceProvider cryptoProvider;
 
-        public DateTime LastActivity = DateTime.Now;
+        public DateTime LastActivity { get; private set; }
 
         private Queue<CMMessage> OutMessageQueue = new Queue<CMMessage>();
         private Queue<CMMessage> InMessageQueue = new Queue<CMMessage>();
@@ -49,26 +50,27 @@ namespace CorporateMessengerLibrary
         public event ErrorEventHandler ConnectionError;
         public event EventHandler NewMessage;
 
-        public delegate void DelegateConnectTo(string server, int port);
+        protected delegate void DelegateConnectTo(string server, int port);
 
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="p_tcp">Подключившийся клиент</param>
-        public CMClientBase(TcpClient p_tcp)
+        /// <param name="tcp">Подключившийся клиент</param>
+        public CMClientBase(TcpClient tcp)
             : this()
         {
-            tcp = p_tcp;
-            cStream = tcp.GetStream();
-            tcp.NoDelay = true;
-            state = ClientState.Connected;
-            OnConnected();
+            this.Tcp = tcp;
+            CStream = this.Tcp.GetStream();
+            this.Tcp.NoDelay = true;
+            State = ClientState.Connected;
+            //OnConnected();
         }
 
         public CMClientBase()
         {
-            state = ClientState.Disconnected;
+            LastActivity = DateTime.Now;
+            State = ClientState.Disconnected;
             cryptoProvider = new RSACryptoServiceProvider();
         }
 
@@ -79,12 +81,12 @@ namespace CorporateMessengerLibrary
             if (Connected != null)
                 Connected(this, new EventArgs());
         }
-        protected virtual void OnConnectionError(Exception e)
+        protected virtual void OnConnectionError(Exception connectionException)
         {
-            exception = e;
+            //exception = e;
 
             if (ConnectionError != null)
-                ConnectionError(this, new ErrorEventArgs(e));
+                ConnectionError(this, new ErrorEventArgs(connectionException));
         }
         protected virtual void OnDisconnected()
         {
@@ -106,17 +108,17 @@ namespace CorporateMessengerLibrary
 
         public void Disconnect()
         {
-            if (state != ClientState.Disconnected)
+            if (State != ClientState.Disconnected)
             {
                 OnDisconnecting();
-                state = ClientState.Disconnected;
-                lock (cStream)
+                State = ClientState.Disconnected;
+                lock (Tcp)
                 {
-                    cStream.Close();
-                    tcp.Close();
+                    CStream.Close();
+                    Tcp.Close();
 
-                    tcp = null;
-                    cStream = null;
+                    Tcp = null;
+                    CStream = null;
                 }
                 OnDisconnected();
             }
@@ -128,15 +130,15 @@ namespace CorporateMessengerLibrary
         /// </summary>
         public void ProcessQueue()
         {
-            if (state == ClientState.Connected)
+            if (State == ClientState.Connected)
             {
                 if (OutMessageQueue.Count > 0)
                     Send(OutMessageQueue.Dequeue());
             }
 
-            if (state == ClientState.Connected)
+            if (State == ClientState.Connected)
             {
-                if (tcp.Available > 0)
+                if (Tcp.Available > 0)
                 {
                     CMMessage tmp = ReadMessage();
 
@@ -161,16 +163,17 @@ namespace CorporateMessengerLibrary
         /// Отправить сообщение
         /// </summary>
         /// <param name="mes">Сообщение</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Не передавать литералы в качестве локализованных параметров", MessageId = "System.Console.WriteLine(System.String,System.Object)")]
         private void Send(CMMessage mes)
         {
-            if (state == ClientState.Connected)
+            if (State == ClientState.Connected)
             {
                 try
                 {
                     //StreamWriter writer = new StreamWriter(stream);
-                    lock (cStream)
+                    lock (Tcp)
                     {
-                         Serializator.fmt.Serialize(cStream, mes);
+                         Serializator.fmt.Serialize(CStream, mes);
                     }
 
                     LastActivity = DateTime.Now;
@@ -179,15 +182,15 @@ namespace CorporateMessengerLibrary
 #if DEBUG
                     if (mes.Kind == MessageKind.RoutedMessage)
                     {
-                        Console.WriteLine("{0}: Отправлено сообщение", DateTime.Now.ToString("HH:mm:ss.ffff"));
+                        Console.WriteLine("{0}: Отправлено сообщение", DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.InvariantCulture));
                     }
                     else if (mes.Kind == MessageKind.Ping)
                     {
-                        Console.WriteLine("{0}: Ping sent", tcp.Client.RemoteEndPoint);
+                        Console.WriteLine("{0}: Ping sent", Tcp.Client.RemoteEndPoint);
                     }
                     else if (mes.Kind == MessageKind.Disconnect)
                     {
-                        Console.WriteLine("{0}: Disconnect sent", tcp.Client.RemoteEndPoint);
+                        Console.WriteLine("{0}: Disconnect sent", Tcp.Client.RemoteEndPoint);
                     }
 
 #endif
@@ -219,7 +222,7 @@ namespace CorporateMessengerLibrary
                 }
                 catch (System.IO.IOException e)
                 {
-                    state = ClientState.MarkedToKill;
+                    State = ClientState.MarkedToKill;
 
                     OnConnectionError(e);
                     Disconnect();
@@ -241,6 +244,7 @@ namespace CorporateMessengerLibrary
         /// <summary>
         /// Проверка существования канала
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Не передавать литералы в качестве локализованных параметров", MessageId = "System.Console.WriteLine(System.String,System.Object,System.Object)")]
         public void CheckAlive()
         {
             CMMessage ping = new CMMessage();
@@ -254,8 +258,8 @@ namespace CorporateMessengerLibrary
             }
             catch (System.IO.IOException e)
             {
-                state = ClientState.MarkedToKill;
-                Console.WriteLine("{0} lost connection ({1})", tcp.Client.RemoteEndPoint.ToString(), e.Message);
+                State = ClientState.MarkedToKill;
+                Console.WriteLine("{0} lost connection ({1})", Tcp.Client.RemoteEndPoint.ToString(), e.Message);
             }
         }
 
@@ -264,15 +268,17 @@ namespace CorporateMessengerLibrary
         /// Прочесть сообщение из потока
         /// </summary>
         /// <returns>Сообщение</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Не передавать литералы в качестве локализованных параметров", MessageId = "System.Console.WriteLine(System.String,System.Object)")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Не передавать литералы в качестве локализованных параметров", MessageId = "System.Console.WriteLine(System.String,System.Object,System.Object)")]
         private CMMessage ReadMessage()
         {
             CMMessage newmes = null;
             try
             {
-                lock (cStream)
+                lock (Tcp)
                 {
                     //msgsize = cStream.Position;
-                    newmes = Serializator.fmt.Deserialize(cStream) as CMMessage;
+                    newmes = Serializator.fmt.Deserialize(CStream) as CMMessage;
                     //msgsize = cStream.Position - msgsize;
                 }
 
@@ -282,11 +288,11 @@ namespace CorporateMessengerLibrary
                 {
                     //byte[] bytes = ((RoutedMessage)newmes.Message).Message as byte[];
                     //Console.WriteLine("{0}: Прочитано сообщение размером {1}", DateTime.Now.ToString("HH:mm:ss.ffff"), bytes != null ? bytes.Length : -1);
-                    Console.WriteLine("{0}: Прочитано сообщение {1}", DateTime.Now.ToString("HH:mm:ss.ffff"), ((RoutedMessage)newmes.Message).MessageID);
+                    Console.WriteLine("{0}: Прочитано сообщение {1}", DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.InvariantCulture), ((RoutedMessage)newmes.Message).MessageID);
                 }
                 else if (newmes.Kind == MessageKind.Ping)
                 {
-                    Console.WriteLine("{0}: Ping received", tcp.Client.RemoteEndPoint );
+                    Console.WriteLine("{0}: Ping received", Tcp.Client.RemoteEndPoint );
                 }
 #endif
                 //Дождались ответа на сообщение, ожидающее ответа :) Вызываем обработчик
@@ -307,7 +313,7 @@ namespace CorporateMessengerLibrary
             }
             catch (System.Runtime.Serialization.SerializationException e)
             {
-                state = ClientState.MarkedToKill;
+                State = ClientState.MarkedToKill;
 
                 OnConnectionError(e);
                 Disconnect();
@@ -315,7 +321,7 @@ namespace CorporateMessengerLibrary
             }
             catch (IOException e)
             {
-                state = ClientState.MarkedToKill;
+                State = ClientState.MarkedToKill;
 
                 OnConnectionError(e);
                 Disconnect();
@@ -323,7 +329,7 @@ namespace CorporateMessengerLibrary
             }
             catch (Exception)
             {
-                state = ClientState.Error;
+                State = ClientState.Error;
                 throw;
             }
 
@@ -334,7 +340,7 @@ namespace CorporateMessengerLibrary
             return newmes;
         }
 
-        public CMMessage GetInMessage()
+        public CMMessage RetrieveInMessage()
         {
             return InMessageQueue.Dequeue();
         }
@@ -356,17 +362,28 @@ namespace CorporateMessengerLibrary
 
         ~CMClientBase()
         {
-            Dispose();
+            Dispose(false);
         }
 
         public void Dispose()
         {
-            if (cStream != null)
-                cStream.Close();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-            if (tcp != null)
-                tcp.Close();
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (CStream != null)
+                    CStream.Close();
 
+                if (Tcp != null)
+                    Tcp.Close();
+
+                if (cryptoProvider != null)
+                    cryptoProvider.Dispose();
+            }
         }
 
         public void SendKey()
@@ -410,6 +427,9 @@ namespace CorporateMessengerLibrary
 
         protected byte[] CryptPassword(SecureString password)
         {
+            if (password == null)
+                throw new ArgumentNullException("password");
+
             cryptoProvider.ImportParameters(clientPublicKey);
             IntPtr valuePtr = IntPtr.Zero;
             try

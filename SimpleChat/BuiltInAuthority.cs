@@ -16,7 +16,7 @@ namespace SimpleChat
         /// <summary>
         /// Сериализатор списка пользователей
         /// </summary>
-        private static XmlSerializer serializer = new XmlSerializer(typeof(List<CoMessengerUser>));
+        private static XmlSerializer serializer = new XmlSerializer(typeof(List<CMUser>));
 
         /// <summary>
         /// Создать и сохранить пример списка встроенных пользователей
@@ -25,12 +25,12 @@ namespace SimpleChat
         public static void MakeBlancBuiltInUsersFile(string builtInUsersFileName = "builtinusers.xml")
         {
 
-            List<CoMessengerUser> UserList = new List<CoMessengerUser>();
+            List<CMUser> UserList = new List<CMUser>();
 
-            UserList.Add(new CoMessengerUser()
+            UserList.Add(new CMUser()
             {
                 DisplayName     = "Пупкин Василий Иванович",
-                Login           = "Pupkin",
+                UserName           = "Pupkin",
                 UserId          = Guid.NewGuid().ToString(),
                 Password    = MD5Helper.CreateMD5("abc123")
             });
@@ -58,16 +58,16 @@ namespace SimpleChat
         /// </summary>
         /// <param name="usersListFile">Файл списка пользователей</param>
         /// <returns>Список пользователей</returns>
-        public static IEnumerable<CoMessengerUser> GetBuiltInUsers(string usersListFile)
+        public static IEnumerable<CMUser> GetBuiltInUsers(string usersListFile)
         {
-            List<CoMessengerUser> UserList = new List<CoMessengerUser>();
+            List<CMUser> UserList = new List<CMUser>();
 
             if (File.Exists(usersListFile))
             {
                 using (Stream fs = new FileStream(usersListFile, FileMode.Open, FileAccess.Read, FileShare.Read))
                 using (XmlReader xml_reader = new XmlTextReader(fs))
                 {
-                    return (UserList = serializer.Deserialize(xml_reader) as List<CoMessengerUser>);
+                    return (UserList = serializer.Deserialize(xml_reader) as List<CMUser>);
                 }
             }
             else

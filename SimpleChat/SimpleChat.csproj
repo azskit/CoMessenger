@@ -77,9 +77,9 @@
     <Compile Include="Peers.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CoMesLib\CoMesLib.csproj">
+    <ProjectReference Include="..\CoMesLib\Cml.csproj">
       <Project>{12D40C8E-0B8A-492E-A1E8-4C81CAAD7F96}</Project>
-      <Name>CoMesLib</Name>
+      <Name>Cml</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

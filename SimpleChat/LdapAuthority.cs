@@ -89,9 +89,9 @@ namespace SimpleChat
         /// </summary>
         /// <param name="Users"></param>
         /// <returns></returns>
-        public IEnumerable<CoMessengerUser> GetWindowsUsers(UsersPlan Users)
+        public IEnumerable<CMUser> GetWindowsUsers(UsersPlan Users)
         {
-            List<CoMessengerUser> UserList = new List<CoMessengerUser>();
+            List<CMUser> UserList = new List<CMUser>();
 
             foreach (DomainEntry dom in Users.DomainList)
             {
@@ -112,11 +112,11 @@ namespace SimpleChat
                                             ToList().
                                             ForEach((member) =>
                                             {
-                                                UserList.Add(new CoMessengerUser()
+                                                UserList.Add(new CMUser()
                                                 {
                                                     DisplayName = member.DisplayName ?? member.SamAccountName,
                                                     UserId = member.Sid.Value,
-                                                    Login = member.SamAccountName,
+                                                    UserName = member.SamAccountName,
                                                     Domain = dom.DomainName,
                                                     IsBuiltIn = false
                                                 }); userscount++;
@@ -206,9 +206,9 @@ namespace SimpleChat
         }
         */
 
-        public IEnumerable<CoMessengerGroup> GetGroups(UsersPlan Plan)
+        public IEnumerable<CMGroup> GetGroups(UsersPlan Plan)
         {
-            List<CoMessengerGroup> GroupList = new List<CoMessengerGroup>();
+            List<CMGroup> GroupList = new List<CMGroup>();
 
             foreach (DomainEntry domainEntry in Plan.DomainList)
             {
@@ -235,15 +235,13 @@ namespace SimpleChat
                                 continue;
                             }
 
-                            CoMessengerGroup newGroup = new CoMessengerGroup();
-                            newGroup.GroupID = principal.Sid.Value;
+                            CMGroup newGroup = new CMGroup();
+                            newGroup.GroupId = principal.Sid.Value;
                             newGroup.DisplayName = principal.DisplayName ?? principal.Name;
 
 
                             if (InfoStream != null)
                                 InfoStream.WriteLine("Looking for users in {0}\\{1}", domainEntry.DomainName, groupEntry.GroupName);
-
-                            newGroup.UserIDs = new List<string>();
 
                             principal.GetMembers(recursive: true).
                                                 OfType<UserPrincipal>().
@@ -259,11 +257,11 @@ namespace SimpleChat
                                                         //    IsBuiltIn = false
                                                         //}); userscount++;
 
-                                                        newGroup.UserIDs.Add(member.Sid.Value);
+                                                        newGroup.UserIds.Add(member.Sid.Value);
                                                     });
 
                             if (InfoStream != null)
-                                InfoStream.WriteLine("{0} users found", newGroup.UserIDs.Count);
+                                InfoStream.WriteLine("{0} users found", newGroup.UserIds.Count);
 
                             GroupList.Add(newGroup);
 

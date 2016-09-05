@@ -38,7 +38,7 @@ namespace COMessengerClient
             {
                 if (parent.Peer != null)
                 {
-                    if (parent.Peer.Type == PeerType.Room)
+                    if (parent.Peer.PeerType == PeerType.Room)
                     {
 
                         RoomPeer room = parent.Peer as RoomPeer;
@@ -67,7 +67,7 @@ namespace COMessengerClient
         {
             get
             {
-                if (parent.Peer.Type == PeerType.Room)
+                if (parent.Peer.PeerType == PeerType.Room)
                     return "Комната";
                 else
                     return ((PersonPeer)parent.Peer).State == PeerStatus.Online ? "В сети" : "Не в сети";
@@ -84,7 +84,7 @@ namespace COMessengerClient
                 if (participants != null)
                     return participants;
 
-                if (!(parent.Peer.Type == PeerType.Room))
+                if (!(parent.Peer.PeerType == PeerType.Room))
                 {
                     return null;
                 }
@@ -139,9 +139,15 @@ namespace COMessengerClient
                     peer.State = newPeer.State;
                 }
 
-                if (peer.Type == PeerType.Room)
+                if (peer.PeerType == PeerType.Room)
                 {
-                    ((RoomPeer)peer).Participants = ((RoomPeer)newPeer).Participants;
+                    //((RoomPeer)peer).Participants = ((RoomPeer)newPeer).Participants;
+
+                    RoomPeer Room = peer as RoomPeer;
+
+                    Room.Participants.Clear();
+                    Room.Participants.AddRange(((RoomPeer)newPeer).Participants);
+
                 }
             }
 
@@ -238,7 +244,7 @@ namespace COMessengerClient
             //Trace.WriteLine(DateTime.Now.ToString("HH:mm:ss.ffff") + " Сохраняем сообщение");
 
             //Сохраняем долбаное сообщение
-            if (Peer.Type == PeerType.Person)
+            if (Peer.PeerType == PeerType.Person)
                 routedMessage.PrevMsgID = routedMessage.PrevMsgID = App.ThisApp.History.GetLastMsgBetween(routedMessage.Sender, routedMessage.Receiver, routedMessage.SendTime);
 
             App.ThisApp.History.Save(routedMessage);
@@ -284,11 +290,11 @@ namespace COMessengerClient
                 throw new ArgumentNullException("y");
 
             //Разные типы - у комнат приоритет
-            if (x.Peer.Type != y.Peer.Type)
-                return x.Peer.Type == PeerType.Room ? -1 : 1;
+            if (x.Peer.PeerType != y.Peer.PeerType)
+                return x.Peer.PeerType == PeerType.Room ? -1 : 1;
 
             //Если два собеседника
-            if (x.Peer.Type == PeerType.Person)
+            if (x.Peer.PeerType == PeerType.Person)
             {
                 //Если разные статусы, то приоритет у тех кто онлайн
                 if (((PersonPeer)x.Peer).State != ((PersonPeer)y.Peer).State)

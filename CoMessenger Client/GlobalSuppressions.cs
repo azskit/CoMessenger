@@ -22,4 +22,7 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "COMessengerClient.ContactList.ContactListViewModel.#NewRoomName")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "COMessengerClient.ContactList.ContactListViewModel.#OnPropertyChanged(System.String)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly", MessageId = "Шрифт", Scope = "resource", Target = "COMessengerClient.Properties.UI.resources")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "COMessengerClient.Conversation.ConversationView.#NewMessageBox_KeyDown(System.Object,System.Windows.Input.KeyEventArgs)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "COMessengerClient.Conversation.ConversationView.#MessageArea_PreviousMessagesClicked(System.Object,System.EventArgs)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "COMessengerClient.Conversation.ConversationView.#MessageArea_ScrollViewerStartPositionReached(System.Object,System.EventArgs)")]
 

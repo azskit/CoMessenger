@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 using System.Windows.Media;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Globalization;
 
 namespace CorporateMessengerLibrary
 {
@@ -20,13 +21,15 @@ namespace CorporateMessengerLibrary
     [Serializable]
     public class PersonPeer : Peer
     {
-        public static PersonPeerEqualityComparer EqualityComparer = new PersonPeerEqualityComparer();
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
+        public static readonly PersonPeerEqualityComparer EqualityComparer = new PersonPeerEqualityComparer();
     }
 
     [Serializable]
     public class RoomPeer : Peer
     {
-        public List<PersonPeer> Participants { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
+        public List<PersonPeer> Participants { get; } = new List<PersonPeer>();
         public bool IsMainRoom { get; set; }
     }
 
@@ -36,9 +39,10 @@ namespace CorporateMessengerLibrary
     public abstract class Peer : IEquatable<Peer>
     {
         public string DisplayName { get; set; }
-        public string PeerID { get; set; }
-        public PeerType Type { get; set; }
+        public string PeerId { get; set; }
+        public PeerType PeerType { get; set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public byte[] Avatar { get; set; }
 
         public PeerStatus State { get; set; }
@@ -46,7 +50,10 @@ namespace CorporateMessengerLibrary
 
         public bool Equals(Peer other)
         {
-            return other.PeerID == this.PeerID;
+            if (other == null)
+                return false;
+
+            return other.PeerId == this.PeerId;
         }
     }
 
@@ -55,7 +62,14 @@ namespace CorporateMessengerLibrary
         public override int Compare(Peer x, Peer y)
         {
             //if (x.Status == y.Status)
-                return x.DisplayName.CompareTo(y.DisplayName);
+
+            if (x == null)
+                throw new ArgumentNullException("x");
+
+            if (y == null)
+                throw new ArgumentNullException("y");
+
+            return string.Compare(x.DisplayName, y.DisplayName, StringComparison.CurrentCulture);
             ////else if (x.Status == PeerStatus.Online)
             //    return -1;
             //else if (y.Status == PeerStatus.Online)
@@ -65,16 +79,18 @@ namespace CorporateMessengerLibrary
         }
     }
 
-
     public class PersonPeerEqualityComparer : IEqualityComparer<PersonPeer>
     {
         public bool Equals(PersonPeer x, PersonPeer y)
         {
-            return x != null && y != null && x.PeerID == y.PeerID;
+            return x != null && y != null && x.PeerId == y.PeerId;
         }
 
         public int GetHashCode(PersonPeer obj)
         {
+            if (obj == null)
+                throw new ArgumentNullException("obj");
+
             return obj.GetHashCode();
         }
 
@@ -82,7 +98,7 @@ namespace CorporateMessengerLibrary
     }
 
     [Serializable]
-    public class CoMessengerUser : IEquatable<CoMessengerUser>
+    public class CMUser : IEquatable<CMUser>
     {
         private string _DisplayName;
 
@@ -100,20 +116,55 @@ namespace CorporateMessengerLibrary
             set { _UserID = value; }
         }
 
-        public string Login;
+        //public string UserName { get; set; }
+
+        private string _UserName;
+
+        public string UserName
+        {
+            get { return _UserName; }
+            set { _UserName = value; }
+        }
+
 
         [NonSerialized()]
-        public string Password;
-        public byte[] EncryptedPassword;
+        private string password;
+        private byte[] encryptedPassword;
 
-
-        public virtual bool IsPasswordCorrect(string password)
+        public string Password
         {
-            if (IsBuiltIn)
-                return (MD5Helper.CreateMD5(password) == Password);
-            else
-                throw new NotImplementedException("Проверка пароля должна быть реализована в наследующем классе");
+            get
+            {
+                return password;
+            }
+
+            set
+            {
+                password = value;
+            }
         }
+
+        public byte[] EncryptedPassword
+        {
+            get
+            {
+                return encryptedPassword;
+            }
+
+            set
+            {
+                encryptedPassword = value;
+            }
+        }
+
+
+        //public virtual bool IsPasswordCorrect(string password)
+        //{
+        //    if (IsBuiltIn)
+        //        return (MD5Helper.CreateMD5(password) == Password);
+        //    else
+        //        throw new NotImplementedException("Проверка пароля должна быть реализована в наследующем классе");
+        //}
 
         public bool IsBuiltIn { get; set; }
 
@@ -130,19 +181,24 @@ namespace CorporateMessengerLibrary
 
         //public PeerStatus Status { get; set; }
 
-        public bool Equals(CoMessengerUser other)
+        public bool Equals(CMUser other)
         {
+            if (other == null)
+                return false;
+
             return other.UserId == this.UserId;
         }
 
-        [NonSerialized]
-        private Queue<CMMessage> messagesQueue = new Queue<CMMessage>();
-        [XmlIgnore]
-        public Queue<CMMessage> MessagesQueue
-        {
-            get { return messagesQueue; }
-            set { messagesQueue = value; }
-        }
+        //[NonSerialized]
+        //private Queue<CMMessage> messagesQueue = new Queue<CMMessage>();
+        //[XmlIgnore]
+        //public Queue<CMMessage> MessagesQueue
+        //{
+        //    get { return messagesQueue; }
+        //    set { messagesQueue = value; }
+        //}
+
+
 
         //[NonSerialized]
         //private Color backColor = new Color();
@@ -203,7 +259,7 @@ namespace CorporateMessengerLibrary
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < hashBytes.Length; i++)
                 {
-                    sb.Append(hashBytes[i].ToString("X2"));
+                    sb.Append(hashBytes[i].ToString("X2", CultureInfo.InvariantCulture));
                 }
                 return sb.ToString();
             }
@@ -211,10 +267,10 @@ namespace CorporateMessengerLibrary
     }
 
     [Serializable]
-    public class CoMessengerGroup
+    public class CMGroup
     {
-        public string GroupID { get; set; }
-        public List<string> UserIDs { get; set; }
+        public string GroupId { get; set; }
+        public List<string> UserIds { get; } = new List<string>();
         public string DisplayName { get; set; }
 
         //[NonSerialized]

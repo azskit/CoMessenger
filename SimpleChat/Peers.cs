@@ -37,7 +37,7 @@ namespace SimpleChat
         /// <summary>
         /// Учетная запись
         /// </summary>
-        public CoMessengerUser User { get; set; }
+        public CMUser User { get; set; }
 
         /// <summary>
         /// Очередь неотправленных сообщений
@@ -58,7 +58,7 @@ namespace SimpleChat
         public void ProcessMessage(RoutedMessage message)
         {
             //Если существует подключение, то отправляем сообщение сразу
-            if (User.Client != null && User.Client.state == ClientState.Connected)
+            if (User.Client != null && User.Client.State == ClientState.Connected)
             {
                 User.Client.PutOutMessage(new CMMessage()
                 {
@@ -83,7 +83,7 @@ namespace SimpleChat
             //    History = new IndexedHistoryManager("Storage/History", false);
 
             //Отправим все, что пришло за время отсутствия клиента
-            foreach (RoutedMessage msg in Server.TempHistory.GetMessagesSentToReceiver(Person.PeerID, ""))
+            foreach (RoutedMessage msg in Server.TempHistory.GetMessagesSentToReceiver(Person.PeerId, ""))
             {
                 if (User.Client != null)
                 {
@@ -130,14 +130,14 @@ namespace SimpleChat
         public void ProcessMessage(RoutedMessage message)
         {
             //сохраняем сообщение
-            message.PrevMsgID = Server.RoomsHistory.GetLastMsgTo(Room.PeerID, message.SendTime);
+            message.PrevMsgID = Server.RoomsHistory.GetLastMsgTo(Room.PeerId, message.SendTime);
 
             Server.RoomsHistory.Save(message);
 
             //рассылаем всем кто онлайн
             Participants.ForEach(participant =>
                 {
-                    if (participant.User.Client != null && participant.User.Client.state == ClientState.Connected)
+                    if (participant.User.Client != null && participant.User.Client.State == ClientState.Connected)
                     {
                         participant.User.Client.PutOutMessage(new CMMessage()
                         {

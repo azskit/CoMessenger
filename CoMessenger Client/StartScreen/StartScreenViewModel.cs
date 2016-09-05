@@ -51,13 +51,14 @@ namespace COMessengerClient.StartScreen
             Client.Connecting += 
                 (clients, args) => 
                 {
-                    logOnScreen.isBusy = true;
+                    logOnScreen.IsBusy = true;
                 };
 
             Client.ConnectionError +=
             (client, args) =>
             {
-                Client.ViewModel.ConnectionStatus = String.Format(CultureInfo.CurrentUICulture, App.ThisApp.Locally.LocaleStrings["Error occurred - {0}"], Client.exception.Message);
+                //Client.ViewModel.ConnectionStatus = String.Format(CultureInfo.CurrentUICulture, App.ThisApp.Locally.LocaleStrings["Error occurred - {0}"], Client.exception.Message);
+                Client.ViewModel.ConnectionStatus = String.Format(CultureInfo.CurrentUICulture, App.ThisApp.Locally.LocaleStrings["Error occurred - {0}"], args.GetException().Message);
             };
 
             App.ThisApp.Client.AuthorizationSuccess +=
@@ -79,7 +80,7 @@ namespace COMessengerClient.StartScreen
 
                     view.Title = args.LoggedUser.DisplayName;
 
-                    logOnScreen.isBusy = false;
+                    logOnScreen.IsBusy = false;
                 }));
 
 
@@ -126,25 +127,25 @@ namespace COMessengerClient.StartScreen
             {
                 foreach (ClientPeer peer in App.ThisApp.ListOfConversations)
 	            {
-                    if (peer.Peer.Type == PeerType.Person)
+                    if (peer.Peer.PeerType == PeerType.Person)
                     {
                         peer.Peer.State = PeerStatus.Offline;
                         peer.UpdatePeer();
                     }
 	            }
 
-                logOnScreen.isBusy = false;
+                logOnScreen.IsBusy = false;
 
             };
 
-            Client.ConnectionError += (a,b)=>{logOnScreen.isBusy = false;};
+            Client.ConnectionError += (a,b)=>{logOnScreen.IsBusy = false;};
 
             //model.StartClient();
         }
 
         private void OnAuthorizationError(AuthorizationErrorEventArgs args)
         {
-            logOnScreen.isBusy = false;
+            logOnScreen.IsBusy = false;
 
             string ErrorMessage = String.Empty;
 

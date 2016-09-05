@@ -24,7 +24,7 @@ namespace COMessengerClient.CustomControls
             InitializeComponent();
         }
 
-        public bool isBusy 
+        public bool IsBusy 
         {
             get { return BusyIndicator.Visibility == System.Windows.Visibility.Visible; }
             set

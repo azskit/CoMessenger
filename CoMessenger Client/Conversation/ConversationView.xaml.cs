@@ -41,7 +41,7 @@ namespace COMessengerClient.Conversation
 
         //private List<MessageForeground> messagesListByID;
         //internal List<MessageForeground> MessagesListByID { get { return messagesListByID; } }
-        public SortedList<string, MessageForeground> IndexByID { get; private set; }
+        public SortedList<string, MessageForeground> IndexById { get; private set; }
 
         public DateTime LastMessageTime { get; set; }
         public DateTime FirstMessageTime { get; set; }
@@ -57,7 +57,7 @@ namespace COMessengerClient.Conversation
 
             messagesList = new List<MessageForeground>();
             //messagesListByID = new List<MessageForeground>();
-            IndexByID = new SortedList<string, MessageForeground>();
+            IndexById = new SortedList<string, MessageForeground>();
 
             InitializeComponent();
 
@@ -72,7 +72,7 @@ namespace COMessengerClient.Conversation
 
             DataContext = Peer;
 
-            if (Peer.Peer.Type != PeerType.Room)
+            if (Peer.Peer.PeerType != PeerType.Room)
             {
                 ParticipantsLink.IsEnabled = false;
                 ParticipantsLink.Visibility = System.Windows.Visibility.Collapsed;
@@ -83,6 +83,7 @@ namespace COMessengerClient.Conversation
         #region Обработчики событий
 
         //Отправить сообщение
+        
         private void NewMessageBox_KeyDown(object sender, KeyEventArgs e)
         {
             //Нажали Ctrl+Enter
@@ -91,7 +92,7 @@ namespace COMessengerClient.Conversation
                 ConversationModel.SendMessage(this, Peer);
             }
         }
-
+        
         //Клик по ссылке
         private void OnNavigationRequest(object sender, RoutedEventArgs e)
         {
@@ -112,7 +113,7 @@ namespace COMessengerClient.Conversation
                 new CMMessage()
                 {
                     Kind = MessageKind.LeaveRoom,
-                    Message = this.Peer.Peer.PeerID
+                    Message = this.Peer.Peer.PeerId
                 });
 
             //И закроемся
@@ -129,7 +130,7 @@ namespace COMessengerClient.Conversation
                 new CMMessage()
                 {
                     Kind = MessageKind.CloseRoom,
-                    Message = this.Peer.Peer.PeerID
+                    Message = this.Peer.Peer.PeerId
                 });
 
             //И закроемся
@@ -146,74 +147,17 @@ namespace COMessengerClient.Conversation
                     if (FirstTimeLoaded)
                     {
                         //Если комната, попросим у сервера немножко истории
-                        if (this.Peer.Peer.Type == PeerType.Room)
+                        if (this.Peer.Peer.PeerType == PeerType.Room)
                         {
 
-                            MessageArea.isBusy = true;
 
                             HistoryQuery query = new HistoryQuery();
 
-                            query.PeerID = this.Peer.Peer.PeerID;
+                            query.PeerID = this.Peer.Peer.PeerId;
                             query.From = String.Empty; //С последнего сообщения на сервере
-                            query.To   = String.Empty; //До нашего последнего сообщения
-                            //query.QueryID = Guid.NewGuid().ToString();
-
-                            //App.ThisApp.History.OnHistoryQueryProcessed = () => { ConversationModel.LoadFewMessageFromHistory(this, 5); }; ;
-
-                            //App.ThisApp.Client.ViewModel.ConnectionStatus = "Waiting server response";
-
-                            Stopwatch sw = new Stopwatch();
-
-                            sw.Start();
-
-                            App.ThisApp.Client.PutOutMessage(new CMMessage()
-                            {
-                                Kind = MessageKind.Query,
-                                Message = new QueryMessage()
-                                {
-                                    Kind = QueryMessageKind.History,
-                                    Message = query,
-                                    MessageID = Guid.NewGuid().ToString(),
-
-                                    //При получении ответа загрузим 5 сообщений
-                                    SuccessAction = (a) =>
-                                    {
-
-                                        MessageArea.isBusy = false;
-
-                                        sw.Stop();
-
-                                        App.ThisApp.Client.ViewModel.ConnectionStatus = "Waiting response took " + sw.ElapsedMilliseconds;
-
-                                        sw.Reset();
-
-                                        HistoryQuery history = a.Message as HistoryQuery;
-
-                                        if (history.Content.Count > 0)
-                                        {
-                                            App.ThisApp.History.SaveMessages(history.Content);
-
-                                            ConversationModel.LoadMessages(
-                                                             conView: this,
-                                                             entriesToLoad: history.Content.Take(5).ToList() //Отсортировано по убыванию
-                                                            );
-                                        }
-
-                                    },
-                                    TimeoutAction = () => 
-                                    {
-                                        MessageArea.isBusy = false;
-
-                                        sw.Stop();
-
-                                        //MessageBox.Show("Истекло время ожидания ответа от сервера"); 
-                                        App.ThisApp.Client.ViewModel.ConnectionStatus = "Timeout expired after " + sw.ElapsedMilliseconds;
-
-                                        sw.Reset();
-
-                                    }
-                                }
-                            });
+                            query.To = String.Empty; //До нашего последнего сообщения
+                                                     //query.QueryID = Guid.NewGuid().ToString();
+                            AskHistory(query);
                         }
                         else
                         {
@@ -237,6 +181,64 @@ namespace COMessengerClient.Conversation
 
             //Сфокусироваться на поле ввода
             NewMessageBox.NewMessageTextBox.Focus();
+        }
+
+        private void AskHistory(HistoryQuery query)
+        {
+            MessageArea.isBusy = true;
+
+            Stopwatch sw = new Stopwatch();
+
+            sw.Start();
+
+            App.ThisApp.Client.PutOutMessage(new CMMessage()
+            {
+                Kind = MessageKind.Query,
+                Message = new QueryMessage()
+                {
+                    Kind = QueryMessageKind.History,
+                    Message = query,
+                    MessageID = Guid.NewGuid().ToString(),
+
+                    //При получении ответа загрузим 5 сообщений
+                    SuccessAction = (a) =>
+                    {
+
+                        MessageArea.isBusy = false;
+
+                        sw.Stop();
+
+                        App.ThisApp.Client.ViewModel.ConnectionStatus = "Waiting response took " + sw.ElapsedMilliseconds;
+
+                        sw.Reset();
+
+                        HistoryQuery history = a.Message as HistoryQuery;
+
+                        if (history.Content.Count > 0)
+                        {
+                            App.ThisApp.History.SaveMessages(history.Content);
+
+                            ConversationModel.LoadMessages(
+                                             conView: this,
+                                             entriesToLoad: history.Content.Take(5).ToList() //Отсортировано по убыванию
+                                            );
+                        }
+
+                    },
+                    TimeoutAction = () =>
+                    {
+                        MessageArea.isBusy = false;
+
+                        sw.Stop();
+
+                        //MessageBox.Show("Истекло время ожидания ответа от сервера"); 
+                        App.ThisApp.Client.ViewModel.ConnectionStatus = "Timeout expired after " + sw.ElapsedMilliseconds;
+
+                        sw.Reset();
+
+                    }
+                }
+            });
         }
 
         private void ElementUnloaded(object sender, RoutedEventArgs e)
@@ -461,13 +463,14 @@ namespace COMessengerClient.Conversation
             MessageArea.ActualScrollViewer.ScrollToVerticalOffset(sta.GetCharacterRect(LogicalDirection.Forward).Top);
         }
 
-        public void LookAt(MessageForeground msg)
+        public void LookAt(TextElement msg)
         {
+            if (msg == null)
+                throw new ArgumentNullException("msg");
+
             LookAt(msg.ContentStart);
         }
-
-
-
+        
     }
 
 }

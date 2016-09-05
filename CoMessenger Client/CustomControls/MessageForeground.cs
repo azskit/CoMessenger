@@ -148,6 +148,9 @@ namespace COMessengerClient.CustomControls
 
         public MessageForeground(RoutedMessage message)
         {
+            if (message == null)
+                throw new ArgumentNullException("message");
+
             versions = new ObservableCollection<VersionViewModel>();
 
             ParagraphBegin.LayoutUpdated +=
@@ -209,13 +212,14 @@ namespace COMessengerClient.CustomControls
         }
 
 
-        //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        //public void FillMessage(ClientPeer peer, BlockCollection blockCollection, DateTime time)
-        public void PrepareMessage(ConversationView conView)
+        public void PrepareMessage()
         {
+            //if (conView == null)
+            //    throw new ArgumentNullException("conView");
+
             ClientPeer peer = App.FoundPeer(Message.Sender);
 
-            Direction = peer.Peer.PeerID == App.ThisApp.CurrentPeer.Peer.PeerID ? MessageDirection.Outcome : MessageDirection.Income;
+            Direction = peer.Peer.PeerId == App.ThisApp.CurrentPeer.Peer.PeerId ? MessageDirection.Outcome : MessageDirection.Income;
 
             switch (Direction)
             {
@@ -263,7 +267,8 @@ namespace COMessengerClient.CustomControls
 
             }
 
-            if (conView.Peer.Peer.Type == PeerType.Person || Direction == MessageDirection.Outcome)
+            //if (conView.Peer.Peer.Type == PeerType.Person || Direction == MessageDirection.Outcome)
+            if (Direction == MessageDirection.Outcome)
             {
                 EditPanel.Opacity = 0;
 

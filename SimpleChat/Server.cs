@@ -19,8 +19,8 @@ namespace SimpleChat
     class Server
     {
         static private List<CMClientBase> clients = new List<CMClientBase>();
-        static List<CoMessengerUser> CoMessengerUsers = new List<CoMessengerUser>();
-        static List<CoMessengerGroup> CoMessengerGroups = new List<CoMessengerGroup>();
+        static List<CMUser> CoMessengerUsers = new List<CMUser>();
+        static List<CMGroup> CoMessengerGroups = new List<CMGroup>();
         static SortedList<string, IMessagable> ReceiversList = new SortedList<string, IMessagable>();
 
         // set the TcpListener on port 13000
@@ -42,7 +42,7 @@ namespace SimpleChat
                         {
                             //Console.WriteLine("{0} sent {1} bytes", clnt.tcp.Client.RemoteEndPoint.ToString(), clnt.tcp.Available);
 
-                            CMMessage newmes = clnt.GetInMessage();
+                            CMMessage newmes = clnt.RetrieveInMessage();
 
                             switch (newmes.Kind)
                             {
@@ -65,7 +65,7 @@ namespace SimpleChat
 
                                 case MessageKind.AuthorizationNewPassword:
 
-                                    clnt.user.Password = (string)newmes.Message;
+                                    clnt.User.Password = (string)newmes.Message;
 
                                     break;
                                 case MessageKind.Disconnect:
@@ -83,7 +83,7 @@ namespace SimpleChat
                                     ServerRoomPeer enteredRoom = ReceiversList[(string)newmes.Message] as ServerRoomPeer;
 
                                     //Ищем клиента по ID
-                                    ServerPersonPeer joiner = (ServerPersonPeer)ReceiversList[clnt.user.UserId];
+                                    ServerPersonPeer joiner = (ServerPersonPeer)ReceiversList[clnt.User.UserId];
 
                                     //Если клиент еще не в комнате, то добавляем
                                     if (!enteredRoom.Participants.Contains(joiner))
@@ -116,7 +116,7 @@ namespace SimpleChat
                                     ServerRoomPeer leavedRoom = ReceiversList[(string)newmes.Message] as ServerRoomPeer;
 
                                     //Ищем клиента по ID
-                                    ServerPersonPeer leaver = (ServerPersonPeer)ReceiversList[clnt.user.UserId];
+                                    ServerPersonPeer leaver = (ServerPersonPeer)ReceiversList[clnt.User.UserId];
 
                                     //Если клиент еще не в комнате, то добавляем
                                     if (leavedRoom.Participants.Contains(leaver))
@@ -160,9 +160,9 @@ namespace SimpleChat
                                                 DisplayName = roomName,
 
                                                 //Список присутствующих в комнате для отправки клиентам (PersonPeer)
-                                                Participants = new List<PersonPeer>(),
-                                                PeerID = Guid.NewGuid().ToString("N"),
-                                                Type = PeerType.Room,
+                                                //Participants = new List<PersonPeer>(),
+                                                PeerId = Guid.NewGuid().ToString("N"),
+                                                PeerType = PeerType.Room,
                                                 IsMainRoom = false,
                                                 State = PeerStatus.Common
                                             },
@@ -172,7 +172,7 @@ namespace SimpleChat
                                         };
 
                                         //Добавляем в список
-                                        ReceiversList.Add(newRoom.Room.PeerID, newRoom);
+                                        ReceiversList.Add(newRoom.Room.PeerId, newRoom);
 
                                         //Уведомляем всех
                                         clients.ForEach((a) => { a.PutOutMessage(new CMMessage() { Kind = MessageKind.UpdatePeer, Message = newRoom.Peer() }); });
@@ -189,10 +189,10 @@ namespace SimpleChat
                                         ServerRoomPeer RoomToClose = ReceiversList[RoomToCloseID] as ServerRoomPeer;
 
                                         if (RoomToClose.Participants.Count == 1
-                                            && RoomToClose.Participants[0].User == clnt.user)
+                                            && RoomToClose.Participants[0].User == clnt.User)
                                         {
                                             //Удаляем комнату
-                                            ReceiversList.Remove(RoomToClose.Room.PeerID);
+                                            ReceiversList.Remove(RoomToClose.Room.PeerId);
 
                                             //Уведомляем всех
                                             clients.ForEach((a) => { a.PutOutMessage(new CMMessage() { Kind = MessageKind.UpdatePeer, Message = RoomToClose.Peer() }); });
@@ -235,7 +235,7 @@ namespace SimpleChat
                     ServerRoomPeer queriedRoom = ReceiversList[query.PeerID] as ServerRoomPeer;
 
                     //answer.Content = queriedRoom.History.GetPrivateMessages(answer.From, 20).ToList();
-                    query.Content = RoomsHistory.GetRoomMessages(queriedRoom.Peer().PeerID, query.From, 20).ToList();
+                    query.Content = RoomsHistory.GetRoomMessages(queriedRoom.Peer().PeerId, query.From, 20).ToList();
 
                     clnt.PutOutMessage(new CMMessage()
                     {
@@ -259,9 +259,9 @@ namespace SimpleChat
 
         private static void AuthorizationHandler(CMClientBase clnt, CMMessage newmes)
         {
-            CoMessengerUser ReceivedUser = newmes.Message as CoMessengerUser;
+            CMUser ReceivedUser = newmes.Message as CMUser;
 
-            CoMessengerUser FoundedUser = null;
+            CMUser FoundedUser = null;
 
             if (ReceivedUser == null)
             {
@@ -295,7 +295,7 @@ namespace SimpleChat
                 //расшифруем жулебный пароль
                 ReceivedUser.Password = clnt.DecryptPassword(ReceivedUser.EncryptedPassword);
 
-                FoundedUser = CoMessengerUsers.Find((UserInList) => { return UserInList.Login.ToLower() == ReceivedUser.Login.ToLower(); });
+                FoundedUser = CoMessengerUsers.Find((UserInList) => { return UserInList.UserName.ToLower() == ReceivedUser.UserName.ToLower(); });
 
                 if (FoundedUser != null)
                 {
@@ -303,7 +303,7 @@ namespace SimpleChat
                     {
                         PrincipalContext prCont = new PrincipalContext(ContextType.Domain, ReceivedUser.Domain);
 
-                        if (prCont.ValidateCredentials(ReceivedUser.Login, ReceivedUser.Password))
+                        if (prCont.ValidateCredentials(ReceivedUser.UserName, ReceivedUser.Password))
                         {
                             AcceptAuthorization(clnt, FoundedUser);
                         }
@@ -343,7 +343,7 @@ namespace SimpleChat
                 //расшифруем жулебный пароль
                 ReceivedUser.Password = clnt.DecryptPassword(ReceivedUser.EncryptedPassword);
 
-                FoundedUser = CoMessengerUsers.Find((UserInList) => { return UserInList.Login.ToLower() == ReceivedUser.Login.ToLower(); });
+                FoundedUser = CoMessengerUsers.Find((UserInList) => { return UserInList.UserName.ToLower() == ReceivedUser.UserName.ToLower(); });
 
 
                 //Нет такой буквы в этом слове
@@ -389,23 +389,23 @@ namespace SimpleChat
 
         }
 
-        private static void AcceptAuthorization(CMClientBase clnt, CoMessengerUser FoundUser)
+        private static void AcceptAuthorization(CMClientBase clnt, CMUser FoundUser)
         {
             //Если уже был авторизован с другой машины - отключаем
-            clients.FindAll((client) => client.user == FoundUser).ToList().ForEach(
+            clients.FindAll((client) => client.User == FoundUser).ToList().ForEach(
                 (client) => 
                 {
                     if (client != null)
                     {
-                        Console.WriteLine("Disconnecting " + client.tcp.Client.RemoteEndPoint);
-                        client.user.Client = null;
-                        client.user = null;
+                        Console.WriteLine("Disconnecting " + client.Tcp.Client.RemoteEndPoint);
+                        client.User.Client = null;
+                        client.User = null;
                         client.PutOutMessage(new CMMessage() { Kind = MessageKind.Disconnect });
                     }
                 });
 
 
-            clnt.user = FoundUser;
+            clnt.User = FoundUser;
             FoundUser.Client = clnt;
 
             ServerPersonPeer peer = ReceiversList[FoundUser.UserId] as ServerPersonPeer;
@@ -415,8 +415,8 @@ namespace SimpleChat
 
             Console.WriteLine(String.Format(CultureInfo.CurrentCulture,
                                 "{1}({0}) Connected",
-                                clnt.tcp.Client.RemoteEndPoint.ToString(),
-                                clnt.user != null ? clnt.user.UserId : null));
+                                clnt.Tcp.Client.RemoteEndPoint.ToString(),
+                                clnt.User != null ? clnt.User.UserId : null));
 
             //Подтверждаем авторизацию
             clnt.PutOutMessage(new CMMessage()
@@ -502,7 +502,7 @@ namespace SimpleChat
                 //Удаляем мертвых
                 //lock (clients)
                 //{
-                    clients.RemoveAll((a) => {return (a.state == ClientState.MarkedToKill || a.state == ClientState.Disconnected);});
+                    clients.RemoveAll((a) => {return (a.State == ClientState.MarkedToKill || a.State == ClientState.Disconnected);});
                 //}
 
                 Thread.Sleep(1000);
@@ -534,7 +534,7 @@ namespace SimpleChat
 
 
 
-                Console.WriteLine(String.Format(CultureInfo.CurrentCulture, "{0} connecting...", newclient.tcp.Client.RemoteEndPoint.ToString()));
+                Console.WriteLine(String.Format(CultureInfo.CurrentCulture, "{0} connecting...", newclient.Tcp.Client.RemoteEndPoint.ToString()));
 
                 newclient.Disconnecting += 
                     (client, args) => 
@@ -543,16 +543,16 @@ namespace SimpleChat
                         CMClientBase DisconnectingClient = client as CMClientBase;
 
                         //Если был авторизован - ставим статус и рассылаем уведомления
-                        if (DisconnectingClient.user != null)
+                        if (DisconnectingClient.User != null)
                         {
-                            ((ServerPersonPeer)ReceiversList[DisconnectingClient.user.UserId]).Person.State = PeerStatus.Offline;
-                            clients.ForEach((a) => { a.PutOutMessage(new CMMessage() { Kind = MessageKind.UpdatePeer, Message = ReceiversList[DisconnectingClient.user.UserId].Peer() }); });
+                            ((ServerPersonPeer)ReceiversList[DisconnectingClient.User.UserId]).Person.State = PeerStatus.Offline;
+                            clients.ForEach((a) => { a.PutOutMessage(new CMMessage() { Kind = MessageKind.UpdatePeer, Message = ReceiversList[DisconnectingClient.User.UserId].Peer() }); });
                         }
 
                         Console.WriteLine(String.Format(CultureInfo.CurrentCulture, 
                                                         "{1}({0}) Disconnected", 
-                                                        DisconnectingClient.tcp.Client.RemoteEndPoint.ToString(),
-                                                        DisconnectingClient.user != null ? DisconnectingClient.user.UserId : null));
+                                                        DisconnectingClient.Tcp.Client.RemoteEndPoint.ToString(),
+                                                        DisconnectingClient.User != null ? DisconnectingClient.User.UserId : null));
                     };
 
 
@@ -630,18 +630,19 @@ namespace SimpleChat
             catch (FileNotFoundException fn)
             {
                 Console.WriteLine(fn.Message);
-            }            
-            const string  MainGroupID = "{8A4458F4-6AA9-40F4-ADD3-A45491EE8FA0}";
+            }
+            const string MainGroupID = "{8A4458F4-6AA9-40F4-ADD3-A45491EE8FA0}";
 
             Console.WriteLine("done");
 
             //Основная группа пользователей
-            CoMessengerGroups.Add(new CoMessengerGroup() 
-            { 
-                UserIDs = CoMessengerUsers.Select<CoMessengerUser, string>((user) => { return user.UserId; }).ToList<string>(),
-                DisplayName = "All users",
-                GroupID = MainGroupID
-            });
+            CMGroup MainGroup = new CMGroup();
+
+            MainGroup.UserIds.AddRange(CoMessengerUsers.Select<CMUser, string>((user) => { return user.UserId; }));
+            MainGroup.GroupId = MainGroupID;
+            MainGroup.DisplayName = "All users";
+
+            CoMessengerGroups.Add(MainGroup);
 
             CoMessengerGroups.AddRange(LdapAuth.GetGroups(Plan));
 
@@ -657,34 +658,37 @@ namespace SimpleChat
                 Person = new PersonPeer()
                 {
                     DisplayName = user.DisplayName,
-                    PeerID = user.UserId,
-                    Type = PeerType.Person,
-                    State = PeerStatus.Offline,                    
+                    PeerId = user.UserId,
+                    PeerType = PeerType.Person,
+                    State = PeerStatus.Offline,
                     Avatar = File.Exists(Path.Combine(@"Storage/Avatars", String.Concat(user.UserId, ".png"))) ? System.IO.File.ReadAllBytes(Path.Combine(@"Storage/Avatars", String.Concat(user.UserId, ".png"))) : null
                 }
 
             }));
-            CoMessengerGroups.ForEach(group => ReceiversList.Add(group.GroupID, new ServerRoomPeer()
-            {
-                Room = new RoomPeer()
+            CoMessengerGroups.ForEach(
+                (group) =>
                 {
-                    DisplayName = group.DisplayName,
+                    ServerRoomPeer Room = new ServerRoomPeer();
 
-                    //Список присутствующих в комнате для отправки клиентам (PersonPeer)
-                    Participants = group.UserIDs.Where(userID => ReceiversList.ContainsKey(userID)). //Выбираем из группы только тех, кто в списке наших пользователей
-                                                 Select<string, PersonPeer>(userID => ((ServerPersonPeer)ReceiversList[userID]).Person). //По ID находим получателей
-                                                 ToList<PersonPeer>(),
-                    
-                    
-                    PeerID = group.GroupID,
-                    Type = PeerType.Room,
-                    IsMainRoom = group.GroupID == MainGroupID ? true : false,
-                    State = PeerStatus.Common
-                },
+                    Room.Room = new RoomPeer()
+                    {
+                        DisplayName = group.DisplayName,
+                        PeerId      = group.GroupId,
+                        PeerType        = PeerType.Room,
+                        IsMainRoom  = group.GroupId == MainGroupID ? true : false,
+                        State       = PeerStatus.Common
+                    };
 
-                //Список присутствующих в комнате для обработки на сервере
-                Participants = group.UserIDs.Where(userID => ReceiversList.ContainsKey(userID)).Select<string, ServerPersonPeer>(userID => ReceiversList[userID] as ServerPersonPeer).ToList<ServerPersonPeer>()                
-            }));
+                    Room.Room.Participants.AddRange(group.UserIds.Where(userID => ReceiversList.ContainsKey(userID)). //Выбираем из группы только тех, кто в списке наших пользователей
+                             Select<string, PersonPeer>(userID => ((ServerPersonPeer)ReceiversList[userID]).Person). //По ID находим получателей
+                             ToList<PersonPeer>());
+
+                    Room.Participants = group.UserIds.Where(userID => ReceiversList.ContainsKey(userID)).Select<string, ServerPersonPeer>(userID => ReceiversList[userID] as ServerPersonPeer).ToList<ServerPersonPeer>();
+
+
+                    ReceiversList.Add(group.GroupId, Room);
+
+                });
             /*
             ReceiversList.ToList().ForEach(pair =>
                 {

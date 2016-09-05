@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CorporateMessengerLibrary</RootNamespace>
-    <AssemblyName>CoMesLib</AssemblyName>
+    <AssemblyName>Cml</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
@@ -54,6 +54,7 @@
     <Compile Include="CoMessengerUser.cs" />
     <Compile Include="Compressing.cs" />
     <Compile Include="CustomUtilites.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="History.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

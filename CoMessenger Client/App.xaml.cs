@@ -25,7 +25,7 @@ namespace COMessengerClient
         public static string StorageCatalog { get; private set; }
         public static App ThisApp { get; set; }
         public CMClientClient Client { get; set; }
-        public CoMessengerUser CurrentUser { get; set; }
+        public CMUser CurrentUser { get; set; }
         public ClientPeer CurrentPeer { get; set; }
         public LocalizationUI Locally { get; set; }
 
@@ -38,8 +38,8 @@ namespace COMessengerClient
         public static string Version { get; private set; }
 
         public static string Home { get; private set; }
-        
-        public static Stopwatch sw = new Stopwatch();
+
+        //public static Stopwatch sw = new Stopwatch();
 
         //public List<ConversationView> ListOfConversations { get; set; }
 
@@ -59,12 +59,12 @@ namespace COMessengerClient
                 ClientPeer Unknown = new ClientPeer();
 
                 Unknown.UpdatePeer(new PersonPeer()
-                    {
-                        DisplayName = "Неизвестный отправитель (пользователь удален)",
-                        PeerID = peerId, 
-                        Type = PeerType.Person, 
-                        State = PeerStatus.Deleted                        
-                    });
+                {
+                    DisplayName = "Неизвестный отправитель (пользователь удален)",
+                    PeerId = peerId,
+                    PeerType = PeerType.Person,
+                    State = PeerStatus.Deleted
+                });
 
                 return Unknown;
             }
@@ -72,7 +72,7 @@ namespace COMessengerClient
                 return App.ThisApp.ListOfConversations[peerId];
         }
 
-        public IndexedHistoryManager History;
+        public IndexedHistoryManager History { get; private set; }
 
 
 
@@ -151,7 +151,7 @@ namespace COMessengerClient
         {
             COMessengerClient.Properties.Settings.Default.Save();
 
-            if (Client != null && Client.state == ClientState.Connected)
+            if (Client != null && Client.State == ClientState.Connected)
                 Client.PutOutMessage(new CMMessage() { Kind = MessageKind.Disconnect });
 
             Client = null;

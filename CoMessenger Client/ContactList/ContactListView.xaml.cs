@@ -71,7 +71,7 @@ namespace COMessengerClient.ContactList
                     //Начинаем разговор
                     if (HaveToAdd)
                     {
-                        if (args.ClickedClientPeer.Peer.Type == PeerType.Room)
+                        if (args.ClickedClientPeer.Peer.PeerType == PeerType.Room)
                         {
                             RoomPeer room = args.ClickedClientPeer.Peer as RoomPeer;
 
@@ -82,7 +82,7 @@ namespace COMessengerClient.ContactList
                                     new CMMessage()
                                     {
                                         Kind = MessageKind.EnterRoom,
-                                        Message = room.PeerID
+                                        Message = room.PeerId
                                     });
                             }
                         }

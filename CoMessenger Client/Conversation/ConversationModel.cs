@@ -128,8 +128,8 @@ namespace COMessengerClient.Conversation
                             conView.MessageArea.ActualScrollViewer.ScrollToEnd();
                     }));
 
-                    App.ThisApp.Client.ViewModel.ConnectionStatus = App.ThisApp.Client.ViewModel.ConnectionStatus + " Обработка окончена через:" + App.sw.ElapsedMilliseconds;
-                    App.sw.Reset();
+                    //App.ThisApp.Client.ViewModel.ConnectionStatus = App.ThisApp.Client.ViewModel.ConnectionStatus + " Обработка окончена через:" + App.sw.ElapsedMilliseconds;
+                    //App.sw.Reset();
         }
 
         internal static BlockCollection ExtractBlocks(MessageValue value)
@@ -182,7 +182,7 @@ namespace COMessengerClient.Conversation
             //Нашли
             //if (existing_message_index >= 0 && conView.MessagesListByID[existing_message_index].Type == newblock.Type)
             //if (existing_message_index >= 0)
-            if (conView.IndexByID.TryGetValue(message.MessageID, out existing_message))
+            if (conView.IndexById.TryGetValue(message.MessageID, out existing_message))
             {
                 //MessageForeground existing_message = conView.IndexByID.Values[existing_message_index];
 
@@ -211,7 +211,7 @@ namespace COMessengerClient.Conversation
 
                 newblock = new MessageForeground(message);
 
-                newblock.PrepareMessage(conView);
+                newblock.PrepareMessage();
 
                 newblock.DisplayVersion(message.Values.Last().Value.Version);
 
@@ -228,14 +228,14 @@ namespace COMessengerClient.Conversation
                 messageBackground.DataContext = newblock;
                 BindingOperations.SetBinding(messageBackground.Avatar.Fill, ImageBrush.ImageSourceProperty, new Binding("Peer.Avatar") { Source = peer, Converter = new NullImageConverter() });
 
-                messageBackground.Avatar.HorizontalAlignment = peer.Peer.PeerID == App.ThisApp.CurrentPeer.Peer.PeerID ? HorizontalAlignment.Right : HorizontalAlignment.Left;
+                messageBackground.Avatar.HorizontalAlignment = peer.Peer.PeerId == App.ThisApp.CurrentPeer.Peer.PeerId ? HorizontalAlignment.Right : HorizontalAlignment.Left;
 
 
                 InsertMessageIntoView(conView, messageBackground, newblock);
 
 
                 conView.MessagesList.Add(newblock);
-                conView.IndexByID.Add(message.MessageID, newblock);
+                conView.IndexById.Add(message.MessageID, newblock);
                 conView.MessagesList.Sort(MessageForeground.ComparerByTime);
             }
         }
@@ -396,7 +396,7 @@ namespace COMessengerClient.Conversation
                 }
                 else
                 {
-                    newMessage.Receiver  = Receiver.Peer.PeerID;
+                    newMessage.Receiver  = Receiver.Peer.PeerId;
                     newMessage.Sender    = App.ThisApp.CurrentUser.UserId;
                     newMessage.SendTime  = DateTime.UtcNow;
                     newMessage.MessageID = Guid.NewGuid().ToString("N");
@@ -422,7 +422,7 @@ namespace COMessengerClient.Conversation
                 newMessage.Values.Add(newValue.Version, newValue);
 
                 //Сообщения комнат сохраняем когда получим ответ от сервера
-                if (Receiver.Peer.Type == PeerType.Person)
+                if (Receiver.Peer.PeerType == PeerType.Person)
                 {
                     newMessage.PrevMsgID = App.ThisApp.History.GetLastMsgBetween(newMessage.Sender, newMessage.Receiver, newMessage.SendTime);
                     App.ThisApp.History.Save(newMessage);
@@ -482,10 +482,10 @@ namespace COMessengerClient.Conversation
             string lastLoadedMessage = conView.MessagesList.Count > 0 ? conView.MessagesList.First().Message.MessageID : String.Empty;
 
             List<RoutedMessage> ExistingMessages;
-            if (conView.Peer.Peer.Type == PeerType.Person)
-                ExistingMessages = App.ThisApp.History.GetPrivateMessages(App.ThisApp.CurrentPeer.Peer.PeerID, conView.Peer.Peer.PeerID, lastLoadedMessage, MessagesToLoad);
+            if (conView.Peer.Peer.PeerType == PeerType.Person)
+                ExistingMessages = App.ThisApp.History.GetPrivateMessages(App.ThisApp.CurrentPeer.Peer.PeerId, conView.Peer.Peer.PeerId, lastLoadedMessage, MessagesToLoad);
             else
-                ExistingMessages = App.ThisApp.History.GetRoomMessages(conView.Peer.Peer.PeerID, lastLoadedMessage, MessagesToLoad);
+                ExistingMessages = App.ThisApp.History.GetRoomMessages(conView.Peer.Peer.PeerId, lastLoadedMessage, MessagesToLoad);
                             
             LoadMessages( 
             conView:        conView,
@@ -498,7 +498,7 @@ namespace COMessengerClient.Conversation
 
             int notLoaded = MessagesToLoad - ExistingMessages.Count;
 
-            if (notLoaded > 0 && conView.Peer.Peer.Type == PeerType.Room)
+            if (notLoaded > 0 && conView.Peer.Peer.PeerType == PeerType.Room)
             {
 
                 conView.MessageArea.isBusy = true;
@@ -511,7 +511,7 @@ namespace COMessengerClient.Conversation
                 else
                     lastStoredMessage = lastLoadedMessage;
 
-                query.PeerID = conView.Peer.Peer.PeerID;
+                query.PeerID = conView.Peer.Peer.PeerId;
                 query.From = lastStoredMessage; //С последнего сообщения на сервере
                 query.To = String.Empty; //До нашего последнего сообщения
                 //query.QueryID = Guid.NewGuid().ToString();

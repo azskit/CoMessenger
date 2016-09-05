@@ -58,7 +58,7 @@ namespace CorporateMessengerLibrary
             HistoryDBFile = Path.Combine(HistoryPath, "history.db");
 
             if (File.Exists(HistoryDBFile))
-                OpenHistoryDB();
+                Open();
             else
                 GenerateIndexDataBase();
 
@@ -182,7 +182,7 @@ namespace CorporateMessengerLibrary
             if (HistoryDBConnection == null)
             {
                 if (File.Exists(HistoryDBFile))
-                    OpenHistoryDB();
+                    Open();
                 else
                     return retList;
             }
@@ -236,7 +236,7 @@ namespace CorporateMessengerLibrary
             if (HistoryDBConnection == null)
             {
                 if (File.Exists(HistoryDBFile))
-                    OpenHistoryDB();
+                    Open();
                 else
                     return retList;
             }
@@ -294,7 +294,7 @@ namespace CorporateMessengerLibrary
             if (HistoryDBConnection == null)
             {
                 if (File.Exists(HistoryDBFile))
-                    OpenHistoryDB();
+                    Open();
                 else
                     return retList;
             }
@@ -365,7 +365,7 @@ namespace CorporateMessengerLibrary
                 if (!File.Exists(HistoryDBFile))
                     return;
                 else
-                    OpenHistoryDB();
+                    Open();
             }
 
             if (HistoryDBConnection != null)
@@ -395,7 +395,7 @@ namespace CorporateMessengerLibrary
                 if (!File.Exists(HistoryDBFile))
                     GenerateIndexDataBase();
                 else
-                    OpenHistoryDB();
+                    Open();
             }
 
 
@@ -547,7 +547,7 @@ namespace CorporateMessengerLibrary
             cmd.ExecuteNonQuery();
         }
 
-        private void OpenHistoryDB()
+        private void Open()
         {
             if (File.Exists(HistoryDBFile))
             {
@@ -573,6 +573,11 @@ namespace CorporateMessengerLibrary
             }
         }
 
+        public void Close()
+        {
+            HistoryDBConnection = null;
+        }
+
         private void GenerateIndexDataBase()
         {
 
@@ -593,7 +598,7 @@ namespace CorporateMessengerLibrary
 
             OleDbCommand com;
 
-            OpenHistoryDB();
+            Open();
             com = HistoryDBConnection.CreateCommand();
             com.CommandText = @"CREATE TABLE [Messages] ( [AutoID]      COUNTER CONSTRAINT [AutoIDPrimKey] PRIMARY KEY,
                                                           [MessageID]   STRING(32) NOT NULL,

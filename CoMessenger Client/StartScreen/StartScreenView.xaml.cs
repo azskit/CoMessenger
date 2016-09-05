@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Globalization;
+using System;
 
 namespace COMessengerClient.StartScreen
 {
@@ -28,14 +29,28 @@ namespace COMessengerClient.StartScreen
         //    get { return conversationsGrid; }
         //    set { conversationsGrid = value; }
         //}
-        
-        
+
+        private System.Windows.Forms.NotifyIcon m_notifyIcon;
 
         public StartScreenView()
         {
             InitializeComponent();
             viewmodel = new StartScreenViewModel(this);
             this.DataContext = viewmodel;
+
+            m_notifyIcon = new System.Windows.Forms.NotifyIcon();
+            m_notifyIcon.BalloonTipTitle = "Зоголовок сообщения";
+            m_notifyIcon.BalloonTipText = "Появляется когда мы помещаем иконку в трэй";
+
+            m_notifyIcon.Text = "Это у нас пишется если мы наведем мышку на нашу иконку в трэее";
+            //m_notifyIcon.Icon = new System.Drawing.Icon(typeof(Control), "Resources\\Icons\\TrayOnline.ico");;
+
+            //System.IO.Stream iconStream = Application.GetResourceStream(new Uri("pack://component/Resources/Icons/TrayOnline.ico")).Stream;
+            //m_notifyIcon.Icon = new System.Drawing.Icon(iconStream);
+
+            m_notifyIcon.Click += (a, b) => { WindowState = System.Windows.WindowState.Normal; };
+            m_notifyIcon.Visible = true; 
+
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

@@ -66,6 +66,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
@@ -177,11 +178,6 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Options\OptionsPanelView.xaml.cs">
       <DependentUpon>OptionsPanelView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\UI.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>UI.resx</DependentUpon>
     </Compile>
     <Compile Include="Options\OptionsWindow.xaml.cs">
       <DependentUpon>OptionsWindow.xaml</DependentUpon>
@@ -337,10 +333,6 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\UI.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>UI.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="azskit.pfx" />
     <None Include="Localization\CustomLocalization.xsd">
@@ -354,9 +346,9 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CoMesLib\CoMesLib.csproj">
+    <ProjectReference Include="..\CoMesLib\Cml.csproj">
       <Project>{12D40C8E-0B8A-492E-A1E8-4C81CAAD7F96}</Project>
-      <Name>CoMesLib</Name>
+      <Name>Cml</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -402,6 +394,7 @@
     <Content Include="Localization\ru.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\Icons\TrayOnline.ico" />
     <Content Include="Sound\newmsg.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
