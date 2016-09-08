@@ -153,7 +153,7 @@ namespace COMessengerClient.Conversation
 
                             HistoryQuery query = new HistoryQuery();
 
-                            query.PeerID = this.Peer.Peer.PeerId;
+                            query.PeerId = this.Peer.Peer.PeerId;
                             query.From = String.Empty; //С последнего сообщения на сервере
                             query.To = String.Empty; //До нашего последнего сообщения
                                                      //query.QueryID = Guid.NewGuid().ToString();
@@ -198,7 +198,7 @@ namespace COMessengerClient.Conversation
                 {
                     Kind = QueryMessageKind.History,
                     Message = query,
-                    MessageID = Guid.NewGuid().ToString(),
+                    MessageId = Guid.NewGuid().ToString(),
 
                     //При получении ответа загрузим 5 сообщений
                     SuccessAction = (a) =>

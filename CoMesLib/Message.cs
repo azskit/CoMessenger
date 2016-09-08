@@ -2,6 +2,7 @@
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 [assembly: CLSCompliant(true)]
 namespace CorporateMessengerLibrary
@@ -37,7 +38,7 @@ namespace CorporateMessengerLibrary
 
     public static class Serializator
     {
-        public static BinaryFormatter fmt = new BinaryFormatter();
+        public static readonly BinaryFormatter Formatter = new BinaryFormatter();
     }
 
     [Serializable]
@@ -56,11 +57,11 @@ namespace CorporateMessengerLibrary
         public string            Receiver  { get; set; }               //ID пира-получателя
         public string            Sender    { get; set; }               //ID пира-отправителя
         public DateTime          SendTime  { get; set; }               //Момент отправки
-        public string            MessageID { get; set; }               //Уникальный ID сообщения
+        public string            MessageId { get; set; }               //Уникальный ID сообщения
         //public string            Text      { get; set; }               //Текст сообщения
         //public byte              Version   { get; set; }               //Версия сообщения (увеличивается при редактировании)
 
-        public string            PrevMsgID { get; set; }
+        public string            PrevMsgId { get; set; }
 
         public SortedList<int, MessageValue> Values { get; private set; }
 
@@ -72,7 +73,7 @@ namespace CorporateMessengerLibrary
     }
 
     [Serializable]
-    public struct MessageValue
+    public class MessageValue
     {
         public RoutedMessageKind Kind       { get; set; }               //Вид сообщения
         public string            Text       { get; set; }               //Текст сообщения
@@ -84,16 +85,25 @@ namespace CorporateMessengerLibrary
     [Serializable]
     public class QueryMessage
     {
-        public string           MessageID { get; set; }
+        public string           MessageId { get; set; }
         public QueryMessageKind Kind      { get; set; }
         public object           Message   { get; set; }
 
         [NonSerialized]
-        public Action<QueryMessage> SuccessAction;
+        private Action<QueryMessage> successAction;
+        public Action<QueryMessage> SuccessAction
+        { get { return successAction; } set { successAction = value; }}
+
         [NonSerialized]
-        public Action TimeoutAction;
+        private Action timeoutAction;
+        public Action TimeoutAction
+        {get{ return timeoutAction;} set {timeoutAction = value;}}
+
         [NonSerialized]
-        public System.Threading.Timer Timer;
+        private System.Threading.Timer timer;
+        public Timer Timer
+        {get{ return timer;}set {timer = value;}}
+
     }
 
     public enum RoutedMessageKind

@@ -7,18 +7,18 @@ namespace CorporateMessengerLibrary
 {
     public static class CustomUtilites
     {
-        public static string formatException(Exception e)
+        public static string FormatException(Exception exceptionToFormat)
         {
             var exError = new StringBuilder();
-            if (e == null)
+            if (exceptionToFormat == null)
             {
-                throw new ArgumentNullException("e");
+                throw new ArgumentNullException("exceptionToFormat");
             }
-            while (e != null)
+            while (exceptionToFormat != null)
             {
-                exError.AppendLine(e.Message);
-                exError.AppendLine(e.StackTrace);
-                e = e.InnerException;
+                exError.AppendLine(exceptionToFormat.Message);
+                exError.AppendLine(exceptionToFormat.StackTrace);
+                exceptionToFormat = exceptionToFormat.InnerException;
             }
             return exError.ToString();
         }

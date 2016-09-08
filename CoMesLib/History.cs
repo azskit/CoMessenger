@@ -12,12 +12,12 @@ namespace CorporateMessengerLibrary
     [Serializable]
     public class HistoryQuery
     {
-        public string PeerID { get; set; }
+        public string PeerId { get; set; }
 
         public string From { get; set; }
         public string To { get; set; }
 
-        public List<RoutedMessage> Content { get; set; }
+        public List<RoutedMessage> Content { get; } = new List<RoutedMessage>();
         //public string QueryID { get; set; }
     }
 
@@ -34,6 +34,7 @@ namespace CorporateMessengerLibrary
         private string HistoryDBFile;
 
         private string formattingFileName;
+        private object formattingFileSemafor = new object();
         //private FileStream formattingFileStream;
 
         //public List<HistoryFile> HistoryFiles { get; private set; }
@@ -91,8 +92,8 @@ namespace CorporateMessengerLibrary
 
             RoutedMessage entry = new RoutedMessage();
 
-            entry.PrevMsgID = reader["PrevMsgID"] as string;
-            entry.MessageID = reader["MessageID"] as string;
+            entry.PrevMsgId = reader["PrevMsgID"] as string;
+            entry.MessageId = reader["MessageID"] as string;
             entry.Sender = reader["Sender"] as string;
             entry.Receiver = reader["Receiver"] as string;
             entry.SendTime = (DateTime)reader["SendTime"];
@@ -130,7 +131,7 @@ namespace CorporateMessengerLibrary
 
                 if (value.Kind == RoutedMessageKind.RichText) 
                 {
-                    lock (formattingFileName)
+                    lock (formattingFileSemafor)
                     {
                         using (FileStream formattingFileStream = new FileStream(formattingFileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                         {
@@ -157,14 +158,14 @@ namespace CorporateMessengerLibrary
 
             string NextID = FirstMessageID;
 
-            while (NextID != String.Empty && retList.Count < MessagesToLoad)
+            while (!String.IsNullOrEmpty(NextID) && retList.Count < MessagesToLoad)
             {
                 RoutedMessage message = RestoreMessageFromHistory(NextID);
 
                 if (message == null)
                     break;
 
-                NextID = message.PrevMsgID;
+                NextID = message.PrevMsgId;
 
                 retList.Add(message);
             }
@@ -172,12 +173,12 @@ namespace CorporateMessengerLibrary
             return retList;
         }
 
-        public List<RoutedMessage> GetRoomMessages(string RoomID, string lastEntryID, int MessagesToLoad)
+        public List<RoutedMessage> GetRoomMessages(string roomId, string lastEntryId, int messagesToLoad)
         {
             OleDbCommand cmd;
             OleDbDataReader reader;
 
-            List<RoutedMessage> retList = new List<RoutedMessage>(MessagesToLoad);
+            List<RoutedMessage> retList = new List<RoutedMessage>(messagesToLoad);
 
             if (HistoryDBConnection == null)
             {
@@ -192,11 +193,11 @@ namespace CorporateMessengerLibrary
 
             cmd = HistoryDBConnection.CreateCommand();
 
-            if (lastEntryID != String.Empty)
+            if (!String.IsNullOrEmpty(lastEntryId))
             {
                 cmd.CommandText = @"SELECT PrevMsgID FROM Messages WHERE MessageID = @MESSAGEID";
 
-                cmd.Parameters.Add(new OleDbParameter("MESSAGEID", lastEntryID));
+                cmd.Parameters.Add(new OleDbParameter("MESSAGEID", lastEntryId));
             }
             else
             {
@@ -205,7 +206,7 @@ namespace CorporateMessengerLibrary
                                      WHERE ([RECEIVER] = @PEER)  
                                   ORDER BY SendTime desc";
 
-                cmd.Parameters.Add(new OleDbParameter("PEER", RoomID));
+                cmd.Parameters.Add(new OleDbParameter("PEER", roomId));
             }
             reader = cmd.ExecuteReader();
 
@@ -217,7 +218,7 @@ namespace CorporateMessengerLibrary
 
             reader.Close();
 
-            retList = GetMessagesStartingWith(NextID, MessagesToLoad);
+            retList = GetMessagesStartingWith(NextID, messagesToLoad);
 
             if (!KeepConnection)
                 HistoryDBConnection = null;
@@ -226,12 +227,12 @@ namespace CorporateMessengerLibrary
 
         }
         
-        public List<RoutedMessage> GetPrivateMessages(string peer1, string peer2, string lastEntryID, int MessagesToLoad)
+        public List<RoutedMessage> GetPrivateMessages(string peer1, string peer2, string lastEntryId, int messagesToLoad)
         {
             OleDbCommand cmd;
             OleDbDataReader reader;
 
-            List<RoutedMessage> retList = new List<RoutedMessage>(MessagesToLoad);
+            List<RoutedMessage> retList = new List<RoutedMessage>(messagesToLoad);
 
             if (HistoryDBConnection == null)
             {
@@ -246,11 +247,11 @@ namespace CorporateMessengerLibrary
 
             cmd = HistoryDBConnection.CreateCommand();
 
-            if (lastEntryID != String.Empty)
+            if ( !String.IsNullOrEmpty(lastEntryId))
             {
                 cmd.CommandText = @"SELECT PrevMsgID FROM Messages WHERE MessageID = @MESSAGEID";
 
-                cmd.Parameters.Add(new OleDbParameter("MESSAGEID", lastEntryID));
+                cmd.Parameters.Add(new OleDbParameter("MESSAGEID", lastEntryId));
             }
             else
             {
@@ -276,7 +277,7 @@ namespace CorporateMessengerLibrary
 
             #endregion
 
-            retList = GetMessagesStartingWith(NextID, MessagesToLoad);
+            retList = GetMessagesStartingWith(NextID, messagesToLoad);
 
             if (!KeepConnection)
                 HistoryDBConnection = null;
@@ -284,7 +285,7 @@ namespace CorporateMessengerLibrary
             return retList;
         }
 
-        public List<RoutedMessage> GetMessagesSentToReceiver(string Receiver, string lastEntryID)
+        public List<RoutedMessage> GetMessagesSentToReceiver(string receiver, string lastEntryId)
         {
             OleDbCommand cmd;
             OleDbDataReader reader;
@@ -301,7 +302,7 @@ namespace CorporateMessengerLibrary
 
             cmd = HistoryDBConnection.CreateCommand();
 
-            if (lastEntryID != String.Empty)
+            if ( !String.IsNullOrEmpty(lastEntryId))
             {
                 cmd.CommandText = @"SELECT MESSAGEID 
                                       FROM Messages 
@@ -309,8 +310,8 @@ namespace CorporateMessengerLibrary
                                        AND SendTime < (SELECT SendTime FROM Messages WHERE MESSAGEID = @MESSAGEID)
                                   ORDER BY SendTime asc";
 
-                cmd.Parameters.Add(new OleDbParameter("PEER", Receiver));
-                cmd.Parameters.Add(new OleDbParameter("MESSAGEID", lastEntryID));
+                cmd.Parameters.Add(new OleDbParameter("PEER", receiver));
+                cmd.Parameters.Add(new OleDbParameter("MESSAGEID", lastEntryId));
             }
             else
             {
@@ -319,7 +320,7 @@ namespace CorporateMessengerLibrary
                                      WHERE ([RECEIVER] = @PEER)  
                                   ORDER BY SendTime asc";
 
-                cmd.Parameters.Add(new OleDbParameter("PEER", Receiver));
+                cmd.Parameters.Add(new OleDbParameter("PEER", receiver));
             }
             reader = cmd.ExecuteReader();
 
@@ -344,6 +345,9 @@ namespace CorporateMessengerLibrary
 
         public void SaveMessages(List<RoutedMessage> messagesToSave)
         {
+            if (messagesToSave == null)
+                throw new ArgumentNullException("messagesToSave");
+
             bool actualKeepConnection = KeepConnection;
 
             KeepConnection = true;
@@ -355,7 +359,10 @@ namespace CorporateMessengerLibrary
 
         public void Delete(RoutedMessage msg)
         {
-            Delete(msg.MessageID);
+            if (msg == null)
+                throw new ArgumentNullException("msg");
+
+            Delete(msg.MessageId);
         }
 
         private void Delete(string messageID)
@@ -388,6 +395,9 @@ namespace CorporateMessengerLibrary
 
         public void Save(RoutedMessage entryToSave)
         {
+            if (entryToSave == null)
+                throw new ArgumentNullException("entryToSave");
+
             System.IO.Directory.CreateDirectory(HistoryPath);
 
             if (HistoryDBConnection == null)
@@ -409,7 +419,7 @@ namespace CorporateMessengerLibrary
 
                 cmd.CommandText = @"SELECT [AutoID] FROM [Messages]  WHERE [MessageID] = @MESSAGEID";
 
-                cmd.Parameters.Add(new OleDbParameter("MESSAGEID", entryToSave.MessageID));
+                cmd.Parameters.Add(new OleDbParameter("MESSAGEID", entryToSave.MessageId));
 
                 reader = cmd.ExecuteReader();
 
@@ -451,18 +461,18 @@ namespace CorporateMessengerLibrary
                 #region
                 else
                 {
-                    if (entryToSave.PrevMsgID == null) entryToSave.PrevMsgID = String.Empty;
+                    if (entryToSave.PrevMsgId == null) entryToSave.PrevMsgId = String.Empty;
 
 
-                    if (entryToSave.PrevMsgID != String.Empty)
+                    if (!String.IsNullOrEmpty(entryToSave.PrevMsgId))
                     {
 
                         cmd = HistoryDBConnection.CreateCommand();
 
                         cmd.CommandText = @"UPDATE [Messages] SET [PrevMsgID] = @CURMSGID  WHERE [PrevMsgID] = @PREVMSGID";
 
-                        cmd.Parameters.Add(new OleDbParameter("CURMSGID", entryToSave.MessageID));
-                        cmd.Parameters.Add(new OleDbParameter("PREVMSGID", entryToSave.PrevMsgID));
+                        cmd.Parameters.Add(new OleDbParameter("CURMSGID", entryToSave.MessageId));
+                        cmd.Parameters.Add(new OleDbParameter("PREVMSGID", entryToSave.PrevMsgId));
 
                         cmd.ExecuteNonQuery();
                     }
@@ -472,8 +482,8 @@ namespace CorporateMessengerLibrary
                     cmd.CommandText = @"INSERT INTO [Messages] ([MessageID], [PrevMsgID], [Sender], [Receiver], [SendTime]) 
                                              VALUES            (@MESSAGEID , @PREVMSGID , @SENDER , @RECEIVER , @SENDTIME )";
 
-                    cmd.Parameters.Add(new OleDbParameter("MESSAGEID", entryToSave.MessageID));
-                    cmd.Parameters.Add(new OleDbParameter("PREVMSGID", entryToSave.PrevMsgID));
+                    cmd.Parameters.Add(new OleDbParameter("MESSAGEID", entryToSave.MessageId));
+                    cmd.Parameters.Add(new OleDbParameter("PREVMSGID", entryToSave.PrevMsgId));
                     cmd.Parameters.Add(new OleDbParameter("SENDER",    entryToSave.Sender));
                     cmd.Parameters.Add(new OleDbParameter("RECEIVER",  entryToSave.Receiver));
                     cmd.Parameters.Add(new OleDbParameter("SENDTIME",  entryToSave.SendTime.ToOADate()));
@@ -513,7 +523,7 @@ namespace CorporateMessengerLibrary
             long position = -1;
             if (value.Kind == RoutedMessageKind.RichText) //Форматированное сообщение
             {
-                lock (formattingFileName)
+                lock (formattingFileSemafor)
                 {
                     using (FileStream formattingFileStream = new FileStream(formattingFileName, FileMode.Append, FileAccess.Write, FileShare.Read))
                     {
@@ -633,7 +643,7 @@ namespace CorporateMessengerLibrary
             com.ExecuteNonQuery();
         }
 
-        public string GetLastMsgBetween(string Peer1, string Peer2, DateTime SendTime)
+        public string GetLastMsgBetween(string peer1, string peer2, DateTime sendTime)
         {
             OleDbCommand cmd;
             OleDbDataReader reader;
@@ -652,9 +662,9 @@ namespace CorporateMessengerLibrary
                                                    )  
                                           ORDER BY [SendTime] DESC";
 
-            cmd.Parameters.Add(new OleDbParameter("SENDTIME", SendTime.ToOADate()));
-            cmd.Parameters.Add(new OleDbParameter("SENDER", Peer1));
-            cmd.Parameters.Add(new OleDbParameter("RECEIVER", Peer2));
+            cmd.Parameters.Add(new OleDbParameter("SENDTIME", sendTime.ToOADate()));
+            cmd.Parameters.Add(new OleDbParameter("SENDER", peer1));
+            cmd.Parameters.Add(new OleDbParameter("RECEIVER", peer2));
 
             reader = cmd.ExecuteReader();
 
@@ -669,7 +679,7 @@ namespace CorporateMessengerLibrary
 
         }
 
-        public string GetLastMsgTo(string Receiver, DateTime SendTime)
+        public string GetLastMsgTo(string receiver, DateTime sendTime)
         {
             OleDbCommand cmd;
             OleDbDataReader reader;
@@ -685,8 +695,8 @@ namespace CorporateMessengerLibrary
                                                AND [RECEIVER] =  @RECEIVER
                                           ORDER BY [SendTime] DESC";
 
-            cmd.Parameters.Add(new OleDbParameter("SENDTIME", SendTime.ToOADate()));
-            cmd.Parameters.Add(new OleDbParameter("RECEIVER", Receiver));
+            cmd.Parameters.Add(new OleDbParameter("SENDTIME", sendTime.ToOADate()));
+            cmd.Parameters.Add(new OleDbParameter("RECEIVER", receiver));
 
             reader = cmd.ExecuteReader();
 

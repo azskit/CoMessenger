@@ -87,7 +87,7 @@ namespace SimpleChat
             {
                 if (User.Client != null)
                 {
-                    msg.PrevMsgID = null;
+                    msg.PrevMsgId = null;
 
                     User.Client.PutOutMessage(new CMMessage()
                     {
@@ -130,7 +130,7 @@ namespace SimpleChat
         public void ProcessMessage(RoutedMessage message)
         {
             //сохраняем сообщение
-            message.PrevMsgID = Server.RoomsHistory.GetLastMsgTo(Room.PeerId, message.SendTime);
+            message.PrevMsgId = Server.RoomsHistory.GetLastMsgTo(Room.PeerId, message.SendTime);
 
             Server.RoomsHistory.Save(message);
 

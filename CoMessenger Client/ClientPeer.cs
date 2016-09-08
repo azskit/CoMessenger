@@ -245,7 +245,7 @@ namespace COMessengerClient
 
             //Сохраняем долбаное сообщение
             if (Peer.PeerType == PeerType.Person)
-                routedMessage.PrevMsgID = routedMessage.PrevMsgID = App.ThisApp.History.GetLastMsgBetween(routedMessage.Sender, routedMessage.Receiver, routedMessage.SendTime);
+                routedMessage.PrevMsgId = routedMessage.PrevMsgId = App.ThisApp.History.GetLastMsgBetween(routedMessage.Sender, routedMessage.Receiver, routedMessage.SendTime);
 
             App.ThisApp.History.Save(routedMessage);
 

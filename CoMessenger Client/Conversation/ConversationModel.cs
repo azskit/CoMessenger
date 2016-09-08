@@ -182,7 +182,7 @@ namespace COMessengerClient.Conversation
             //Нашли
             //if (existing_message_index >= 0 && conView.MessagesListByID[existing_message_index].Type == newblock.Type)
             //if (existing_message_index >= 0)
-            if (conView.IndexById.TryGetValue(message.MessageID, out existing_message))
+            if (conView.IndexById.TryGetValue(message.MessageId, out existing_message))
             {
                 //MessageForeground existing_message = conView.IndexByID.Values[existing_message_index];
 
@@ -235,7 +235,7 @@ namespace COMessengerClient.Conversation
 
 
                 conView.MessagesList.Add(newblock);
-                conView.IndexById.Add(message.MessageID, newblock);
+                conView.IndexById.Add(message.MessageId, newblock);
                 conView.MessagesList.Sort(MessageForeground.ComparerByTime);
             }
         }
@@ -385,7 +385,7 @@ namespace COMessengerClient.Conversation
                     newMessage.Receiver  = oldMessage.Receiver ;
                     newMessage.Sender    = oldMessage.Sender   ;
                     newMessage.SendTime  = oldMessage.SendTime ;
-                    newMessage.MessageID = oldMessage.MessageID;
+                    newMessage.MessageId = oldMessage.MessageId;
 
                     newValue.Version = oldMessage.Values.Last().Value.Version + 1;
                     newValue.ChangeTime = DateTime.UtcNow;
@@ -399,7 +399,7 @@ namespace COMessengerClient.Conversation
                     newMessage.Receiver  = Receiver.Peer.PeerId;
                     newMessage.Sender    = App.ThisApp.CurrentUser.UserId;
                     newMessage.SendTime  = DateTime.UtcNow;
-                    newMessage.MessageID = Guid.NewGuid().ToString("N");
+                    newMessage.MessageId = Guid.NewGuid().ToString("N");
 
                     newValue.Version = 0;
                     newValue.ChangeTime = newMessage.SendTime;
@@ -424,9 +424,9 @@ namespace COMessengerClient.Conversation
                 //Сообщения комнат сохраняем когда получим ответ от сервера
                 if (Receiver.Peer.PeerType == PeerType.Person)
                 {
-                    newMessage.PrevMsgID = App.ThisApp.History.GetLastMsgBetween(newMessage.Sender, newMessage.Receiver, newMessage.SendTime);
+                    newMessage.PrevMsgId = App.ThisApp.History.GetLastMsgBetween(newMessage.Sender, newMessage.Receiver, newMessage.SendTime);
                     App.ThisApp.History.Save(newMessage);
-                    newMessage.PrevMsgID = null;
+                    newMessage.PrevMsgId = null;
                 }
 
                 App.ThisApp.Client.PutOutMessage(new CMMessage() { Kind = MessageKind.RoutedMessage, Message = newMessage });
@@ -479,7 +479,7 @@ namespace COMessengerClient.Conversation
         {
             conView.MessageArea.isBusy = true;
 
-            string lastLoadedMessage = conView.MessagesList.Count > 0 ? conView.MessagesList.First().Message.MessageID : String.Empty;
+            string lastLoadedMessage = conView.MessagesList.Count > 0 ? conView.MessagesList.First().Message.MessageId : String.Empty;
 
             List<RoutedMessage> ExistingMessages;
             if (conView.Peer.Peer.PeerType == PeerType.Person)
@@ -507,11 +507,11 @@ namespace COMessengerClient.Conversation
 
                 string lastStoredMessage = String.Empty;
                 if (ExistingMessages.Count > 0)
-                    lastStoredMessage = ExistingMessages.Last().MessageID;
+                    lastStoredMessage = ExistingMessages.Last().MessageId;
                 else
                     lastStoredMessage = lastLoadedMessage;
 
-                query.PeerID = conView.Peer.Peer.PeerId;
+                query.PeerId = conView.Peer.Peer.PeerId;
                 query.From = lastStoredMessage; //С последнего сообщения на сервере
                 query.To = String.Empty; //До нашего последнего сообщения
                 //query.QueryID = Guid.NewGuid().ToString();
@@ -523,7 +523,7 @@ namespace COMessengerClient.Conversation
                     {
                         Kind = QueryMessageKind.History,
                         Message = query,
-                        MessageID = Guid.NewGuid().ToString(),
+                        MessageId = Guid.NewGuid().ToString(),
 
                         //При получении ответа загрузим то , что недогрузили
                         SuccessAction = (a) =>

@@ -232,10 +232,10 @@ namespace SimpleChat
 
                     HistoryQuery query = queryMessage.Message as HistoryQuery;
 
-                    ServerRoomPeer queriedRoom = ReceiversList[query.PeerID] as ServerRoomPeer;
+                    ServerRoomPeer queriedRoom = ReceiversList[query.PeerId] as ServerRoomPeer;
 
                     //answer.Content = queriedRoom.History.GetPrivateMessages(answer.From, 20).ToList();
-                    query.Content = RoomsHistory.GetRoomMessages(queriedRoom.Peer().PeerId, query.From, 20).ToList();
+                    query.Content.AddRange(RoomsHistory.GetRoomMessages(queriedRoom.Peer().PeerId, query.From, 20));
 
                     clnt.PutOutMessage(new CMMessage()
                     {
@@ -243,7 +243,7 @@ namespace SimpleChat
                         Message = new QueryMessage()
                         {
                             Kind = QueryMessageKind.History,
-                            MessageID = queryMessage.MessageID,
+                            MessageId = queryMessage.MessageId,
                             Message = query                            
                         }
                     });

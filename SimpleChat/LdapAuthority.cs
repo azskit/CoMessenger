@@ -127,7 +127,7 @@ namespace SimpleChat
                 }
                 catch (Exception e)
                 {
-                    Console.Error.WriteLine(CustomUtilites.formatException(e));
+                    Console.Error.WriteLine(CustomUtilites.FormatException(e));
                 }
                 finally
                 {
@@ -268,13 +268,13 @@ namespace SimpleChat
                         }
                         catch (Exception e)
                         {
-                            Console.Error.WriteLine(CustomUtilites.formatException(e));
+                            Console.Error.WriteLine(CustomUtilites.FormatException(e));
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    Console.Error.WriteLine(CustomUtilites.formatException(e));
+                    Console.Error.WriteLine(CustomUtilites.FormatException(e));
                 }
                 finally
                 {

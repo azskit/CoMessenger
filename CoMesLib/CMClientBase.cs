@@ -173,7 +173,7 @@ namespace CorporateMessengerLibrary
                     //StreamWriter writer = new StreamWriter(stream);
                     lock (Tcp)
                     {
-                         Serializator.fmt.Serialize(CStream, mes);
+                         Serializator.Formatter.Serialize(CStream, mes);
                     }
 
                     LastActivity = DateTime.Now;
@@ -199,19 +199,19 @@ namespace CorporateMessengerLibrary
                     {
                         QueryMessage query = mes.Message as QueryMessage;
 
-                        QueryMessages.Add(query.MessageID, query);
+                        QueryMessages.Add(query.MessageId, query);
 
                         //Если ответа не придет - вызываем назначенный обработчик и удаляемся из списка ожидающих ответа
                         query.Timer = new Timer(callback: (me) =>
                                                             {
                                                                 QueryMessage timedOutQuery = me as QueryMessage;
 
-                                                                Trace.WriteLine("Timeout of " + timedOutQuery.MessageID + " fired");
+                                                                Trace.WriteLine("Timeout of " + timedOutQuery.MessageId + " fired");
 
                                                                 if (timedOutQuery.TimeoutAction != null)
                                                                     timedOutQuery.TimeoutAction.BeginInvoke(null, null);
 
-                                                                QueryMessages.Remove(timedOutQuery.MessageID);
+                                                                QueryMessages.Remove(timedOutQuery.MessageId);
                                                             },
                                                 state: query,
                                                 dueTime: TimeSpan.FromSeconds(60),       //Таймаут 60 секунд
@@ -278,7 +278,7 @@ namespace CorporateMessengerLibrary
                 lock (Tcp)
                 {
                     //msgsize = cStream.Position;
-                    newmes = Serializator.fmt.Deserialize(CStream) as CMMessage;
+                    newmes = Serializator.Formatter.Deserialize(CStream) as CMMessage;
                     //msgsize = cStream.Position - msgsize;
                 }
 
@@ -288,7 +288,7 @@ namespace CorporateMessengerLibrary
                 {
                     //byte[] bytes = ((RoutedMessage)newmes.Message).Message as byte[];
                     //Console.WriteLine("{0}: Прочитано сообщение размером {1}", DateTime.Now.ToString("HH:mm:ss.ffff"), bytes != null ? bytes.Length : -1);
-                    Console.WriteLine("{0}: Прочитано сообщение {1}", DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.InvariantCulture), ((RoutedMessage)newmes.Message).MessageID);
+                    Console.WriteLine("{0}: Прочитано сообщение {1}", DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.InvariantCulture), ((RoutedMessage)newmes.Message).MessageId);
                 }
                 else if (newmes.Kind == MessageKind.Ping)
                 {
@@ -300,14 +300,14 @@ namespace CorporateMessengerLibrary
                 {
                     QueryMessage answer = newmes.Message as QueryMessage;
 
-                    QueryMessage initialQuery = QueryMessages[answer.MessageID];
+                    QueryMessage initialQuery = QueryMessages[answer.MessageId];
 
                     initialQuery.Timer.Dispose(); //остановить таймер
 
                     if (initialQuery.SuccessAction != null)
                         initialQuery.SuccessAction.BeginInvoke(answer, null, null);
 
-                    QueryMessages.Remove(answer.MessageID);
+                    QueryMessages.Remove(answer.MessageId);
                 }
 
             }
@@ -410,7 +410,7 @@ namespace CorporateMessengerLibrary
             //Зашифровать вонючее сообщение
             using (MemoryStream toEncrypt = new MemoryStream())
             {
-                Serializator.fmt.Serialize(toEncrypt, something);
+                Serializator.Formatter.Serialize(toEncrypt, something);
                 
                 cryptoProvider.ImportParameters(clientPublicKey);
                 return cryptoProvider.Encrypt(toEncrypt.ToArray(), true);
@@ -421,7 +421,7 @@ namespace CorporateMessengerLibrary
         {
             using (MemoryStream toEncrypt = new MemoryStream(cryptoProvider.Decrypt(encrypted, true)))
             {
-                return Serializator.fmt.Deserialize(toEncrypt);
+                return Serializator.Formatter.Deserialize(toEncrypt);
             }
         }
 
