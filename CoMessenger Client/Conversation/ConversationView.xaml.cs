@@ -185,7 +185,7 @@ namespace COMessengerClient.Conversation
 
         private void AskHistory(HistoryQuery query)
         {
-            MessageArea.isBusy = true;
+            MessageArea.IsBusy = true;
 
             Stopwatch sw = new Stopwatch();
 
@@ -204,7 +204,7 @@ namespace COMessengerClient.Conversation
                     SuccessAction = (a) =>
                     {
 
-                        MessageArea.isBusy = false;
+                        MessageArea.IsBusy = false;
 
                         sw.Stop();
 
@@ -227,7 +227,7 @@ namespace COMessengerClient.Conversation
                     },
                     TimeoutAction = () =>
                     {
-                        MessageArea.isBusy = false;
+                        MessageArea.IsBusy = false;
 
                         sw.Stop();
 

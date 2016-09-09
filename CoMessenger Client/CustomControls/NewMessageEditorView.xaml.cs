@@ -23,9 +23,7 @@ namespace COMessengerClient.ChatFace
     {
 
         private bool isXamlPasted;
-        public bool isRichText = false;
 
-        public MessageForeground CurrentEditingMessage = null;
 
 
         public bool IsEditingMode
@@ -33,6 +31,13 @@ namespace COMessengerClient.ChatFace
             get { return (bool)GetValue(IsEditingModeProperty); }
             set { SetValue(IsEditingModeProperty, value); }
         }
+
+        private bool isRichText = false;
+        public bool IsRichText { get { return isRichText; } set { isRichText = value; } }
+
+        private MessageForeground currentEditingMessage = null;
+        public MessageForeground CurrentEditingMessage
+        { get { return currentEditingMessage; } set { currentEditingMessage = value; } }
 
         // Using a DependencyProperty as the backing store for IsEditingMode.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty IsEditingModeProperty =
@@ -52,7 +57,7 @@ namespace COMessengerClient.ChatFace
                     if (args.DataObject.GetDataPresent(DataFormats.Xaml))
                         isXamlPasted = true;
 
-                    isRichText = true;
+                    IsRichText = true;
                 }));
 
             //Если событие происходит после вставки xaml, то 
@@ -326,7 +331,7 @@ namespace COMessengerClient.ChatFace
         private void EditToolbar_Click(object sender, RoutedEventArgs e)
         {
             //MessageBox.Show ("clicked");
-            isRichText = true;
+            IsRichText = true;
         }
 
         private void EditToolbar_Loaded(object sender, RoutedEventArgs e)

@@ -25,7 +25,7 @@ namespace COMessengerClient.CustomControls
         public ScrollViewer ActualScrollViewer { get; private set; }
         public StackPanel BackgroundStackPanel { get; private set; }
 
-        public bool isBusy
+        public bool IsBusy
         {
             get { return BusyIndicator.Visibility == System.Windows.Visibility.Visible; }
             set
@@ -141,7 +141,7 @@ namespace COMessengerClient.CustomControls
 
                 //FrameworkElement ele = content.Content as FrameworkElement;
 
-                Grid doc = content.Content as Grid;
+                //Grid doc = content.Content as Grid;
 
                 //FlowDocumentView doc.Children[1]
 

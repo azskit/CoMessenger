@@ -25,4 +25,6 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "COMessengerClient.Conversation.ConversationView.#NewMessageBox_KeyDown(System.Object,System.Windows.Input.KeyEventArgs)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "COMessengerClient.Conversation.ConversationView.#MessageArea_PreviousMessagesClicked(System.Object,System.EventArgs)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "COMessengerClient.Conversation.ConversationView.#MessageArea_ScrollViewerStartPositionReached(System.Object,System.EventArgs)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "COMessengerClient.CustomControls.MessageHeaderViewModel.#Versions")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "COMessengerClient.CustomControls.MessageHeaderViewModel.#HasMultipleVersion")]
 

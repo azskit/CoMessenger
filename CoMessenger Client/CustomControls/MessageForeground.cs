@@ -217,9 +217,9 @@ namespace COMessengerClient.CustomControls
             //if (conView == null)
             //    throw new ArgumentNullException("conView");
 
-            ClientPeer peer = App.FoundPeer(Message.Sender);
+            ClientPeer sender = App.FoundPeer(Message.Sender);
 
-            Direction = peer.Peer.PeerId == App.ThisApp.CurrentPeer.Peer.PeerId ? MessageDirection.Outcome : MessageDirection.Income;
+            Direction = sender.Peer.PeerId == App.ThisApp.CurrentPeer.Peer.PeerId ? MessageDirection.Outcome : MessageDirection.Income;
 
             switch (Direction)
             {
@@ -245,8 +245,21 @@ namespace COMessengerClient.CustomControls
 
             MessageTime = Message.SendTime;
 
-            this.SetBinding(MessageForeground.SenderNameProperty, new Binding("Peer.DisplayName") { Source = peer });
+            this.SetBinding(MessageForeground.SenderNameProperty, new Binding("Peer.DisplayName") { Source = sender });
 
+            SetHeader();
+
+            //Содержание
+            this.Blocks.Add(new BlockUIContainer(ParagraphBegin));
+            Content = new Section();
+            Content.SetBinding(Block.PaddingProperty, new Binding("TextPadding") { Source = this });
+            this.Blocks.Add(Content);
+            this.Blocks.Add(new BlockUIContainer(ParagraphEnd));
+
+        }
+
+        private void SetHeader()
+        {
             this.Blocks.Add(new BlockUIContainer(ParagraphHeaderBegin));
 
             //Заголовок сообщения
@@ -267,8 +280,10 @@ namespace COMessengerClient.CustomControls
 
             }
 
-            //if (conView.Peer.Peer.Type == PeerType.Person || Direction == MessageDirection.Outcome)
-            if (Direction == MessageDirection.Outcome)
+            ClientPeer reciever = App.FoundPeer(Message.Receiver);
+
+            if (reciever.Peer.PeerType == PeerType.Person || Direction == MessageDirection.Outcome)
+            //if (Direction == MessageDirection.Outcome)
             {
                 EditPanel.Opacity = 0;
 
@@ -294,15 +309,9 @@ namespace COMessengerClient.CustomControls
             headerParagraph.Inlines.Add(new InlineUIContainer(EditPanel));
 
             this.Blocks.Add(headerParagraph);
+
+
             this.Blocks.Add(new BlockUIContainer(ParagraphHeaderEnd));
-
-            //Содержание
-            this.Blocks.Add(new BlockUIContainer(ParagraphBegin));
-            Content = new Section();
-            Content.SetBinding(Block.PaddingProperty, new Binding("TextPadding") { Source = this });
-            this.Blocks.Add(Content);
-            this.Blocks.Add(new BlockUIContainer(ParagraphEnd));
-
         }
 
         private Section Content { get; set; }
@@ -363,6 +372,12 @@ namespace COMessengerClient.CustomControls
 
         public void Update(RoutedMessage message)
         {
+            if (message == null)
+            {
+                throw new ArgumentNullException("message");
+            }//if
+
+
             message.Values.ToList().ForEach(pair =>
             {
                 if (!this.Message.Values.ContainsKey(pair.Key))

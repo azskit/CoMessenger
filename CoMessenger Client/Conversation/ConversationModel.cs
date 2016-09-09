@@ -263,7 +263,7 @@ namespace COMessengerClient.Conversation
                 {
                     case RoutedMessageKind.RichText:
                         conView.NewMessageBox.NewMessageTextBox.Document.Blocks.AddRange(ExtractBlocks(currentValue).ToList());
-                        conView.NewMessageBox.isRichText = true;
+                        conView.NewMessageBox.IsRichText = true;
 
                         break;
                     case RoutedMessageKind.PlainText:
@@ -405,13 +405,13 @@ namespace COMessengerClient.Conversation
                     newValue.ChangeTime = newMessage.SendTime;
                 }
 
-                if (conView.NewMessageBox.isRichText)
+                if (conView.NewMessageBox.IsRichText)
                 {
                     newValue.Kind = RoutedMessageKind.RichText;
                     newValue.Body = GetMessageBody(source);
                     newValue.Text = tr.Text;
 
-                    conView.NewMessageBox.isRichText = false;
+                    conView.NewMessageBox.IsRichText = false;
                 }
                 else
                 {
@@ -477,7 +477,7 @@ namespace COMessengerClient.Conversation
 
         internal static void LoadFewMessageFromHistory(ConversationView conView, int MessagesToLoad)
         {
-            conView.MessageArea.isBusy = true;
+            conView.MessageArea.IsBusy = true;
 
             string lastLoadedMessage = conView.MessagesList.Count > 0 ? conView.MessagesList.First().Message.MessageId : String.Empty;
 
@@ -492,7 +492,7 @@ namespace COMessengerClient.Conversation
             entriesToLoad:  ExistingMessages
                         );
 
-            conView.MessageArea.isBusy = false;
+            conView.MessageArea.IsBusy = false;
 
             //Если получили из истории меньше чем просили - то отправим запрос на сервер
 
@@ -501,7 +501,7 @@ namespace COMessengerClient.Conversation
             if (notLoaded > 0 && conView.Peer.Peer.PeerType == PeerType.Room)
             {
 
-                conView.MessageArea.isBusy = true;
+                conView.MessageArea.IsBusy = true;
 
                 HistoryQuery query = new HistoryQuery();
 
@@ -552,13 +552,13 @@ namespace COMessengerClient.Conversation
                                 //}
                             }
 
-                            conView.MessageArea.isBusy = false;
+                            conView.MessageArea.IsBusy = false;
 
                         },
                         TimeoutAction = () =>
                         {
                             MessageBox.Show("Истекло время ожидания ответа от сервера"); 
-                            conView.MessageArea.isBusy = false;
+                            conView.MessageArea.IsBusy = false;
                         }                        
                     }
                 });

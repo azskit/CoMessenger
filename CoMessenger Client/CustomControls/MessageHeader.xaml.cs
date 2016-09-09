@@ -17,7 +17,7 @@ namespace COMessengerClient.CustomControls
 
     public class VersionSelectedEventArgs: EventArgs
     {
-        public VersionViewModel Version;
+        public VersionViewModel Version { get; set; }
 
     }
 

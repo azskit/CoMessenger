@@ -22,7 +22,7 @@ namespace COMessengerClient.CustomControls.SearchPanel
     public partial class SearchListBox : UserControl
     {
 
-        public SearchPanelViewModel viewModel;
+        private SearchPanelViewModel viewModel;
 
         public event EventHandler<MessageDoubleClickedEventArgs> MessageDoubleClicked;
 
