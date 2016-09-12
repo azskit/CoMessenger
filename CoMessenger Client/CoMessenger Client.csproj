@@ -395,6 +395,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Resources\Icons\TrayOnline.ico" />
+    <Resource Include="Resources\Icons\online3.ico" />
     <Content Include="Sound\newmsg.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

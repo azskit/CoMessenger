@@ -43,12 +43,12 @@ namespace COMessengerClient.StartScreen
             m_notifyIcon.BalloonTipText = "Появляется когда мы помещаем иконку в трэй";
 
             m_notifyIcon.Text = "Это у нас пишется если мы наведем мышку на нашу иконку в трэее";
-            //m_notifyIcon.Icon = new System.Drawing.Icon(typeof(Control), "Resources\\Icons\\TrayOnline.ico");;
+            //m_notifyIcon.Icon = new System.Drawing.Icon(typeof(Control), "Resources\\Icons\\TrayOnline.ico"); ;
 
-            //System.IO.Stream iconStream = Application.GetResourceStream(new Uri("pack://component/Resources/Icons/TrayOnline.ico")).Stream;
-            //m_notifyIcon.Icon = new System.Drawing.Icon(iconStream);
+            System.IO.Stream iconStream = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Icons/online3.ico")).Stream;
+            m_notifyIcon.Icon = new System.Drawing.Icon(iconStream);
 
-            m_notifyIcon.Click += (a, b) => { WindowState = System.Windows.WindowState.Normal; };
+            m_notifyIcon.Click += (a, b) => { WindowState = System.Windows.WindowState.Normal;};
             m_notifyIcon.Visible = true; 
 
         }

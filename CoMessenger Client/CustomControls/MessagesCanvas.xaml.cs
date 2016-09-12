@@ -137,7 +137,7 @@ namespace COMessengerClient.CustomControls
                 //Ставим контент в правую колонку
                 grd.Children[1].SetValue(Grid.ColumnProperty, 1);
 
-                ScrollContentPresenter content = grd.Children[1] as ScrollContentPresenter;
+                //ScrollContentPresenter content = grd.Children[1] as ScrollContentPresenter;
 
                 //FrameworkElement ele = content.Content as FrameworkElement;
 
