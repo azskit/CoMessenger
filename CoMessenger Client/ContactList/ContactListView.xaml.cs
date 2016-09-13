@@ -78,7 +78,7 @@ namespace COMessengerClient.ContactList
                             //Если мы не являемся участником разговора в этой комнате, то уведомим сервер, что мы присоединились
                             if (!room.Participants.Contains(App.ThisApp.CurrentPeer.Peer as PersonPeer))
                             {
-                                App.ThisApp.Client.PutOutMessage(
+                                ConnectionManager.Client.PutOutMessage(
                                     new CMMessage()
                                     {
                                         Kind = MessageKind.EnterRoom,
@@ -109,7 +109,7 @@ namespace COMessengerClient.ContactList
         {
             if (!String.IsNullOrWhiteSpace(viewModel.NewRoomName))
             {
-                App.ThisApp.Client.PutOutMessage(
+                ConnectionManager.Client.PutOutMessage(
                 new CMMessage()
                 {
                     Kind = MessageKind.NewRoom,

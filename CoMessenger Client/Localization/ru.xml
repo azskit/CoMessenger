@@ -116,4 +116,10 @@
     <Original>Language</Original>
     <Translation>Язык интерфейса</Translation>
   </LocalizationEntry>
+
+  <LocalizationEntry Remark="Options">
+    <Original>Hide to tray instead of closing</Original>
+    <Translation>Скрывать в трей при закрытии</Translation>
+  </LocalizationEntry>
+
 </ArrayOfLocalizationEntry>

@@ -429,7 +429,7 @@ namespace COMessengerClient.Conversation
                     newMessage.PrevMsgId = null;
                 }
 
-                App.ThisApp.Client.PutOutMessage(new CMMessage() { Kind = MessageKind.RoutedMessage, Message = newMessage });
+                ConnectionManager.Client.PutOutMessage(new CMMessage() { Kind = MessageKind.RoutedMessage, Message = newMessage });
 
                 AddNewMessage(conView, newMessage);
 
@@ -516,7 +516,7 @@ namespace COMessengerClient.Conversation
                 query.To = String.Empty; //До нашего последнего сообщения
                 //query.QueryID = Guid.NewGuid().ToString();
 
-                App.ThisApp.Client.PutOutMessage(new CMMessage()
+                ConnectionManager.Client.PutOutMessage(new CMMessage()
                 {
                     Kind = MessageKind.Query,
                     Message = new QueryMessage()

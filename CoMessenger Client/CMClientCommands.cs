@@ -18,24 +18,21 @@ namespace COMessengerClient
 
         private static void SignOut_CanExecute(Object sender, CanExecuteRoutedEventArgs e)
         {
-            var client = COMessengerClient.App.ThisApp.Client as CMClientClient;
+            //var client = COMessengerClient.App.ThisApp.Client as CMClientClient;
 
-            e.CanExecute = (client.State == ClientState.Connected);
+            e.CanExecute = (ConnectionManager.Client.State == ClientState.Connected);
         }
 
         private static void SignOut_Executed(Object sender, ExecutedRoutedEventArgs e)
         {
-            App.ThisApp.Client.Disconnect();
+            ConnectionManager.Client.Disconnect();
             App.ThisApp.History.Close();
-            App.ThisApp.Client.ViewModel.ConnectionStatus = String.Format(CultureInfo.CurrentCulture, App.ThisApp.Locally.LocaleStrings["Disconnected"]);
+            ConnectionManager.Client.ViewModel.ConnectionStatus = String.Format(CultureInfo.CurrentCulture, App.ThisApp.Locally.LocaleStrings["Disconnected"]);
         }
 
         private static void SignIn_CanExecute(Object sender, CanExecuteRoutedEventArgs e)
         {
-            var client = COMessengerClient.App.ThisApp.Client as CMClientClient;
-
-            
-
+            var client = ConnectionManager.Client as CMClientClient;
 
             e.CanExecute = (
                 //Состояние - не подключен
@@ -57,7 +54,7 @@ namespace COMessengerClient
 
             //HandleSecureString(form.PasswordBoxElement.SecurePassword);
 
-            var client = COMessengerClient.App.ThisApp.Client as CMClientClient;
+            var client = ConnectionManager.Client as CMClientClient;
 
             string server = COMessengerClient.Properties.Settings.Default.Server;
             int port = Int32.Parse(COMessengerClient.Properties.Settings.Default.Port, CultureInfo.InvariantCulture);

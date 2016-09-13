@@ -34,7 +34,7 @@
                     <MenuItem Header="{Binding Path=Locally.LocaleStrings[Options]}" Click="ShowOptions" />
                     
                     <!--Выход натипа-->
-                    <MenuItem Header="{Binding Path=Locally.LocaleStrings[Exit]}" />
+                    <MenuItem Header="{Binding Path=Locally.LocaleStrings[Exit]}" Click="ExitClicked"/>
                 </MenuItem>
             </Menu>
             <StatusBar Name="ConnectionStatusBar"

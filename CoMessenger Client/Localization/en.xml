@@ -117,4 +117,9 @@
     <Original>Language</Original>
     <Translation>Language</Translation>
   </LocalizationEntry>
+
+  <LocalizationEntry Remark="Options">
+    <Original>Hide to tray instead of closing</Original>
+    <Translation>Hide to tray instead of closing</Translation>
+  </LocalizationEntry>
 </ArrayOfLocalizationEntry>

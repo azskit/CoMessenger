@@ -260,10 +260,13 @@ namespace COMessengerClient.CustomControls
 
         private void SetHeader()
         {
+
+            ClientPeer reciever = App.FoundPeer(Message.Receiver);
+
             this.Blocks.Add(new BlockUIContainer(ParagraphHeaderBegin));
 
             //Заголовок сообщения
-            Paragraph headerParagraph = new Paragraph();
+            headerParagraph = new Paragraph();
 
             //Отправитель и время
             headerParagraph.Inlines.Add(new Run(String.Format(CultureInfo.InvariantCulture, App.ThisApp.Locally.LocaleStrings["{0} {1}"], MessageTime.ToLocalTime().ToString(Properties.Settings.Default.UserCultureUIInfo), SenderName)));
@@ -277,33 +280,11 @@ namespace COMessengerClient.CustomControls
             {
                 EditPanel.EditButton.Visibility = Visibility.Visible;
                 EditPanel.EditButton.Click += (a, b) => { OnEditClick(); };
-
             }
 
-            ClientPeer reciever = App.FoundPeer(Message.Receiver);
-
             if (reciever.Peer.PeerType == PeerType.Person || Direction == MessageDirection.Outcome)
-            //if (Direction == MessageDirection.Outcome)
             {
-                EditPanel.Opacity = 0;
-
-                headerParagraph.Foreground = new SolidColorBrush();
-
-                BindingOperations.SetBinding(headerParagraph.Foreground, SolidColorBrush.ColorProperty, new Binding("ChatBoxFont.FontColor") { Source = Properties.Settings.Default, Mode = BindingMode.OneWay });
-
-                headerParagraph.Foreground.Opacity = 0;
-
-                this.MouseEnter += (a, b) =>
-                {
-                    EditPanel.BeginStoryboard(App.ThisApp.Resources["Appear"] as Storyboard);
-                    headerParagraph.BeginStoryboard(App.ThisApp.Resources["AppearParagraph"] as Storyboard);
-                };
-                this.MouseLeave += (a, b) =>
-                {
-                    EditPanel.BeginStoryboard(App.ThisApp.Resources["Disappear"] as Storyboard);
-                    headerParagraph.BeginStoryboard(App.ThisApp.Resources["DisappearParagraph"] as Storyboard);
-                };
-
+                SetHeaderInvisible();
             }
 
             headerParagraph.Inlines.Add(new InlineUIContainer(EditPanel));
@@ -312,6 +293,28 @@ namespace COMessengerClient.CustomControls
 
 
             this.Blocks.Add(new BlockUIContainer(ParagraphHeaderEnd));
+        }
+
+        private void SetHeaderInvisible()
+        {
+            headerParagraph.Foreground = new SolidColorBrush();
+
+            BindingOperations.SetBinding(headerParagraph.Foreground, SolidColorBrush.ColorProperty, new Binding("ChatBoxFont.FontColor") { Source = Properties.Settings.Default, Mode = BindingMode.OneWay });
+
+            headerParagraph.Foreground.Opacity = 0;
+
+            EditPanel.Opacity = 0;
+
+            this.MouseEnter += (a, b) =>
+            {
+                headerParagraph.BeginStoryboard(App.ThisApp.Resources["AppearParagraph"] as Storyboard);
+                EditPanel.BeginStoryboard(App.ThisApp.Resources["Appear"] as Storyboard);
+            };
+            this.MouseLeave += (a, b) =>
+            {
+                headerParagraph.BeginStoryboard(App.ThisApp.Resources["DisappearParagraph"] as Storyboard);
+                EditPanel.BeginStoryboard(App.ThisApp.Resources["Disappear"] as Storyboard);
+            };
         }
 
         private Section Content { get; set; }
@@ -410,6 +413,8 @@ namespace COMessengerClient.CustomControls
         }
 
         private double height;
+        private Paragraph headerParagraph;
+
         public double Height
         {
             get

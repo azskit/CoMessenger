@@ -109,7 +109,7 @@ namespace COMessengerClient.Conversation
         private void LeaveRoomClick(object sender, RoutedEventArgs e)
         {
             //Уведомим сервер
-            App.ThisApp.Client.PutOutMessage(
+            ConnectionManager.Client.PutOutMessage(
                 new CMMessage()
                 {
                     Kind = MessageKind.LeaveRoom,
@@ -126,7 +126,7 @@ namespace COMessengerClient.Conversation
         private void CloseRoomClick(object sender, RoutedEventArgs e)
         {
             //Уведомим сервер
-            App.ThisApp.Client.PutOutMessage(
+            ConnectionManager.Client.PutOutMessage(
                 new CMMessage()
                 {
                     Kind = MessageKind.CloseRoom,
@@ -191,7 +191,7 @@ namespace COMessengerClient.Conversation
 
             sw.Start();
 
-            App.ThisApp.Client.PutOutMessage(new CMMessage()
+            ConnectionManager.Client.PutOutMessage(new CMMessage()
             {
                 Kind = MessageKind.Query,
                 Message = new QueryMessage()
@@ -208,7 +208,7 @@ namespace COMessengerClient.Conversation
 
                         sw.Stop();
 
-                        App.ThisApp.Client.ViewModel.ConnectionStatus = "Waiting response took " + sw.ElapsedMilliseconds;
+                        ConnectionManager.Client.ViewModel.ConnectionStatus = "Waiting response took " + sw.ElapsedMilliseconds;
 
                         sw.Reset();
 
@@ -232,7 +232,7 @@ namespace COMessengerClient.Conversation
                         sw.Stop();
 
                         //MessageBox.Show("Истекло время ожидания ответа от сервера"); 
-                        App.ThisApp.Client.ViewModel.ConnectionStatus = "Timeout expired after " + sw.ElapsedMilliseconds;
+                        ConnectionManager.Client.ViewModel.ConnectionStatus = "Timeout expired after " + sw.ElapsedMilliseconds;
 
                         sw.Reset();
 

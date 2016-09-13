@@ -20,7 +20,7 @@ namespace COMessengerClient.StartScreen
 
         //private StartScreenModel model;
 
-        public CMClientClient Client { get; set; }
+        //public CMClientClient Client { get; set; }
 
         private LogOnScreen logOnScreen = new LogOnScreen();
 
@@ -38,7 +38,7 @@ namespace COMessengerClient.StartScreen
         public StartScreenViewModel(Window viewParameter)
         {
             view = viewParameter as StartScreenView;
-            Client = App.ThisApp.Client;
+            //Client = App.ThisApp.Client;
             //model = new StartScreenModel(this);
         }
 
@@ -46,37 +46,16 @@ namespace COMessengerClient.StartScreen
         {
             view.MainGrid.Children.Add(logOnScreen);
 
-            //App.ThisApp.ListOfConversations.CollectionChanged += (collection, args) => { Client.ViewModel.ConnectionStatus = args.Action.ToString() + ": " + ((ClientPeer)args.NewItems[0]).Peer.DisplayName; };
-             
-            Client.Connecting += 
-                (clients, args) => 
-                {
-                    logOnScreen.IsBusy = true;
-                };
-
-            Client.ConnectionError +=
-            (client, args) =>
-            {
-                //Client.ViewModel.ConnectionStatus = String.Format(CultureInfo.CurrentUICulture, App.ThisApp.Locally.LocaleStrings["Error occurred - {0}"], Client.exception.Message);
-                Client.ViewModel.ConnectionStatus = String.Format(CultureInfo.CurrentUICulture, App.ThisApp.Locally.LocaleStrings["Error occurred - {0}"], args.GetException().Message);
-            };
-
-            App.ThisApp.Client.AuthorizationSuccess +=
+            ConnectionManager.Client.AuthorizationSuccess +=
             (client, args) =>
             {
 
 
                 App.ThisApp.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    Client.ViewModel.ConnectionStatus = String.Format(CultureInfo.CurrentCulture, App.ThisApp.Locally.LocaleStrings["Authorization success"]);
+                    ConnectionManager.Client.ViewModel.ConnectionStatus = String.Format(CultureInfo.CurrentCulture, App.ThisApp.Locally.LocaleStrings["Authorization success"]);
 
                     logOnScreen.Visibility = Visibility.Collapsed;
-
-                    //view.MainGrid.Children.Clear();
-
-                    //view.ConversationsGrid.SetValue(Grid.ColumnProperty, 0);
-
-                    //view.MainGrid.Children.Add(view.ConversationsGrid);
 
                     view.Title = args.LoggedUser.DisplayName;
 
@@ -86,7 +65,7 @@ namespace COMessengerClient.StartScreen
 
             };
 
-            App.ThisApp.Client.ContactListLoaded +=
+            ConnectionManager.Client.ContactListLoaded +=
             (client, args) =>
             {
                 if (conList == null)
@@ -116,73 +95,7 @@ namespace COMessengerClient.StartScreen
                     }));
                 }
             };
-
-            Client.AuthorizationError +=
-                (client, args) =>
-                {
-                    OnAuthorizationError(args);
-                };
-
-            Client.Disconnected += (a, b) => 
-            {
-                foreach (ClientPeer peer in App.ThisApp.ListOfConversations)
-	            {
-                    if (peer.Peer.PeerType == PeerType.Person)
-                    {
-                        peer.Peer.State = PeerStatus.Offline;
-                        peer.UpdatePeer();
-                    }
-	            }
-
-                logOnScreen.IsBusy = false;
-
-            };
-
-            Client.ConnectionError += (a,b)=>{logOnScreen.IsBusy = false;};
-
-            //model.StartClient();
         }
 
-        private void OnAuthorizationError(AuthorizationErrorEventArgs args)
-        {
-            logOnScreen.IsBusy = false;
-
-            string ErrorMessage = String.Empty;
-
-            switch ((ErrorKind)args.ErrorMessage.Message)
-            {
-                case ErrorKind.UserNotFound:
-                    ErrorMessage =
-                        String.Format(provider: CultureInfo.CurrentUICulture,
-                                      format: App.ThisApp.Locally.LocaleStrings["User {0} is not registered on server {1}"],
-                                      args: new Object[]{String.IsNullOrEmpty(Client.Domain) ? Client.Login : Client.Domain + "\\" + Client.Login,
-                                                                     Client.Server});
-                    break;
-
-                case ErrorKind.UserNotPresented:
-                    throw new InvalidOperationException("Получен ответ от сервера об отсутствии контекста пользователя");
-
-                case ErrorKind.WrongPassword:
-                    ErrorMessage =
-                        String.Format(provider: CultureInfo.CurrentUICulture,
-                                      format: App.ThisApp.Locally.LocaleStrings["{1}: Wrong password for user {0}"],
-                                      args: new Object[]{String.IsNullOrEmpty(Client.Domain)  ? Client.Login : Client.Domain + "\\" + Client.Login,
-                                                        Client.Server});
-                    break;
-
-                case ErrorKind.DomainCouldNotBeContacted:
-                    ErrorMessage =
-                        String.Format(provider: CultureInfo.CurrentUICulture,
-                                      format: App.ThisApp.Locally.LocaleStrings["Domain {0} couldn't be contacted"],
-                                      args: new Object[] { Client.Domain });
-                    break;
-
-
-            }
-
-
-
-            Client.ViewModel.ConnectionStatus = String.Format(CultureInfo.CurrentUICulture, App.ThisApp.Locally.LocaleStrings["Error during authorization occurred - {0}"], ErrorMessage);
-        }
     }
 }

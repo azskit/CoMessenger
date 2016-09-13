@@ -22,6 +22,30 @@ namespace COMessengerClient.CustomControls
         public LogOnScreen()
         {
             InitializeComponent();
+
+            ConnectionManager.Client.Connecting +=
+                (clients, args) =>
+                {
+                    IsBusy = true;
+                };
+
+            ConnectionManager.Client.AuthorizationError +=
+                                (clients, args) =>
+                                {
+                                    IsBusy = false;
+                                };
+
+            ConnectionManager.Client.ConnectionError +=
+                                (clients, args) =>
+                                {
+                                    IsBusy = false;
+                                };
+
+            ConnectionManager.Client.Disconnected +=
+                                (clients, args) =>
+                                {
+                                    IsBusy = false;
+                                };
         }
 
         public bool IsBusy 

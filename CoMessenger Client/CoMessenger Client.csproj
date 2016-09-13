@@ -81,6 +81,7 @@
     <Compile Include="ClientPeer.cs" />
     <Compile Include="CMClientClient.cs" />
     <Compile Include="CMClientCommands.cs" />
+    <Compile Include="ConnectionManager.cs" />
     <Compile Include="ContactList\ContactListView.xaml.cs">
       <DependentUpon>ContactListView.xaml</DependentUpon>
     </Compile>
@@ -157,11 +158,17 @@
     <Compile Include="GroupConversation\GroupConversationViewModel.cs" />
     <Compile Include="IndexedObservableCollection.cs" />
     <Compile Include="Localization\Localization.cs" />
+    <Compile Include="Log\LogWindow.xaml.cs">
+      <DependentUpon>LogWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Options\Sections\AppearanceView.xaml.cs">
       <DependentUpon>AppearanceView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Options\Sections\ContactListView.xaml.cs">
       <DependentUpon>ContactListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Options\Sections\Others.xaml.cs">
+      <DependentUpon>Others.xaml</DependentUpon>
     </Compile>
     <Compile Include="Options\SetAssistance.xaml.cs">
       <DependentUpon>SetAssistance.xaml</DependentUpon>
@@ -263,6 +270,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Log\LogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Options\Sections\AppearanceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -270,6 +281,10 @@
     <Page Include="Options\Sections\ContactListView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Options\Sections\Others.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Options\SetAssistance.xaml">
       <SubType>Designer</SubType>
@@ -394,8 +409,9 @@
     <Content Include="Localization\ru.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Resources\Icons\TrayOnline.ico" />
-    <Resource Include="Resources\Icons\online3.ico" />
+    <Resource Include="Resources\Icons\TrayGreen.ico" />
+    <Resource Include="Resources\Icons\TrayOrange.ico" />
+    <Resource Include="Resources\Icons\TrayRed.ico" />
     <Content Include="Sound\newmsg.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

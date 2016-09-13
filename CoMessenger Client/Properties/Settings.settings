@@ -57,7 +57,7 @@
       <Value Profile="(Default)">35,0,100,15</Value>
     </Setting>
     <Setting Name="ContactListRowHeight" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">15</Value>
+      <Value Profile="(Default)">20</Value>
     </Setting>
     <Setting Name="OutcomingMessageBackgroundColor1" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#1000FF00</Value>
@@ -73,6 +73,9 @@
     </Setting>
     <Setting Name="SoundFileNewMessage" Type="System.String" Scope="User">
       <Value Profile="(Default)">Sound\newmsg.wav</Value>
+    </Setting>
+    <Setting Name="HideOnClose" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

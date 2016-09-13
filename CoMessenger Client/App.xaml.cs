@@ -24,7 +24,7 @@ namespace COMessengerClient
     {
         public static string StorageCatalog { get; private set; }
         public static App ThisApp { get; set; }
-        public CMClientClient Client { get; set; }
+        //public CMClientClient Client { get; set; }
         public CMUser CurrentUser { get; set; }
         public ClientPeer CurrentPeer { get; set; }
         public LocalizationUI Locally { get; set; }
@@ -38,6 +38,10 @@ namespace COMessengerClient
         public static string Version { get; private set; }
 
         public static string Home { get; private set; }
+
+        public static Log.LogWindow Log { get; private set; }
+
+        public static System.Windows.Forms.NotifyIcon TrayIcon { get; private set; }
 
         //public static Stopwatch sw = new Stopwatch();
 
@@ -80,11 +84,16 @@ namespace COMessengerClient
         public App()
         {
 
-
+            InitializeComponent();
 
             ThisApp = (App)App.Current;
             Locally = new LocalizationUI();
-            Client = new CMClientClient();
+
+            TrayIcon = new System.Windows.Forms.NotifyIcon();
+
+            Log = new Log.LogWindow();
+
+            //Client = new CMClientClient();
 
             Company = ((AssemblyCompanyAttribute)Attribute.GetCustomAttribute(
                         Assembly.GetExecutingAssembly(), typeof(AssemblyCompanyAttribute), false))
@@ -102,14 +111,16 @@ namespace COMessengerClient
 
             Sound = new SoundManager();
 
+            History = new IndexedHistoryManager();
+
             //При авторизации открываем файл истории
-            Client.AuthorizationSuccess +=
-                            (client, args) =>
-                            {
-                                History = new IndexedHistoryManager
-                                            (storageCatalog: System.IO.Path.Combine(App.StorageCatalog, App.ThisApp.CurrentUser.UserId),
-                                             keepConnection: true);
-                            };
+            //Client.AuthorizationSuccess +=
+            //                (client, args) =>
+            //                {
+            //                    History = new IndexedHistoryManager
+            //                                (storageCatalog: System.IO.Path.Combine(App.StorageCatalog, App.ThisApp.CurrentUser.UserId),
+            //                                 keepConnection: true);
+            //                };
 
             //При отключении - закрываем
             //upd нет, не закрываем, так как связь может прерваться временно. Закрываем командой SignOut
@@ -137,12 +148,20 @@ namespace COMessengerClient
 
             Locally.Load(global::COMessengerClient.Properties.Settings.Default.UserCultureUIInfo);
 
-            Client.Connected +=
-                    (client, args) =>
-                    {
-                        Client.IsProcessing = true;
-                        Client.IsStayAlive = true;
-                    };
+            System.IO.Stream iconStream = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Icons/TrayRed.ico")).Stream;
+            TrayIcon.Icon = new System.Drawing.Icon(iconStream);
+
+            TrayIcon.DoubleClick += (a, b) => { MainWindow.Show(); };
+            TrayIcon.BalloonTipClicked += (a, b) => 
+            {
+                    Log.Show();
+                    Log.Activate();
+            };
+
+
+            ConnectionManager.InitClient();
+
+            TrayIcon.Visible = true;
 
         }
 
@@ -151,15 +170,11 @@ namespace COMessengerClient
         {
             COMessengerClient.Properties.Settings.Default.Save();
 
-            if (Client != null && Client.State == ClientState.Connected)
-                Client.PutOutMessage(new CMMessage() { Kind = MessageKind.Disconnect });
+            TrayIcon.Visible = false;
 
-            Client = null;
+            ConnectionManager.Shutdown();
 
             base.OnExit(e);
-            
-
-            //if (ListenerThread != null) ListenerThread.Abort();
         }
 
 

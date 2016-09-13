@@ -30,7 +30,7 @@ namespace COMessengerClient.StartScreen
         //    set { conversationsGrid = value; }
         //}
 
-        private System.Windows.Forms.NotifyIcon m_notifyIcon;
+        
 
         public StartScreenView()
         {
@@ -38,18 +38,8 @@ namespace COMessengerClient.StartScreen
             viewmodel = new StartScreenViewModel(this);
             this.DataContext = viewmodel;
 
-            m_notifyIcon = new System.Windows.Forms.NotifyIcon();
-            m_notifyIcon.BalloonTipTitle = "Зоголовок сообщения";
-            m_notifyIcon.BalloonTipText = "Появляется когда мы помещаем иконку в трэй";
+            App.ThisApp.MainWindow = this;
 
-            m_notifyIcon.Text = "Это у нас пишется если мы наведем мышку на нашу иконку в трэее";
-            //m_notifyIcon.Icon = new System.Drawing.Icon(typeof(Control), "Resources\\Icons\\TrayOnline.ico"); ;
-
-            System.IO.Stream iconStream = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Icons/online3.ico")).Stream;
-            m_notifyIcon.Icon = new System.Drawing.Icon(iconStream);
-
-            m_notifyIcon.Click += (a, b) => { WindowState = System.Windows.WindowState.Normal;};
-            m_notifyIcon.Visible = true; 
 
         }
 
@@ -60,6 +50,10 @@ namespace COMessengerClient.StartScreen
 
             App.DpiYScalingFactor = PresentationSource.FromVisual(Application.Current.MainWindow).CompositionTarget.TransformToDevice.M22;
             App.DpiXScalingFactor = PresentationSource.FromVisual(Application.Current.MainWindow).CompositionTarget.TransformToDevice.M11;
+
+            
+
+
         }
 
         private void ShowOptions(object sender, RoutedEventArgs e)
@@ -80,5 +74,30 @@ namespace COMessengerClient.StartScreen
 
         }
 
+
+        // minimize to system tray when applicaiton is closed
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            if (e == null)
+            {
+                throw new ArgumentNullException("e");
+            }
+
+
+            if (Properties.Settings.Default.HideOnClose)
+            {
+                e.Cancel = true;
+
+                this.Hide();
+            }
+
+
+            base.OnClosing(e);
+        }
+
+        private void ExitClicked(object sender, RoutedEventArgs e)
+        {
+            App.ThisApp.Shutdown();
+        }
     }
 }

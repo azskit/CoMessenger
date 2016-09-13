@@ -197,6 +197,9 @@ namespace CorporateMessengerLibrary
 
         protected override void OnConnected()
         {
+            IsProcessing = true;
+            IsStayAlive = true;
+
             NewMessageTask = new Task(NewMessageHandler);
             NewMessageTask.Start();
 
@@ -253,7 +256,7 @@ namespace CorporateMessengerLibrary
                 }
             }
 
-            App.ThisApp.Client.PutOutMessage(AuthorizationMessage);
+            ConnectionManager.Client.PutOutMessage(AuthorizationMessage);
         }
 
         protected virtual void OnAuthorizationSuccess(AuthorizationSuccessEventArgs args)

@@ -24,7 +24,7 @@ namespace CorporateMessengerLibrary
     public class IndexedHistoryManager
     {
         private BinaryFormatter fmt = new BinaryFormatter();
-        private string StorageCatalog;
+        //private string StorageCatalog;
         //private string Sender;
         private string HistoryPath;
 
@@ -46,14 +46,22 @@ namespace CorporateMessengerLibrary
 
 
         //public IndexedHistoryManager(string storageCatalog, string RECEIVER, string sender)
+
+        public IndexedHistoryManager()
+        {
+
+        }
+
         public IndexedHistoryManager(string storageCatalog, bool keepConnection)
         {
-            StorageCatalog = storageCatalog;
+            InitHistoryManager(storageCatalog, keepConnection);
+        }
 
-            //Sender = sender;
+        public void InitHistoryManager(string storageCatalog, bool keepConnection)
+        {
+            //StorageCatalog = storageCatalog;
 
-            //HistoryPath = System.IO.Path.Combine(StorageCatalog, Sender);
-            HistoryPath = StorageCatalog;
+            HistoryPath = storageCatalog;
 
             //База данных сообщений
             HistoryDBFile = Path.Combine(HistoryPath, "history.db");
@@ -68,9 +76,7 @@ namespace CorporateMessengerLibrary
             formattingFileName = Path.Combine(HistoryPath, "history.dat");
 
             KeepConnection = keepConnection;
-
         }
-
 
         private RoutedMessage RestoreMessageFromHistory(string MessageID)
         {

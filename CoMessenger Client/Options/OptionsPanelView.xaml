@@ -112,11 +112,10 @@
             
             <!--<StackPanel Grid.Column="1"  Visibility="{Binding ElementName=ConnectionSection, Path=IsSelected, Converter={StaticResource visibilityConverter}, FallbackValue=Collapsed}">
                 <Label Content="Some Stuff"/>
-            </StackPanel>
-
-            <StackPanel Grid.Column="1"  Visibility="{Binding ElementName=OtherSection, Path=IsSelected, Converter={StaticResource visibilityConverter}, FallbackValue=Collapsed}">
-                <Label Content="Some Other Stuff"/>
             </StackPanel>-->
+
+            <!--Прочее-->
+            <sections:Others Grid.Column="1" Visibility="{Binding ElementName=OtherSection, Path=IsSelected, Converter={StaticResource visibilityConverter}}"/>
 
 
         </Grid>
