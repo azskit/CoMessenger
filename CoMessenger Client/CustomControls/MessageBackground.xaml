@@ -42,10 +42,11 @@
 
                 </Border>
             <!--Аватарка-->
-            <Ellipse Name="Avatar"
-                 Stroke="Gray" 
-                 Margin="3,-3,3,0"
-                 StrokeThickness="0.5" 
+            <Border Name="Avatar"
+                    CornerRadius="0, 5, 5, 5"
+                 BorderBrush="Gray" 
+                 Margin="10,-3,3,0"
+                 BorderThickness="0.5" 
                  MaxHeight="25" 
                  Height="{Binding Path=Height, FallbackValue=25}" 
                  Width="{Binding RelativeSource={RelativeSource Mode=Self},Path=ActualHeight}" 
@@ -53,10 +54,10 @@
                  VerticalAlignment="Top"
                  UseLayoutRounding="False"
                  SnapsToDevicePixels="False">
-                <Ellipse.Fill>
+                    <Border.Background>
                     <ImageBrush />
-                </Ellipse.Fill>
-            </Ellipse>
+                </Border.Background>
+            </Border>
             </Grid>
         </StackPanel>
     </Grid>

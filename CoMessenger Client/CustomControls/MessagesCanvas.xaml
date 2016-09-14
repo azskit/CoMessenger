@@ -10,6 +10,17 @@
              Loaded="UserControl_Loaded"
              
              d:DesignHeight="300" d:DesignWidth="300">
+
+    <UserControl.Resources>
+        <Style TargetType="{x:Type ScrollBar}">
+            <Setter Property="Margin" Value="0,0,-20,0"/>
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Template" Value="{StaticResource VerticalLeftScrollBar}"/>
+        </Style>
+
+    </UserControl.Resources>
+
+
     <Grid Name="MainGrid">
         <FlowDocumentScrollViewer Name="ChatBox" 
                                   Block.LineHeight="1"

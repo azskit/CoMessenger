@@ -226,7 +226,7 @@ namespace COMessengerClient.Conversation
 
 
                 messageBackground.DataContext = newblock;
-                BindingOperations.SetBinding(messageBackground.Avatar.Fill, ImageBrush.ImageSourceProperty, new Binding("Peer.Avatar") { Source = peer, Converter = new NullImageConverter() });
+                BindingOperations.SetBinding(messageBackground.Avatar.Background, ImageBrush.ImageSourceProperty, new Binding("Peer.Avatar") { Source = peer, Converter = new NullImageConverter() });
 
                 messageBackground.Avatar.HorizontalAlignment = peer.Peer.PeerId == App.ThisApp.CurrentPeer.Peer.PeerId ? HorizontalAlignment.Right : HorizontalAlignment.Left;
 

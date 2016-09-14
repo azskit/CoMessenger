@@ -11,6 +11,13 @@
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="visibilityConverter" />
         <converters:NullImageConverter x:Key="nullImageConverter"/>
+
+        <Style TargetType="{x:Type ScrollBar}">
+            <Setter Property="Margin" Value="-50,0,0,0"/>
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="Template" Value="{StaticResource VerticalRightScrollBar}"/>
+        </Style>
+
     </UserControl.Resources>
 
 
@@ -19,7 +26,13 @@
 
 
         <!--<ListBox ItemsSource="{Binding Source={x:Static application:App.ThisApp}, Path=UsersList}" >-->
-        <ListBox ItemsSource="{Binding Path=Participants}" VirtualizingStackPanel.IsVirtualizing="True" BorderThickness="0">
+        <ListBox ItemsSource="{Binding Path=Participants}" 
+                 VirtualizingStackPanel.IsVirtualizing="True" 
+                 BorderThickness="0"
+                 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                 >
+
+
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Style.Triggers>
@@ -30,20 +43,30 @@
             </ListBox.ItemContainerStyle>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Height="{Binding Source={x:Static props:Settings.Default}, Path=ContactListRowHeight}" Margin="1" Orientation="Horizontal" Background="Transparent" Loaded="StackPanel_Loaded">
+                    <Grid Margin="5" Loaded="Grid_Loaded" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}, Path=ActualWidth }">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!--<StackPanel Height="{Binding Source={x:Static props:Settings.Default}, Path=ContactListRowHeight}" Margin="1" Orientation="Horizontal" Background="Transparent" Loaded="StackPanel_Loaded" Width="150">-->
                         <!--Аватар-->
-                        <Ellipse Stroke="#48808080"                                  
-                                 StrokeThickness="0.5" 
-                                 Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type StackPanel}},Path=ActualHeight}"
+                        <Border Grid.Column="0"
+                                 BorderBrush="#48808080"                                  
+                                 BorderThickness="0.5" 
+                                 CornerRadius="0, 5, 5, 5"
+                                 Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}},Path=ActualHeight}"
                                  VerticalAlignment="Stretch" 
                                  HorizontalAlignment="Stretch" 
                                  Visibility="{Binding Path=ViewModel.HasAvatar, Converter={StaticResource visibilityConverter}}">
-                            <Ellipse.Fill>
+                            <Border.Background>
                                 <ImageBrush ImageSource="{Binding Peer.Avatar, Converter={StaticResource nullImageConverter}}"></ImageBrush>
-                            </Ellipse.Fill>
-                        </Ellipse>
+                            </Border.Background>
+                        </Border>
                         <!--Индикатор статуса-->
-                        <Border UseLayoutRounding="False"
+                        <Border Grid.Column="1"
+                                UseLayoutRounding="False"
                                 SnapsToDevicePixels="False"
                                 Height="15" Width="{Binding RelativeSource={RelativeSource Mode=Self},Path=ActualHeight}"
                                 CornerRadius="5" 
@@ -85,9 +108,8 @@
                             </Border>
                         </Border>
                         <!--Собственно - имя контакта-->
-                        <TextBlock VerticalAlignment="Center" Text="{Binding Peer.DisplayName}"/>
-                        <TextBlock VerticalAlignment="Center" Text="{Binding Path=ViewModel.HasUnreadMessages}"/>
-                        </StackPanel>
+                        <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{Binding Peer.DisplayName}" TextWrapping="WrapWithOverflow" />
+                        </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

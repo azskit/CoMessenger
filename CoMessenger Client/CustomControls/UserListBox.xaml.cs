@@ -36,21 +36,21 @@ namespace COMessengerClient.CustomControls
         //При обновлении статуса пира ищем панельку, его содержащую
         private void StatusUpdated(object sender, DataTransferEventArgs e)
         {
-            StackPanel elem = TryFindParent<StackPanel>(((DependencyObject)sender)) as StackPanel;
+            Grid elem = TryFindParent<Grid>(((DependencyObject)sender)) as Grid;
 
             OnStatusUpdated(elem);
         }
 
         //Панелька только загрузилась - 
         // возможно это потому что контакт только что вошел в сеть, нужно проверить и при необходимости подсветить
-        private void StackPanel_Loaded(object sender, RoutedEventArgs e)
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            StackPanel elem = sender as StackPanel;
+            Grid elem = sender as Grid;
 
             OnStatusUpdated(elem);
         }
 
-        private static void OnStatusUpdated(StackPanel elem)
+        private static void OnStatusUpdated(Grid elem)
         {
             if (elem.DataContext != null)
             {

@@ -322,5 +322,17 @@ namespace COMessengerClient.Properties {
                 this["HideOnClose"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("150")]
+        public global::System.Windows.GridLength ContactListWidth {
+            get {
+                return ((global::System.Windows.GridLength)(this["ContactListWidth"]));
+            }
+            set {
+                this["ContactListWidth"] = value;
+            }
+        }
     }
 }
