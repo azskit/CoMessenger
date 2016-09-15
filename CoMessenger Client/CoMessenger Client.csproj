@@ -16,7 +16,7 @@
     <WarningLevel>4</WarningLevel>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>publish\</PublishUrl>
+    <PublishUrl>d:\deploy\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -26,9 +26,10 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationRevision>1</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -57,6 +58,21 @@
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>azskit.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>5302FE2997BEADA886BC02CA6CFAFC99FDB29EC0</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>azskit.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\Icons\Petal.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.Profiler">
@@ -157,7 +173,7 @@
     </Compile>
     <Compile Include="GroupConversation\GroupConversationViewModel.cs" />
     <Compile Include="IndexedObservableCollection.cs" />
-    <Compile Include="Localization\Localization.cs" />
+    <Compile Include="Language\Localization.cs" />
     <Compile Include="Log\LogWindow.xaml.cs">
       <DependentUpon>LogWindow.xaml</DependentUpon>
     </Compile>
@@ -350,7 +366,7 @@
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="azskit.pfx" />
-    <None Include="Localization\CustomLocalization.xsd">
+    <None Include="Language\CustomLocalization.xsd">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -374,7 +390,7 @@
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
+      <ProductName>Клиентский профиль Microsoft .NET Framework 4 %28x86 и x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -400,18 +416,19 @@
     <Resource Include="Resources\Images\MaleDefaultAvatar.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Localization\fr.xml">
+    <Content Include="Language\fr.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Localization\en.xml">
+    <Content Include="Language\en.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Localization\ru.xml">
+    <Content Include="Language\ru.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Resources\Icons\TrayGreen.ico" />
     <Resource Include="Resources\Icons\TrayOrange.ico" />
     <Resource Include="Resources\Icons\TrayRed.ico" />
+    <Resource Include="Resources\Icons\Petal.ico" />
     <Content Include="Sound\newmsg.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

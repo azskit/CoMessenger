@@ -18,8 +18,8 @@
         Width="{Binding Source={x:Static props:Settings.Default}, Path=MainWindowSize.Width, Mode=TwoWay}"
 
         
-        Title="Window1" 
-        Loaded="Window_Loaded">
+        Title="Petal" 
+        Loaded="Window_Loaded" Icon="/COMessengerClient;component/Resources/Icons/Petal.ico">
     <Grid>
         <DockPanel DataContext="{x:Static application:App.ThisApp}">
             <Menu Visibility="Visible" DockPanel.Dock="Top">

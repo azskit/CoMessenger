@@ -46,6 +46,9 @@ namespace COMessengerClient.StartScreen
         {
             view.MainGrid.Children.Add(logOnScreen);
 
+            logOnScreen.SetValue(Grid.ColumnSpanProperty, 3);
+
+
             ConnectionManager.Client.AuthorizationSuccess +=
             (client, args) =>
             {
