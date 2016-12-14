@@ -29,7 +29,7 @@ namespace COMessengerClient.CustomControls
 
             AdvancedPicker.SetBinding(AdvancedColorSelector.SelectedColorProperty, new Binding("SelectedColor") { Source = this, Mode = BindingMode.TwoWay });
 
-            SetPalette(StandartPalette);
+            SetPalette(StandardPalette);
             //SelectedColor = Colors.Violet;
 
             //Popup.IsMouseCaptureWithinChanged += Popup_IsMouseCaptureWithinChanged;
@@ -71,7 +71,7 @@ namespace COMessengerClient.CustomControls
 
         public event RoutedPropertyChangedEventHandler<Color> SelectedColorChanged;
 
-        public static Collection<ColorItem> StandartPalette
+        public static Collection<ColorItem> StandardPalette
         {
             get
             {

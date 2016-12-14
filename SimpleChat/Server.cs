@@ -261,7 +261,7 @@ namespace SimpleChat
         {
             CMUser ReceivedUser = newmes.Message as CMUser;
 
-            CMUser FoundedUser = null;
+            CMUser FoundUser = null;
 
             if (ReceivedUser == null)
             {
@@ -275,10 +275,10 @@ namespace SimpleChat
             //Без авторизации - вход под текущим пользователем
             if (!(String.IsNullOrEmpty(ReceivedUser.UserId)))
             {
-                FoundedUser = CoMessengerUsers.Find((UserInList) => { return (UserInList.UserId == ReceivedUser.UserId); });
-                if (FoundedUser != null)
+                FoundUser = CoMessengerUsers.Find((UserInList) => { return (UserInList.UserId == ReceivedUser.UserId); });
+                if (FoundUser != null)
                 {
-                    AcceptAuthorization(clnt, FoundedUser);
+                    AcceptAuthorization(clnt, FoundUser);
                 }
                 else
                 {
@@ -295,9 +295,9 @@ namespace SimpleChat
                 //расшифруем жулебный пароль
                 ReceivedUser.Password = clnt.DecryptPassword(ReceivedUser.EncryptedPassword);
 
-                FoundedUser = CoMessengerUsers.Find((UserInList) => { return UserInList.UserName.ToLower() == ReceivedUser.UserName.ToLower(); });
+                FoundUser = CoMessengerUsers.Find((UserInList) => { return UserInList.UserName.ToLower() == ReceivedUser.UserName.ToLower(); });
 
-                if (FoundedUser != null)
+                if (FoundUser != null)
                 {
                     try
                     {
@@ -305,7 +305,7 @@ namespace SimpleChat
 
                         if (prCont.ValidateCredentials(ReceivedUser.UserName, ReceivedUser.Password))
                         {
-                            AcceptAuthorization(clnt, FoundedUser);
+                            AcceptAuthorization(clnt, FoundUser);
                         }
                         else
                         {
@@ -343,11 +343,11 @@ namespace SimpleChat
                 //расшифруем жулебный пароль
                 ReceivedUser.Password = clnt.DecryptPassword(ReceivedUser.EncryptedPassword);
 
-                FoundedUser = CoMessengerUsers.Find((UserInList) => { return UserInList.UserName.ToLower() == ReceivedUser.UserName.ToLower(); });
+                FoundUser = CoMessengerUsers.Find((UserInList) => { return UserInList.UserName.ToLower() == ReceivedUser.UserName.ToLower(); });
 
 
                 //Нет такой буквы в этом слове
-                if (FoundedUser == null)
+                if (FoundUser == null)
                 {
                     clnt.PutOutMessage(new CMMessage()
                     {
@@ -359,11 +359,11 @@ namespace SimpleChat
                 {
                     //Сектор приз на барабане!
                     if (
-                            FoundedUser.Password == MD5Helper.CreateMD5(ReceivedUser.Password)   //Верный пароль
-                        || (FoundedUser.Password == String.Empty && ReceivedUser.Password == String.Empty) //Пароль не задан
+                            FoundUser.Password == MD5Helper.CreateMD5(ReceivedUser.Password)   //Верный пароль
+                        || (FoundUser.Password == String.Empty && ReceivedUser.Password == String.Empty) //Пароль не задан
                         )
                     {
-                        AcceptAuthorization(clnt, FoundedUser);
+                        AcceptAuthorization(clnt, FoundUser);
                     }
                     else
                     {
@@ -620,11 +620,13 @@ namespace SimpleChat
             LdapAuthority LdapAuth = new LdapAuthority() { InfoStream = Console.Out };
             UsersPlan Plan = LdapAuthority.GetUsersPlan(usersplan);
 
-            CoMessengerUsers.AddRange(LdapAuth.GetWindowsUsers(Plan));
+            CoMessengerUsers.AddRange(LdapAuth.GetWindowsUsers(Plan).Where(user => !String.IsNullOrWhiteSpace(user.UserName) && !String.IsNullOrWhiteSpace(user.UserId)));
+
+            Console.WriteLine("Get builtin users using {0} ...", usersListFile);
 
             try
             {
-                CoMessengerUsers.AddRange(BuiltInAuthority.GetBuiltInUsers(usersListFile));
+                CoMessengerUsers.AddRange(BuiltInAuthority.GetBuiltInUsers(usersListFile).Where(user => !String.IsNullOrWhiteSpace(user.UserName) && !String.IsNullOrWhiteSpace(user.UserId)));
 
             }
             catch (FileNotFoundException fn)
@@ -633,7 +635,7 @@ namespace SimpleChat
             }
             const string MainGroupID = "{8A4458F4-6AA9-40F4-ADD3-A45491EE8FA0}";
 
-            Console.WriteLine("done");
+            //Console.WriteLine("done");
 
             //Основная группа пользователей
             CMGroup MainGroup = new CMGroup();
@@ -643,6 +645,9 @@ namespace SimpleChat
             MainGroup.DisplayName = "All users";
 
             CoMessengerGroups.Add(MainGroup);
+
+
+            Console.WriteLine("Get groups using {0} ...", usersplan);
 
             CoMessengerGroups.AddRange(LdapAuth.GetGroups(Plan));
 
@@ -727,6 +732,9 @@ namespace SimpleChat
 
             int i = 0;
             Console.WriteLine("Common Users List:");
+
+            if (CoMessengerUsers.Count == 0) Console.WriteLine("No users were found!");
+
             CoMessengerUsers.ForEach((element) => 
             {
                 //element.Status = PeerStatus.Offline;

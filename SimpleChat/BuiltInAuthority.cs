@@ -64,14 +64,23 @@ namespace SimpleChat
 
             if (File.Exists(usersListFile))
             {
-                using (Stream fs = new FileStream(usersListFile, FileMode.Open, FileAccess.Read, FileShare.Read))
-                using (XmlReader xml_reader = new XmlTextReader(fs))
+
+                try
                 {
-                    return (UserList = serializer.Deserialize(xml_reader) as List<CMUser>);
+                    using (Stream fs = new FileStream(usersListFile, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    using (XmlReader xml_reader = new XmlTextReader(fs))
+                    {
+                        return (UserList = serializer.Deserialize(xml_reader) as List<CMUser>);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.Error.WriteLine(CustomUtilites.FormatException(e));
+                    return new List<CMUser>();
                 }
             }
             else
-                throw new FileNotFoundException("Не найден файл списк пользователей", usersListFile);
+                throw new FileNotFoundException("Не найден файл списка пользователей", usersListFile);
         }
 
 

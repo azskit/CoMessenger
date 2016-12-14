@@ -463,12 +463,12 @@ namespace COMessengerClient.Conversation
             MessageArea.ActualScrollViewer.ScrollToVerticalOffset(sta.GetCharacterRect(LogicalDirection.Forward).Top);
         }
 
-        public void LookAt(TextElement msg)
+        public void LookAt(TextElement message)
         {
-            if (msg == null)
-                throw new ArgumentNullException("msg");
+            if (message == null)
+                throw new ArgumentNullException("message");
 
-            LookAt(msg.ContentStart);
+            LookAt(message.ContentStart);
         }
         
     }

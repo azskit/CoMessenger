@@ -27,4 +27,5 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "COMessengerClient.Conversation.ConversationView.#MessageArea_ScrollViewerStartPositionReached(System.Object,System.EventArgs)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "COMessengerClient.CustomControls.MessageHeaderViewModel.#Versions")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "COMessengerClient.CustomControls.MessageHeaderViewModel.#HasMultipleVersion")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "OnScreen", Scope = "type", Target = "COMessengerClient.CustomControls.LogOnScreen")]
 
