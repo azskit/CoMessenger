@@ -46,7 +46,7 @@ namespace COMessengerClient.CustomControls
             }
         }
 
-        private void BusyIndicator_Loaded(object sender, RoutedEventArgs e)
+        void BusyIndicator_Loaded(object sender, RoutedEventArgs e)
         {
             if (ConnectionManager.Client != null)
             {

@@ -37,7 +37,6 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -48,6 +47,7 @@
     <ProjectReference Include="..\SimpleChat\SimpleChat.csproj">
       <Project>{c8da2570-feeb-4f7e-966a-6927e421558e}</Project>
       <Name>SimpleChat</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
