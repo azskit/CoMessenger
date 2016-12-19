@@ -82,7 +82,7 @@
                 <TextBlock Margin="2" VerticalAlignment="Bottom" Foreground="Gray" Text="{Binding ViewModel.Description, FallbackValue=В сети}"/>
             </Grid>
 
-            <MediaElement  x:Name="myGif" UnloadedBehavior="Manual" Source="file://C:\secret.gif" LoadedBehavior="Play" Stretch="None"/>
+            
 
             </StackPanel>
             <Grid VerticalAlignment="Bottom" HorizontalAlignment="Right"  Margin="2">

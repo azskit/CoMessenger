@@ -13,6 +13,7 @@ using System.Windows.Controls.Primitives;
 using COMessengerClient.CustomControls;
 using System.Linq;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace COMessengerClient.ChatFace
 {
@@ -44,7 +45,7 @@ namespace COMessengerClient.ChatFace
             DependencyProperty.Register("IsEditingMode", typeof(bool), typeof(NewMessageEditorView), new UIPropertyMetadata(false));
 
         
-        
+
 
         public NewMessageEditorView()
         {
@@ -63,6 +64,7 @@ namespace COMessengerClient.ChatFace
             //Если событие происходит после вставки xaml, то 
             NewMessageTextBox.TextChanged += (sent, args) =>
             {
+
                 if (isXamlPasted)
                 {
                     isXamlPasted = false;
@@ -347,6 +349,36 @@ namespace COMessengerClient.ChatFace
                 cmdAlignLeft.LayoutTransform = scalingfix;
                 cmdAlignRight.LayoutTransform = scalingfix;
             }
+        }
+
+        private void NewMessageTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+            {
+                TextRange tr = new TextRange(NewMessageTextBox.Document.ContentStart, NewMessageTextBox.Document.ContentEnd);
+
+                if (!string.IsNullOrEmpty(tr.Text))
+                {
+                    if (tr.Text.EndsWith(":)\r\n"))
+                    {
+                        TextPointer start = tr.End.GetPositionAtOffset(-4, LogicalDirection.Backward);
+
+                        //TextRange smile = new TextRange(start, tr.End);
+
+                        NewMessageTextBox.Selection.Select(start, tr.End);
+
+                        
+
+                        //NewMessageTextBox.Selection.
+
+                        //MessageBox.Show(smile.Text);
+
+                        //NewMessageTextBox.CaretPosition = new TextPointer();
+                        //NewMessageTextBox.Selection.Select();
+                    }
+                }
+            }
+
         }
     }
 

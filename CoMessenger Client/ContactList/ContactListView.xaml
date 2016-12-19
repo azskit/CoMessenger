@@ -19,7 +19,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid x:Name="RootControl">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />

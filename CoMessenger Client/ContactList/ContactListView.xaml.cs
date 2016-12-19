@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using CorporateMessengerLibrary;
 using System.Windows.Media.Animation;
 using COMessengerClient.Conversation;
+using COMessengerClient.StartScreen;
 
 namespace COMessengerClient.ContactList
 {
@@ -22,7 +23,9 @@ namespace COMessengerClient.ContactList
     /// </summary>
     public partial class ContactListView : UserControl
     {
-        StartScreen.StartScreenView startscreen = App.ThisApp.MainWindow as StartScreen.StartScreenView;
+        //StartScreen.StartScreenView startscreen = App.ThisApp.MainWindow as StartScreen.StartScreenView;
+
+        public StartScreenView StartScreen { get; set; }
         ContactListViewModel viewModel;
 
         public ContactListView()
@@ -49,7 +52,7 @@ namespace COMessengerClient.ContactList
                         {
                             //Еще нигде не открыт
                             if (view.Parent == null)
-                                startscreen.MainGrid.Children.Add(args.ClickedClientPeer.View);
+                                StartScreen.MainGrid.Children.Add(args.ClickedClientPeer.View);
 
 
                             view.Visibility = Visibility.Visible;
@@ -90,13 +93,13 @@ namespace COMessengerClient.ContactList
                         args.ClickedClientPeer.InitView();
                         args.ClickedClientPeer.View.Visibility = System.Windows.Visibility.Visible;
                         //startscreen.ConversationsGrid.Children.Add(args.ClickedClientPeer.View);
-                        startscreen.MainGrid.Children.Add(args.ClickedClientPeer.View);
+                        StartScreen.MainGrid.Children.Add(args.ClickedClientPeer.View);
                         args.ClickedClientPeer.View.Peer.ViewModel.HasUnreadMessages = false;
                     }
 
-                }; 
+                };
 
-            DataContext = viewModel;
+            RootControl.DataContext = viewModel;
 
         }
 

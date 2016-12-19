@@ -61,6 +61,7 @@
             Visibility="Hidden" 
             HorizontalAlignment="Stretch" 
             VerticalAlignment="Stretch"
+            Loaded="BusyIndicator_Loaded"
             />
         </Border>
     </Grid>

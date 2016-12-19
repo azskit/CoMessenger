@@ -42,6 +42,7 @@
                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                      BorderThickness="0"
+                     PreviewKeyDown="NewMessageTextBox_KeyDown"
                      >
             <RichTextBox.Foreground>
                 <SolidColorBrush Color="{Binding Source={x:Static props:Settings.Default}, Path=NewMessageFont.FontColor, Mode=OneWay}"/>
@@ -52,6 +53,11 @@
                     <Setter Property="Margin" Value="0"/>
                 </Style>
             </RichTextBox.Resources>
+            <FlowDocument>
+                <BlockUIContainer>
+                    <MediaElement  x:Name="myGif" UnloadedBehavior="Manual" Source="file://C:\secret.gif" LoadedBehavior="Play" Stretch="None"/>
+                </BlockUIContainer>
+            </FlowDocument>
 
         </RichTextBox>
 
