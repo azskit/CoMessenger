@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using CorporateMessengerLibrary;
 using System.Globalization;
+using SimpleChat.Identity;
 
 namespace SimpleChat
 {
@@ -37,7 +38,7 @@ namespace SimpleChat
         /// <summary>
         /// Учетная запись
         /// </summary>
-        public CMUser User { get; set; }
+        internal CMUser User { get; set; }
 
         /// <summary>
         /// Очередь неотправленных сообщений

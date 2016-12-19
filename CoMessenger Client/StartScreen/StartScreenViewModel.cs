@@ -60,7 +60,7 @@ namespace COMessengerClient.StartScreen
 
                     logOnScreen.Visibility = Visibility.Collapsed;
 
-                    view.Title = args.LoggedUser.DisplayName;
+                    //view.Title = args.LoggedUser.DisplayName;
 
                     logOnScreen.IsBusy = false;
                 }));

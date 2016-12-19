@@ -13,7 +13,7 @@ namespace CorporateMessengerLibrary
         Disconnect,
         Ping,
         AuthorizationError,
-        AuthorizationNewPassword,
+        //AuthorizationNewPassword,
         UsersList,
         UpdatePeer,
         Groups,

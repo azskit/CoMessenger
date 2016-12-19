@@ -9,9 +9,18 @@ using System.IO;
 using System.Xml;
 using System.Diagnostics;
 using CorporateMessengerLibrary;
+using SimpleChat.Identity;
 
 namespace SimpleChat
 {
+    class LDAPUser : CMUser
+    {
+        internal override bool CheckPassword(string password)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     class LdapAuthority
     {
         /// <summary>
@@ -112,13 +121,12 @@ namespace SimpleChat
                                             ToList().
                                             ForEach((member) =>
                                             {
-                                                UserList.Add(new CMUser()
+                                                UserList.Add(new LDAPUser()
                                                 {
                                                     DisplayName = member.DisplayName ?? member.SamAccountName,
                                                     UserId = member.Sid.Value,
                                                     UserName = member.SamAccountName,
-                                                    Domain = dom.DomainName,
-                                                    IsBuiltIn = false
+                                                    Domain = dom.DomainName
                                                 }); userscount++;
                                             });
 

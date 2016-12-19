@@ -397,7 +397,7 @@ namespace COMessengerClient.Conversation
                 else
                 {
                     newMessage.Receiver  = Receiver.Peer.PeerId;
-                    newMessage.Sender    = App.ThisApp.CurrentUser.UserId;
+                    newMessage.Sender    = App.ThisApp.CurrentUserId;
                     newMessage.SendTime  = DateTime.UtcNow;
                     newMessage.MessageId = Guid.NewGuid().ToString("N");
 

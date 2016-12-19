@@ -25,7 +25,8 @@ namespace COMessengerClient
         public static string StorageCatalog { get; private set; }
         public static App ThisApp { get; set; }
         //public CMClientClient Client { get; set; }
-        public CMUser CurrentUser { get; set; }
+        //public CMUser CurrentUser { get; set; }
+        internal string CurrentUserId { get; set; }
         public ClientPeer CurrentPeer { get; set; }
         public LocalizationUI Locally { get; set; }
 

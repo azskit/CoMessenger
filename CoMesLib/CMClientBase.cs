@@ -24,6 +24,16 @@ namespace CorporateMessengerLibrary
 
     public class CMClientBase : IDisposable
     {
+        [Serializable]
+        protected class CimCredentials
+        {
+            public bool   IsLoggedIn { get; set; }
+            public string UserName   { get; set; }
+            public string Domain     { get; set; }
+            public byte[] Password   { get; set; }
+        }
+
+
         public TcpClient Tcp { get; protected set; }
 
         public NetworkStream CStream { get; protected set; }
@@ -32,7 +42,7 @@ namespace CorporateMessengerLibrary
 
         //public Exception exception { get; set; }
 
-        public CMUser User { get; set; }
+        //protected CMUser User { get; set; }
 
         private RSAParameters clientPublicKey;
         private RSACryptoServiceProvider cryptoProvider;

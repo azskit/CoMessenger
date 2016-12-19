@@ -13,13 +13,15 @@ using System.DirectoryServices;
 using System.IO;
 using System.Windows.Media.Imaging;
 using System.Diagnostics;
+using SimpleChat.Protocol;
+using SimpleChat.Identity;
 
 namespace SimpleChat
 {
     class Server
     {
-        static private List<CMClientBase> clients = new List<CMClientBase>();
-        static List<CMUser> CoMessengerUsers = new List<CMUser>();
+        static private List<ServerSideClient> clients = new List<ServerSideClient>();
+        static internal List<CMUser> CoMessengerUsers = new List<CMUser>();
         static List<CMGroup> CoMessengerGroups = new List<CMGroup>();
         static SortedList<string, IMessagable> ReceiversList = new SortedList<string, IMessagable>();
 
@@ -36,21 +38,21 @@ namespace SimpleChat
             {
                 //lock (clients)
                 //{
-                    foreach (CMClientBase clnt in clients.ToList())
+                    foreach (ServerSideClient clnt in clients.ToList())
                     {
                         if (clnt != null && clnt.InMessagesCount > 0)
                         {
                             //Console.WriteLine("{0} sent {1} bytes", clnt.tcp.Client.RemoteEndPoint.ToString(), clnt.tcp.Available);
 
-                            CMMessage newmes = clnt.RetrieveInMessage();
+                            CMMessage incomingMessage = clnt.RetrieveInMessage();
 
-                            switch (newmes.Kind)
+                            switch (incomingMessage.Kind)
                             {
 
                                 //Сообщение
                                 case MessageKind.RoutedMessage:
 
-                                    RoutedMessageHandler(newmes);
+                                    RoutedMessageHandler(incomingMessage);
 
                                     //clients.ForEach((a) => { a.PutOutMessage(queryMessage); });
                                     break;
@@ -59,15 +61,15 @@ namespace SimpleChat
                                 //Авторизация
                                 case MessageKind.Authorization:
 
-                                    AuthorizationHandler(clnt, newmes);
+                                    clnt.AuthorizationHandler(incomingMessage);
 
                                     break;
 
-                                case MessageKind.AuthorizationNewPassword:
+                                //case MessageKind.AuthorizationNewPassword:
 
-                                    clnt.User.Password = (string)newmes.Message;
+                                    //clnt.User.Password = (string)incomingMessage.Message;
 
-                                    break;
+                                    //break;
                                 case MessageKind.Disconnect:
 
                                     clnt.Disconnect();
@@ -80,7 +82,7 @@ namespace SimpleChat
                                 case MessageKind.EnterRoom:
 
                                     //Ищем группу по ID
-                                    ServerRoomPeer enteredRoom = ReceiversList[(string)newmes.Message] as ServerRoomPeer;
+                                    ServerRoomPeer enteredRoom = ReceiversList[(string)incomingMessage.Message] as ServerRoomPeer;
 
                                     //Ищем клиента по ID
                                     ServerPersonPeer joiner = (ServerPersonPeer)ReceiversList[clnt.User.UserId];
@@ -113,7 +115,7 @@ namespace SimpleChat
                                 case MessageKind.LeaveRoom:
 
                                     //Ищем группу по ID
-                                    ServerRoomPeer leavedRoom = ReceiversList[(string)newmes.Message] as ServerRoomPeer;
+                                    ServerRoomPeer leavedRoom = ReceiversList[(string)incomingMessage.Message] as ServerRoomPeer;
 
                                     //Ищем клиента по ID
                                     ServerPersonPeer leaver = (ServerPersonPeer)ReceiversList[clnt.User.UserId];
@@ -148,7 +150,7 @@ namespace SimpleChat
                                     //Открыть новую комнату
                                 case MessageKind.NewRoom:
 
-                                    String roomName = newmes.Message as String;
+                                    String roomName = incomingMessage.Message as String;
 
                                     if (!String.IsNullOrWhiteSpace(roomName))
                                     {
@@ -182,7 +184,7 @@ namespace SimpleChat
                                     //Закрыть комнату
                                 case MessageKind.CloseRoom:
 
-                                    String RoomToCloseID = newmes.Message as String;
+                                    String RoomToCloseID = incomingMessage.Message as String;
 
                                     if (!String.IsNullOrWhiteSpace(RoomToCloseID))
                                     {
@@ -205,7 +207,7 @@ namespace SimpleChat
                                 //Запрос на получении истории
                                 case MessageKind.Query:
 
-                                    ProcessQueryMessage(clnt, newmes.Message as QueryMessage);
+                                    ProcessQueryMessage(clnt, incomingMessage.Message as QueryMessage);
 
                                     break;
 
@@ -257,125 +259,6 @@ namespace SimpleChat
 
         }
 
-        private static void AuthorizationHandler(CMClientBase clnt, CMMessage newmes)
-        {
-            CMUser ReceivedUser = newmes.Message as CMUser;
-
-            CMUser FoundUser = null;
-
-            if (ReceivedUser == null)
-            {
-                clnt.PutOutMessage(new CMMessage()
-                {
-                    Kind = MessageKind.AuthorizationError,
-                    Message = ErrorKind.UserNotPresented
-                });
-            }
-
-            //Без авторизации - вход под текущим пользователем
-            if (!(String.IsNullOrEmpty(ReceivedUser.UserId)))
-            {
-                FoundUser = CoMessengerUsers.Find((UserInList) => { return (UserInList.UserId == ReceivedUser.UserId); });
-                if (FoundUser != null)
-                {
-                    AcceptAuthorization(clnt, FoundUser);
-                }
-                else
-                {
-                    clnt.PutOutMessage(new CMMessage()
-                    {
-                        Kind = MessageKind.AuthorizationError,
-                        Message = ErrorKind.UserNotFound
-                    });
-                }
-            }
-            //Доменная авторизация
-            else if (!(String.IsNullOrEmpty(ReceivedUser.Domain)))
-            {
-                //расшифруем жулебный пароль
-                ReceivedUser.Password = clnt.DecryptPassword(ReceivedUser.EncryptedPassword);
-
-                FoundUser = CoMessengerUsers.Find((UserInList) => { return UserInList.UserName.ToLower() == ReceivedUser.UserName.ToLower(); });
-
-                if (FoundUser != null)
-                {
-                    try
-                    {
-                        PrincipalContext prCont = new PrincipalContext(ContextType.Domain, ReceivedUser.Domain);
-
-                        if (prCont.ValidateCredentials(ReceivedUser.UserName, ReceivedUser.Password))
-                        {
-                            AcceptAuthorization(clnt, FoundUser);
-                        }
-                        else
-                        {
-                            clnt.PutOutMessage(new CMMessage()
-                            {
-                                Kind = MessageKind.AuthorizationError,
-                                Message = ErrorKind.WrongPassword
-                            });
-                        }
-                    }
-                    catch (PrincipalServerDownException)
-                    {
-                        clnt.PutOutMessage(new CMMessage()
-                        {
-                            Kind = MessageKind.AuthorizationError,
-                            Message = ErrorKind.DomainCouldNotBeContacted
-                        });
-                    }
-
-                }
-                else
-                {
-                    clnt.PutOutMessage(new CMMessage()
-                    {
-                        Kind = MessageKind.AuthorizationError,
-                        Message = ErrorKind.UserNotFound
-                    });
-                }
-
-
-            }
-            //Встроенная авторизация
-            else
-            {
-                //расшифруем жулебный пароль
-                ReceivedUser.Password = clnt.DecryptPassword(ReceivedUser.EncryptedPassword);
-
-                FoundUser = CoMessengerUsers.Find((UserInList) => { return UserInList.UserName.ToLower() == ReceivedUser.UserName.ToLower(); });
-
-
-                //Нет такой буквы в этом слове
-                if (FoundUser == null)
-                {
-                    clnt.PutOutMessage(new CMMessage()
-                    {
-                        Kind = MessageKind.AuthorizationError,
-                        Message = ErrorKind.UserNotFound
-                    });
-                }
-                else
-                {
-                    //Сектор приз на барабане!
-                    if (
-                            FoundUser.Password == MD5Helper.CreateMD5(ReceivedUser.Password)   //Верный пароль
-                        || (FoundUser.Password == String.Empty && ReceivedUser.Password == String.Empty) //Пароль не задан
-                        )
-                    {
-                        AcceptAuthorization(clnt, FoundUser);
-                    }
-                    else
-                    {
-                        clnt.PutOutMessage(new CMMessage()
-                        {
-                            Kind = MessageKind.AuthorizationError,
-                            Message = ErrorKind.WrongPassword
-                        });
-                    }
-                }
-            }
-        }
 
         private static void RoutedMessageHandler(CMMessage newmes)
         {
@@ -389,11 +272,11 @@ namespace SimpleChat
 
         }
 
-        private static void AcceptAuthorization(CMClientBase clnt, CMUser FoundUser)
+        internal static void AcceptAuthorization(ServerSideClient clnt, CMUser FoundUser)
         {
             //Если уже был авторизован с другой машины - отключаем
             clients.FindAll((client) => client.User == FoundUser).ToList().ForEach(
-                (client) => 
+                (client) =>
                 {
                     if (client != null)
                     {
@@ -422,7 +305,7 @@ namespace SimpleChat
             clnt.PutOutMessage(new CMMessage()
             {
                 Kind = MessageKind.Authorization,
-                Message = FoundUser
+                Message = FoundUser.UserId
             });
 
             clients.ForEach((a) => { a.PutOutMessage(new CMMessage() { Kind = MessageKind.UpdatePeer, Message = ReceiversList[FoundUser.UserId].Peer() }); });
@@ -519,7 +402,7 @@ namespace SimpleChat
                     state: server
                     );
 
-                CMClientBase newclient = new CMClientBase(server.EndAcceptTcpClient(iar));
+                ServerSideClient newclient = new ServerSideClient(server.EndAcceptTcpClient(iar));
 
                 //Обмениваемся ключами
                 newclient.WaitKey();
@@ -540,7 +423,7 @@ namespace SimpleChat
                     (client, args) => 
                     {
 
-                        CMClientBase DisconnectingClient = client as CMClientBase;
+                        ServerSideClient DisconnectingClient = client as ServerSideClient;
 
                         //Если был авторизован - ставим статус и рассылаем уведомления
                         if (DisconnectingClient.User != null)

@@ -58,11 +58,12 @@ namespace CorporateMessengerLibrary
 
     public class AuthorizationSuccessEventArgs : EventArgs
     {
-        public CMUser LoggedUser { get; set; }
+        //public CMUser LoggedUser { get; set; }
+        public string SignedInUserId { get; set; }
 
-        public AuthorizationSuccessEventArgs(CMUser loggedUser)
+        public AuthorizationSuccessEventArgs(string signedInUserId)
         {
-            LoggedUser = loggedUser;
+            SignedInUserId = signedInUserId;
         }
     }
 
@@ -204,12 +205,12 @@ namespace CorporateMessengerLibrary
             NewMessageTask.Start();
 
             //Сперва представимся
-            Authorizate();
+            SignIn();
 
             base.OnConnected();
         }
 
-        private void Authorizate()
+        private void SignIn()
         {
 
             credentials = CredentialFormModel.GetCredentials();
@@ -226,10 +227,12 @@ namespace CorporateMessengerLibrary
                 this.Login = Environment.UserName;
                 this.Domain = Environment.UserDomainName;
 
-                AuthorizationMessage.Message = new CMUser()
+                AuthorizationMessage.Message = new CimCredentials()
                 {
-                    UserId = System.Security.Principal.WindowsIdentity.GetCurrent().User.Value,
-                    IsBuiltIn = false
+                    UserName = "",
+                    Domain   = Environment.UserDomainName,
+                    Password = CryptSomething(System.Security.Principal.WindowsIdentity.GetCurrent().User.Value)
+                    
                 };
             }
             //Если в поле "Логин" введена учетка с доменом
@@ -238,20 +241,21 @@ namespace CorporateMessengerLibrary
                 //Доменная авторизация
                 if (!String.IsNullOrEmpty(credentials.Domain))
                 {
-                    AuthorizationMessage.Message = new CMUser()
+                    AuthorizationMessage.Message = new CimCredentials()
                     {
                         UserName = credentials.UserName,
-                        Domain = credentials.Domain,
-                        EncryptedPassword = CryptPassword(credentials.SecurePassword)
+                        Domain   = credentials.Domain,
+                        Password = CryptPassword(credentials.SecurePassword)
                     };
                 }
                 //Встроенная авторизация
                 else
                 {
-                    AuthorizationMessage.Message = new CMUser()
+                    AuthorizationMessage.Message = new CimCredentials()
                     {
                         UserName = credentials.UserName,
-                        EncryptedPassword = CryptPassword(credentials.SecurePassword)
+                        Domain   = String.Empty,
+                        Password = CryptPassword(credentials.SecurePassword)
                     };
                 }
             }
@@ -264,7 +268,8 @@ namespace CorporateMessengerLibrary
             if (args == null)
                 throw new ArgumentNullException("args");
 
-            App.ThisApp.CurrentUser = args.LoggedUser;
+            //App.ThisApp.CurrentUser = args.LoggedUser;
+            App.ThisApp.CurrentUserId = args.SignedInUserId;
 
             //Если вручную вводили пароль, то сохраним данные для следующего входа
             if (!COMessengerClient.Properties.Settings.Default.UseCurrentWindowsAccount)
@@ -416,7 +421,7 @@ namespace CorporateMessengerLibrary
 
                             //Trace.WriteLine("{0}: Авторизация успешна", DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.CurrentCulture));
 
-                            OnAuthorizationSuccess( new AuthorizationSuccessEventArgs((CMUser)NewCMMessage.Message));
+                            OnAuthorizationSuccess( new AuthorizationSuccessEventArgs(NewCMMessage.Message as string));
 
                             break;
 
@@ -428,9 +433,9 @@ namespace CorporateMessengerLibrary
                             break;
 
                         //Требуется новый пароль
-                        case MessageKind.AuthorizationNewPassword:
+                        //case MessageKind.AuthorizationNewPassword:
 
-                            throw new InvalidOperationException("Требования смены пароля");
+                        //    throw new InvalidOperationException("Требования смены пароля");
 
                             /*
                             App.ThisApp.Dispatcher.BeginInvoke(new Action(() =>
@@ -578,7 +583,7 @@ namespace CorporateMessengerLibrary
                     App.ThisApp.ListOfConversations.Add(peer.PeerId, NewPeer);
                 }
             }
-            if (App.ThisApp.CurrentUser.UserId == peer.PeerId)
+            if (App.ThisApp.CurrentUserId == peer.PeerId)
                 App.ThisApp.CurrentPeer = App.ThisApp.ListOfConversations[peer.PeerId];
             //}));
         }
@@ -606,7 +611,7 @@ namespace CorporateMessengerLibrary
                 //}
                 
             }
-            else if (routedMessage.Receiver == App.ThisApp.CurrentUser.UserId)
+            else if (routedMessage.Receiver == App.ThisApp.CurrentUserId)
             {
 
                 //lock (Receiver)

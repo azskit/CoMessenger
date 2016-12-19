@@ -81,7 +81,7 @@ namespace COMessengerClient
         {
             //Открываем историю
             App.ThisApp.History.InitHistoryManager(
-                         storageCatalog: System.IO.Path.Combine(App.StorageCatalog, App.ThisApp.CurrentUser.UserId),
+                         storageCatalog: System.IO.Path.Combine(App.StorageCatalog, App.ThisApp.CurrentUserId),
                          keepConnection: true);
 
             App.TrayIcon.Icon = new System.Drawing.Icon(Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Icons/TrayGreen.ico")).Stream);
