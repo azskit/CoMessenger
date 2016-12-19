@@ -10,43 +10,27 @@ namespace COMessengerClient.StartScreen
     /// </summary>
     public partial class StartScreenView : Window
     {
-        StartScreenViewModel viewmodel;
+        //StartScreenViewModel viewmodel;
+
+        internal StartScreenViewModel ViewModel { get; set; }
 
         private Window optionsWindow;
-
-        //private TabControl tabControl = new TabControl();
-
-        //public TabControl TabControl
-        //{
-        //    get { return tabControl; }
-        //    set { tabControl = value; }
-        //} 
-
-        //private Grid conversationsGrid = new Grid();
-
-        //public Grid ConversationsGrid
-        //{
-        //    get { return conversationsGrid; }
-        //    set { conversationsGrid = value; }
-        //}
-
-        
 
         public StartScreenView()
         {
             InitializeComponent();
-            viewmodel = new StartScreenViewModel(this);
-            this.DataContext = viewmodel;
+            ViewModel = new StartScreenViewModel();
+            this.DataContext = ViewModel;
 
             App.ThisApp.MainWindow = this;
-
+            ContactList.StartScreen = this;
 
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            
-            viewmodel.OnLoad();
+
+            ViewModel.OnLoad();
 
             App.DpiYScalingFactor = PresentationSource.FromVisual(Application.Current.MainWindow).CompositionTarget.TransformToDevice.M22;
             App.DpiXScalingFactor = PresentationSource.FromVisual(Application.Current.MainWindow).CompositionTarget.TransformToDevice.M11;

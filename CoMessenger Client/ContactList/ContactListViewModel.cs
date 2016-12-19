@@ -42,15 +42,12 @@ namespace COMessengerClient.ContactList
 
         public ContactListViewModel()
         {
-            //participants = CollectionViewSource.GetDefaultView(App.ThisApp.ListOfConversations);
-            participants = new System.Windows.Data.CollectionViewSource { Source = App.ThisApp.ListOfConversations }.View;
+            if (App.ThisApp != null)
+            {
+                participants = new System.Windows.Data.CollectionViewSource { Source = App.ThisApp.ListOfConversations }.View;
 
-
-
-            ((ListCollectionView)Participants).CustomSort = new ClientPeerComparer() as System.Collections.IComparer;
-
-
-            //participants.CollectionChanged += (collection, args) => { System.Windows.MessageBox.Show("Collection changed event"); };
+                ((ListCollectionView)Participants).CustomSort = new ClientPeerComparer() as System.Collections.IComparer;
+            }
         }
 
         private void OnPropertyChanged(string propertyname)

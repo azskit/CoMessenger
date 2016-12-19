@@ -207,6 +207,7 @@
       <DependentUpon>StartScreenView.xaml</DependentUpon>
     </Compile>
     <Compile Include="StartScreen\StartScreenViewModel.cs" />
+    <Compile Include="Tools\NotifyPropertyChanged.cs" />
     <Page Include="Animations\Animations.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

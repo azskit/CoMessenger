@@ -27,6 +27,13 @@ namespace COMessengerClient
         {
             ConnectionManager.Client.Disconnect();
             App.ThisApp.History.Close();
+
+            if (App.ThisApp.MainWindow != null)
+            {
+                ((StartScreen.StartScreenView)App.ThisApp.MainWindow).ViewModel.IsLogonMode = true;
+                ((StartScreen.StartScreenView)App.ThisApp.MainWindow).ViewModel.Title = App.Product;
+            }
+
             ConnectionManager.Client.ViewModel.ConnectionStatus = String.Format(CultureInfo.CurrentCulture, App.ThisApp.Locally.LocaleStrings["Disconnected"]);
         }
 

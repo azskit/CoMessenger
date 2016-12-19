@@ -1,4 +1,4 @@
-﻿<Window x:Class="COMessengerClient.StartScreen.StartScreenView"
+﻿<Window xmlns:ContactList="clr-namespace:COMessengerClient.ContactList"  xmlns:CustomControls="clr-namespace:COMessengerClient.CustomControls"  x:Class="COMessengerClient.StartScreen.StartScreenView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:CorporateMessengerLibrary"
@@ -8,6 +8,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:application="clr-namespace:COMessengerClient"
         xmlns:system      ="clr-namespace:System;assembly=mscorlib"
+        xmlns:converters="clr-namespace:COMessengerClient.CustomControls.CustomConverters"
         
         mc:Ignorable="d"
         
@@ -18,11 +19,18 @@
         Width="{Binding Source={x:Static props:Settings.Default}, Path=MainWindowSize.Width, Mode=TwoWay}"
 
         
-        Title="Petal" 
-        Loaded="Window_Loaded" Icon="/COMessengerClient;component/Resources/Icons/Petal.ico">
+        Title="{Binding Title}"
+        Loaded="Window_Loaded" 
+        Icon="/COMessengerClient;component/Resources/Icons/Petal.ico">
+    <Window.Resources>
+        <ResourceDictionary>
+            <converters:BoolToVisibilityConverter x:Key="b2v"/>
+            <converters:BoolToInvisibilityConverter x:Key="b2i"/>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
-        <DockPanel DataContext="{x:Static application:App.ThisApp}">
-            <Menu Visibility="Visible" DockPanel.Dock="Top">
+        <DockPanel>
+            <Menu Visibility="Visible" DockPanel.Dock="Top"  DataContext="{x:Static application:App.ThisApp}">
                 <MenuItem Header="{Binding Path=Locally.LocaleStrings[Messenger], FallbackValue=Messenger}">
                     <!--Войти-->
                     <MenuItem Header="{Binding Path=Locally.LocaleStrings[Sign in], FallbackValue=Sign in}"
@@ -53,10 +61,16 @@
                 </Grid.ColumnDefinitions>
 
                 <!--<TabControl OverridesDefaultStyle="True"></TabControl>-->
-                
-                
-                
-                
+
+                <CustomControls:LogOnScreen Grid.ColumnSpan="3" Visibility="{Binding IsLogonMode, Converter={StaticResource b2v}}"/>
+
+
+                <GridSplitter Grid.Column="1"  Width="20" ShowsPreview="True" VerticalAlignment="Stretch" HorizontalAlignment="Center" Background="Transparent" Visibility="{Binding IsLogonMode, Converter={StaticResource b2i}}"/>
+                <ContactList:ContactListView 
+                    x:Name="ContactList" 
+                    Grid.Column="2" 
+                    Visibility="{Binding IsLogonMode, Converter={StaticResource b2i}}"/>
+
             </Grid>
         </DockPanel>
 
