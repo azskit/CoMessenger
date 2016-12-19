@@ -52,7 +52,7 @@ namespace COMessengerClient.ContactList
                         {
                             //Еще нигде не открыт
                             if (view.Parent == null)
-                                StartScreen.MainGrid.Children.Add(args.ClickedClientPeer.View);
+                                StartScreen.ConversationsHost.Children.Add(args.ClickedClientPeer.View);
 
 
                             view.Visibility = Visibility.Visible;
@@ -93,7 +93,7 @@ namespace COMessengerClient.ContactList
                         args.ClickedClientPeer.InitView();
                         args.ClickedClientPeer.View.Visibility = System.Windows.Visibility.Visible;
                         //startscreen.ConversationsGrid.Children.Add(args.ClickedClientPeer.View);
-                        StartScreen.MainGrid.Children.Add(args.ClickedClientPeer.View);
+                        StartScreen.ConversationsHost.Children.Add(args.ClickedClientPeer.View);
                         args.ClickedClientPeer.View.Peer.ViewModel.HasUnreadMessages = false;
                     }
 

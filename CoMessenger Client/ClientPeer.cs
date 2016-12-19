@@ -100,7 +100,7 @@ namespace COMessengerClient
                 App.ThisApp.ListOfConversations.CollectionChanged += 
                     (a, b) => 
                     { 
-                        if (b.NewItems.Contains(parent))
+                        if (b.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add && b.NewItems.Contains(parent))
                             participants.Filter = filter; 
                     };
 

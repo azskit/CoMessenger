@@ -48,6 +48,12 @@ namespace COMessengerClient
             }
         }
 
+        new public void Clear()
+        {
+            index.Clear();
+            base.Clear();
+        }
+
         public void Add(TKey key, TValue value)
         {
             if (index.ContainsKey(key))

@@ -46,15 +46,10 @@ namespace COMessengerClient.StartScreen
         {
             Title = App.Product;
 
-            ConnectionManager.Client.AuthorizationSuccess +=
-            (client, args) =>
-            {
-                Title = args.LoggedUser.DisplayName;
-            };
-
             ConnectionManager.Client.ContactListLoaded +=
             (client, args) =>
             {
+                Title = App.ThisApp.CurrentPeer.Peer.DisplayName;
                 IsLogonMode = false;
             };
         }
