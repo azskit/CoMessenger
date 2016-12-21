@@ -409,10 +409,13 @@ namespace CorporateMessengerLibrary
         {
             CMMessage KeyMessage = ReadMessage();
 
-            if (KeyMessage.Kind != MessageKind.CryptoKey)
-                throw new InvalidOperationException("Ожидался криптоключ вообще то...");
+            if (KeyMessage != null)
+            {
+                if (KeyMessage.Kind != MessageKind.CryptoKey)
+                    throw new InvalidOperationException("Ожидался криптоключ вообще то...");
 
-            clientPublicKey = (RSAParameters)KeyMessage.Message;
+                clientPublicKey = (RSAParameters)KeyMessage.Message;
+            }
         }
 
         protected byte[] CryptSomething(object something)

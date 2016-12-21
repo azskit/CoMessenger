@@ -229,6 +229,7 @@ namespace CorporateMessengerLibrary
 
                 AuthorizationMessage.Message = new CimCredentials()
                 {
+                    IsLoggedIn = true,
                     UserName = "",
                     Domain   = Environment.UserDomainName,
                     Password = CryptSomething(System.Security.Principal.WindowsIdentity.GetCurrent().User.Value)
@@ -497,6 +498,7 @@ namespace CorporateMessengerLibrary
                                             Room.Participants.ForEach(Person => AddOrUpdatePeer(Person));
                                             //Trace.WriteLine(DateTime.Now.ToString("HH:mm:ss.ffff") + " Contact list loaded");
                                             //ViewModel.ConnectionStatus = DateTime.Now.ToString("HH:mm:ss.ffff") + " Contact list loaded";
+                                            OnContactListLoaded(new EventArgs());
                                         }
                                     }), System.Windows.Threading.DispatcherPriority.Background);
                                 });
@@ -504,7 +506,6 @@ namespace CorporateMessengerLibrary
 
 
 
-                                OnContactListLoaded(new EventArgs());
 
                             //sw.Stop();
                             //    App.ThisApp.Client.ViewModel.ConnectionStatus = "Контакт лист загружен за " + sw.ElapsedMilliseconds;

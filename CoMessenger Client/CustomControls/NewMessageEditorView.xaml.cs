@@ -367,8 +367,14 @@ namespace COMessengerClient.ChatFace
 
                         NewMessageTextBox.Selection.Select(start, tr.End);
 
-                        
-
+                        NewMessageTextBox.Selection.Start.InsertLineBreak();
+                        NewMessageTextBox.Selection.Start.Paragraph.Inlines.Add(new MediaElement()
+                        {
+                            UnloadedBehavior = MediaState.Manual,
+                            Source = new Uri("file://C:\\secret.gif"),
+                            LoadedBehavior = MediaState.Play,
+                            Stretch = Stretch.None
+                        });
                         //NewMessageTextBox.Selection.
 
                         //MessageBox.Show(smile.Text);
