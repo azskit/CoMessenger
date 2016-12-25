@@ -61,7 +61,7 @@ namespace SimpleChat
             //Если существует подключение, то отправляем сообщение сразу
             if (User.Client != null && User.Client.State == ClientState.Connected)
             {
-                User.Client.PutOutMessage(new CMMessage()
+                User.Client.PutOutgoingMessage(new CMMessage()
                 {
                     Kind = MessageKind.RoutedMessage,
                     Message = message
@@ -88,9 +88,9 @@ namespace SimpleChat
             {
                 if (User.Client != null)
                 {
-                    msg.PrevMsgId = null;
+                    msg.PreviousMessageId = null;
 
-                    User.Client.PutOutMessage(new CMMessage()
+                    User.Client.PutOutgoingMessage(new CMMessage()
                     {
                         Kind = MessageKind.RoutedMessage,
                         Message = msg
@@ -131,7 +131,7 @@ namespace SimpleChat
         public void ProcessMessage(RoutedMessage message)
         {
             //сохраняем сообщение
-            message.PrevMsgId = Server.RoomsHistory.GetLastMsgTo(Room.PeerId, message.SendTime);
+            message.PreviousMessageId = Server.RoomsHistory.GetLastMessageTo(Room.PeerId, message.SendTime);
 
             Server.RoomsHistory.Save(message);
 
@@ -140,7 +140,7 @@ namespace SimpleChat
                 {
                     if (participant.User.Client != null && participant.User.Client.State == ClientState.Connected)
                     {
-                        participant.User.Client.PutOutMessage(new CMMessage()
+                        participant.User.Client.PutOutgoingMessage(new CMMessage()
                         {
                             Kind = MessageKind.RoutedMessage,
                             Message = message

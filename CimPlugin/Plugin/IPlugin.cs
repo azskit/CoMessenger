@@ -1,15 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security;
 using System.Text;
 
-namespace SimpleChat.Plugin
+namespace CimPlugin.Plugin
 {
     public interface IPlugin
     {
         string Name { get; }
         string Version { get; }
         string Author { get; }
-        object Data(Dictionary<string, string> query);
+
+        TextWriter WarningStream { get; set; }
+        TextWriter ErrorStream { get; set; }
+        TextWriter InfoStream { get; set; }
     }
+
+
 }

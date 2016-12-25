@@ -98,7 +98,7 @@ namespace CorporateMessengerLibrary
 
             RoutedMessage entry = new RoutedMessage();
 
-            entry.PrevMsgId = reader["PrevMsgID"] as string;
+            entry.PreviousMessageId = reader["PrevMsgID"] as string;
             entry.MessageId = reader["MessageID"] as string;
             entry.Sender = reader["Sender"] as string;
             entry.Receiver = reader["Receiver"] as string;
@@ -133,7 +133,7 @@ namespace CorporateMessengerLibrary
 
                 long position = (long)(decimal)ContentReader["PositionInFile"];
 
-                value.Kind = position >= 0 ? RoutedMessageKind.RichText : RoutedMessageKind.PlainText;
+                value.Kind = position >= 0 ? RoutedMessageKind.RichText : RoutedMessageKind.Plaintext;
 
                 if (value.Kind == RoutedMessageKind.RichText) 
                 {
@@ -171,7 +171,7 @@ namespace CorporateMessengerLibrary
                 if (message == null)
                     break;
 
-                NextID = message.PrevMsgId;
+                NextID = message.PreviousMessageId;
 
                 retList.Add(message);
             }
@@ -363,12 +363,12 @@ namespace CorporateMessengerLibrary
             KeepConnection = actualKeepConnection;
         }
 
-        public void Delete(RoutedMessage msg)
+        public void Delete(RoutedMessage message)
         {
-            if (msg == null)
+            if (message == null)
                 throw new ArgumentNullException("msg");
 
-            Delete(msg.MessageId);
+            Delete(message.MessageId);
         }
 
         private void Delete(string messageID)
@@ -467,10 +467,10 @@ namespace CorporateMessengerLibrary
                 #region
                 else
                 {
-                    if (entryToSave.PrevMsgId == null) entryToSave.PrevMsgId = String.Empty;
+                    if (entryToSave.PreviousMessageId == null) entryToSave.PreviousMessageId = String.Empty;
 
 
-                    if (!String.IsNullOrEmpty(entryToSave.PrevMsgId))
+                    if (!String.IsNullOrEmpty(entryToSave.PreviousMessageId))
                     {
 
                         cmd = HistoryDBConnection.CreateCommand();
@@ -478,7 +478,7 @@ namespace CorporateMessengerLibrary
                         cmd.CommandText = @"UPDATE [Messages] SET [PrevMsgID] = @CURMSGID  WHERE [PrevMsgID] = @PREVMSGID";
 
                         cmd.Parameters.Add(new OleDbParameter("CURMSGID", entryToSave.MessageId));
-                        cmd.Parameters.Add(new OleDbParameter("PREVMSGID", entryToSave.PrevMsgId));
+                        cmd.Parameters.Add(new OleDbParameter("PREVMSGID", entryToSave.PreviousMessageId));
 
                         cmd.ExecuteNonQuery();
                     }
@@ -489,7 +489,7 @@ namespace CorporateMessengerLibrary
                                              VALUES            (@MESSAGEID , @PREVMSGID , @SENDER , @RECEIVER , @SENDTIME )";
 
                     cmd.Parameters.Add(new OleDbParameter("MESSAGEID", entryToSave.MessageId));
-                    cmd.Parameters.Add(new OleDbParameter("PREVMSGID", entryToSave.PrevMsgId));
+                    cmd.Parameters.Add(new OleDbParameter("PREVMSGID", entryToSave.PreviousMessageId));
                     cmd.Parameters.Add(new OleDbParameter("SENDER",    entryToSave.Sender));
                     cmd.Parameters.Add(new OleDbParameter("RECEIVER",  entryToSave.Receiver));
                     cmd.Parameters.Add(new OleDbParameter("SENDTIME",  entryToSave.SendTime.ToOADate()));
@@ -649,7 +649,7 @@ namespace CorporateMessengerLibrary
             com.ExecuteNonQuery();
         }
 
-        public string GetLastMsgBetween(string peer1, string peer2, DateTime sendTime)
+        public string GetLastMessageBetween(string peer1, string peer2, DateTime sendTime)
         {
             OleDbCommand cmd;
             OleDbDataReader reader;
@@ -685,7 +685,7 @@ namespace CorporateMessengerLibrary
 
         }
 
-        public string GetLastMsgTo(string receiver, DateTime sendTime)
+        public string GetLastMessageTo(string receiver, DateTime sendTime)
         {
             OleDbCommand cmd;
             OleDbDataReader reader;

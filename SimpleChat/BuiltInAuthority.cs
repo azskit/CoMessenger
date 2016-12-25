@@ -12,27 +12,13 @@ using SimpleChat.Identity;
 
 namespace SimpleChat
 {
-    public class BuiltInUser : CMUser
-    {
-        public string Password { get; set; }
 
-        internal override bool CheckPassword(string password)
-        {
-            if (Password == MD5Helper.CreateMD5(password))   //Верный пароль
-                return true;
-            else if (Password == String.Empty && password == String.Empty) //Пароль не задан
-                return true;
-            else
-                return false;
-        }
-    }
 
     static class  BuiltInAuthority
     {
         /// <summary>
         /// Сериализатор списка пользователей
         /// </summary>
-        private static XmlSerializer serializer = new XmlSerializer(typeof(List<BuiltInUser>));
 
 //        /// <summary>
 //        /// Создать и сохранить пример списка встроенных пользователей
@@ -69,35 +55,7 @@ namespace SimpleChat
 //            }
 //        }
 
-        /// <summary>
-        /// Получить список пользователей из файла usersListFile
-        /// </summary>
-        /// <param name="usersListFile">Файл списка пользователей</param>
-        /// <returns>Список пользователей</returns>
-        public static IEnumerable<CMUser> GetBuiltInUsers(string usersListFile)
-        {
-            List<BuiltInUser> UserList = new List<BuiltInUser>();
 
-            if (File.Exists(usersListFile))
-            {
-
-                try
-                {
-                    using (Stream fs = new FileStream(usersListFile, FileMode.Open, FileAccess.Read, FileShare.Read))
-                    using (XmlReader xml_reader = new XmlTextReader(fs))
-                    {
-                        return (UserList = serializer.Deserialize(xml_reader) as List<BuiltInUser>);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.Error.WriteLine(CustomUtilites.FormatException(e));
-                    return new List<CMUser>();
-                }
-            }
-            else
-                throw new FileNotFoundException("Не найден файл списка пользователей", usersListFile);
-        }
 
 
 

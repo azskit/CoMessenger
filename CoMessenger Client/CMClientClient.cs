@@ -261,7 +261,7 @@ namespace CorporateMessengerLibrary
                 }
             }
 
-            ConnectionManager.Client.PutOutMessage(AuthorizationMessage);
+            ConnectionManager.Client.PutOutgoingMessage(AuthorizationMessage);
         }
 
         protected virtual void OnAuthorizationSuccess(AuthorizationSuccessEventArgs args)
@@ -396,9 +396,9 @@ namespace CorporateMessengerLibrary
 //                Debug.WriteLine("{0}: Получен сигнал о новом сообщении", DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.CurrentCulture));
 //#endif
 
-                while (InMessagesCount > 0)
+                while (IncomingMessagesCount > 0)
                 {
-                    CMMessage NewCMMessage = RetrieveInMessage();
+                    CMMessage NewCMMessage = RetrieveIncomingMessage();
 //#if DEBUG
 //                    Debug.WriteLine("{0}: searchResult dequeued", DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.CurrentCulture));
 //#endif

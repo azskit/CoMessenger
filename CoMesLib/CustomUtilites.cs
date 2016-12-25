@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CorporateMessengerLibrary
 {
-    public static class CustomUtilites
+    public static class CustomUtilities
     {
         public static string FormatException(Exception exceptionToFormat)
         {
