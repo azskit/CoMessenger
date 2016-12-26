@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Security;
 using System.Runtime.InteropServices;
 using System.Globalization;
+using System.Resources;
 
 namespace CorporateMessengerLibrary
 {
@@ -33,6 +34,9 @@ namespace CorporateMessengerLibrary
             public byte[] Password   { get; set; }
         }
 
+        public CultureInfo ClientCulture { get; set; } = CultureInfo.CurrentUICulture;
+
+        private ResourceManager Strings = new ResourceManager("CorporateMessengerLibrary.Resources.LocalizingString.CimLibraryStrings", typeof(CMClientBase).Assembly);
 
         public TcpClient Tcp { get; protected set; }
 
@@ -183,7 +187,7 @@ namespace CorporateMessengerLibrary
                     //StreamWriter writer = new StreamWriter(stream);
                     lock (Tcp)
                     {
-                         Serializator.Formatter.Serialize(CStream, mes);
+                         Serializer.Formatter.Serialize(CStream, mes);
                     }
 
                     LastActivity = DateTime.Now;
@@ -192,15 +196,18 @@ namespace CorporateMessengerLibrary
 #if DEBUG
                     if (mes.Kind == MessageKind.RoutedMessage)
                     {
-                        Console.WriteLine("{0}: Отправлено сообщение", DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.InvariantCulture));
+                        //Console.WriteLine("{0}: Отправлено сообщение", DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.InvariantCulture));
+                        Console.WriteLine(String.Format("{0}: {1}", DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.InvariantCulture), Strings.GetString("MessageHasBeenSent", ClientCulture)));
                     }
                     else if (mes.Kind == MessageKind.Ping)
                     {
-                        Console.WriteLine("{0}: Ping sent", Tcp.Client.RemoteEndPoint);
+                        //Console.WriteLine("{0}: Ping sent", Tcp.Client.RemoteEndPoint);
+                        Console.WriteLine(Strings.GetString("PingSent", ClientCulture), Tcp.Client.RemoteEndPoint);
                     }
                     else if (mes.Kind == MessageKind.Disconnect)
                     {
-                        Console.WriteLine("{0}: Disconnect sent", Tcp.Client.RemoteEndPoint);
+                        //Console.WriteLine("{0}: Disconnect sent", Tcp.Client.RemoteEndPoint);
+                        Console.WriteLine(Strings.GetString("DisconnectSent", ClientCulture), Tcp.Client.RemoteEndPoint);
                     }
 
 #endif
@@ -246,7 +253,7 @@ namespace CorporateMessengerLibrary
             }
             else
             {
-                throw new InvalidOperationException("Подключение не установлено");
+                throw new InvalidOperationException(Strings.GetString("NoConnection", ClientCulture));
             }
 
         }
@@ -261,16 +268,16 @@ namespace CorporateMessengerLibrary
 
             ping.Kind = MessageKind.Ping;
 
-            try
-            {
-                PutOutMessage(ping);
+            //try
+            //{
+                PutOutgoingMessage(ping);
                 //state = ClientState.Connected;
-            }
-            catch (System.IO.IOException e)
-            {
-                State = ClientState.MarkedToKill;
-                Console.WriteLine("{0} lost connection ({1})", Tcp.Client.RemoteEndPoint.ToString(), e.Message);
-            }
+            //}
+            //catch (System.IO.IOException e)
+            //{
+            //    State = ClientState.MarkedToKill;
+            //    Console.WriteLine("{0} lost connection ({1})", Tcp.Client.RemoteEndPoint.ToString(), e.Message);
+            //}
         }
 
 
@@ -288,7 +295,7 @@ namespace CorporateMessengerLibrary
                 lock (Tcp)
                 {
                     //msgsize = cStream.Position;
-                    newmes = Serializator.Formatter.Deserialize(CStream) as CMMessage;
+                    newmes = Serializer.Formatter.Deserialize(CStream) as CMMessage;
                     //msgsize = cStream.Position - msgsize;
                 }
 
@@ -350,22 +357,22 @@ namespace CorporateMessengerLibrary
             return newmes;
         }
 
-        public CMMessage RetrieveInMessage()
+        public CMMessage RetrieveIncomingMessage()
         {
             return InMessageQueue.Dequeue();
         }
 
-        public void PutOutMessage(CMMessage mes)
+        public void PutOutgoingMessage(CMMessage mes)
         {
             OutMessageQueue.Enqueue(mes);
         }
 
-        public int InMessagesCount
+        public int IncomingMessagesCount
         {
             get { return InMessageQueue.Count; }
         }
 
-        public int OutMessagesCount
+        public int OutgoingMessagesCount
         {
             get { return OutMessageQueue.Count; }
         }
@@ -423,7 +430,7 @@ namespace CorporateMessengerLibrary
             //Зашифровать вонючее сообщение
             using (MemoryStream toEncrypt = new MemoryStream())
             {
-                Serializator.Formatter.Serialize(toEncrypt, something);
+                Serializer.Formatter.Serialize(toEncrypt, something);
                 
                 cryptoProvider.ImportParameters(clientPublicKey);
                 return cryptoProvider.Encrypt(toEncrypt.ToArray(), true);
@@ -434,7 +441,9 @@ namespace CorporateMessengerLibrary
         {
             using (MemoryStream toEncrypt = new MemoryStream(cryptoProvider.Decrypt(encrypted, true)))
             {
-                return Serializator.Formatter.Deserialize(toEncrypt);
+                if (toEncrypt.Length == 0)
+                    return null;
+                return Serializer.Formatter.Deserialize(toEncrypt);
             }
         }
 

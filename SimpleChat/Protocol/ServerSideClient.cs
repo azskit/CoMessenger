@@ -27,18 +27,45 @@ namespace SimpleChat.Protocol
 
             if (credentials == null)
             {
-                PutOutMessage(new CMMessage()
+                PutOutgoingMessage(new CMMessage()
                 {
                     Kind = MessageKind.AuthorizationError,
                     Message = ErrorKind.UserNotPresented
                 });
+                return;
             }
 
+            if (!Server.CoMessengerUsers.TryGetValue(new Server.FullUserName(credentials.Domain,credentials.UserName), out FoundUser))
+            {
+                PutOutgoingMessage(new CMMessage()
+                {
+                    Kind = MessageKind.AuthorizationError,
+                    Message = ErrorKind.UserNotFound
+                });
+                return;
+            }
+
+            string PasswordCheckError = String.Empty;
+            if (FoundUser.AuthData.CheckPassword(DecryptPassword(credentials.Password) as string, out PasswordCheckError))
+            {
+                Server.AcceptAuthorization(this, FoundUser);
+            }
+            else
+            {
+                PutOutgoingMessage(new CMMessage()
+                {
+                    Kind = MessageKind.AuthorizationError,
+                    Message = ErrorKind.WrongPassword
+                });
+            }
+
+            /*
             //Без авторизации - вход под текущим пользователем
             if (credentials.IsLoggedIn)
             {
-                FoundUser = Server.CoMessengerUsers.Find((UserInList) => { return (UserInList.UserId == DecryptSomething(credentials.Password) as string); });
-                if (FoundUser != null)
+                //FoundUser = Server.CoMessengerUsers.First()
+                //FoundUser = Server.CoMessengerUsers.Find((UserInList) => { return (UserInList.UserId == DecryptSomething(credentials.Password) as string); });
+                if (Server.CoMessengerUsers.TryGetValue(credentials.UserName, out FoundUser))
                 {
                     Server.AcceptAuthorization(this, FoundUser);
                 }
@@ -137,7 +164,7 @@ namespace SimpleChat.Protocol
                         });
                     }
                 }
-            }
+            }*/
         }
 
     }

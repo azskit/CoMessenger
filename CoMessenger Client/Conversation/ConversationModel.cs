@@ -153,7 +153,7 @@ namespace COMessengerClient.Conversation
                     }
 
                     break;
-                case RoutedMessageKind.PlainText:
+                case RoutedMessageKind.Plaintext:
                     tr.Text = value.Text ?? "";
                     break;
             }
@@ -266,7 +266,7 @@ namespace COMessengerClient.Conversation
                         conView.NewMessageBox.IsRichText = true;
 
                         break;
-                    case RoutedMessageKind.PlainText:
+                    case RoutedMessageKind.Plaintext:
                         conView.NewMessageBox.NewMessageTextBox.AppendText(currentValue.Text);
 
                         break;
@@ -415,7 +415,7 @@ namespace COMessengerClient.Conversation
                 }
                 else
                 {
-                    newValue.Kind = RoutedMessageKind.PlainText;
+                    newValue.Kind = RoutedMessageKind.Plaintext;
                     newValue.Text = tr.Text;
                 }
 
@@ -424,12 +424,12 @@ namespace COMessengerClient.Conversation
                 //Сообщения комнат сохраняем когда получим ответ от сервера
                 if (Receiver.Peer.PeerType == PeerType.Person)
                 {
-                    newMessage.PrevMsgId = App.ThisApp.History.GetLastMsgBetween(newMessage.Sender, newMessage.Receiver, newMessage.SendTime);
+                    newMessage.PreviousMessageId = App.ThisApp.History.GetLastMessageBetween(newMessage.Sender, newMessage.Receiver, newMessage.SendTime);
                     App.ThisApp.History.Save(newMessage);
-                    newMessage.PrevMsgId = null;
+                    newMessage.PreviousMessageId = null;
                 }
 
-                ConnectionManager.Client.PutOutMessage(new CMMessage() { Kind = MessageKind.RoutedMessage, Message = newMessage });
+                ConnectionManager.Client.PutOutgoingMessage(new CMMessage() { Kind = MessageKind.RoutedMessage, Message = newMessage });
 
                 AddNewMessage(conView, newMessage);
 
@@ -516,7 +516,7 @@ namespace COMessengerClient.Conversation
                 query.To = String.Empty; //До нашего последнего сообщения
                 //query.QueryID = Guid.NewGuid().ToString();
 
-                ConnectionManager.Client.PutOutMessage(new CMMessage()
+                ConnectionManager.Client.PutOutgoingMessage(new CMMessage()
                 {
                     Kind = MessageKind.Query,
                     Message = new QueryMessage()

@@ -36,7 +36,7 @@ namespace CorporateMessengerLibrary
     }
 
 
-    public static class Serializator
+    public static class Serializer
     {
         public static readonly BinaryFormatter Formatter = new BinaryFormatter();
     }
@@ -61,7 +61,7 @@ namespace CorporateMessengerLibrary
         //public string            Text      { get; set; }               //Текст сообщения
         //public byte              Version   { get; set; }               //Версия сообщения (увеличивается при редактировании)
 
-        public string            PrevMsgId { get; set; }
+        public string            PreviousMessageId { get; set; }
 
         public SortedList<int, MessageValue> Values { get; private set; }
 
@@ -109,7 +109,7 @@ namespace CorporateMessengerLibrary
     public enum RoutedMessageKind
     {
         RichText,
-        PlainText
+        Plaintext
     }
 
     public enum QueryMessageKind

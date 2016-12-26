@@ -109,7 +109,7 @@ namespace COMessengerClient.Conversation
         private void LeaveRoomClick(object sender, RoutedEventArgs e)
         {
             //Уведомим сервер
-            ConnectionManager.Client.PutOutMessage(
+            ConnectionManager.Client.PutOutgoingMessage(
                 new CMMessage()
                 {
                     Kind = MessageKind.LeaveRoom,
@@ -126,7 +126,7 @@ namespace COMessengerClient.Conversation
         private void CloseRoomClick(object sender, RoutedEventArgs e)
         {
             //Уведомим сервер
-            ConnectionManager.Client.PutOutMessage(
+            ConnectionManager.Client.PutOutgoingMessage(
                 new CMMessage()
                 {
                     Kind = MessageKind.CloseRoom,
@@ -191,7 +191,7 @@ namespace COMessengerClient.Conversation
 
             sw.Start();
 
-            ConnectionManager.Client.PutOutMessage(new CMMessage()
+            ConnectionManager.Client.PutOutgoingMessage(new CMMessage()
             {
                 Kind = MessageKind.Query,
                 Message = new QueryMessage()

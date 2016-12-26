@@ -50,7 +50,7 @@ namespace COMessengerClient
         public static void Shutdown()
         {
             if (Client != null && Client.State == ClientState.Connected)
-                Client.PutOutMessage(new CMMessage() { Kind = MessageKind.Disconnect });
+                Client.PutOutgoingMessage(new CMMessage() { Kind = MessageKind.Disconnect });
 
             Client = null;
         }
