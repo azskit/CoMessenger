@@ -312,7 +312,7 @@ namespace SimpleChat
             clients.FindAll((client) => client.User == FoundUser).ToList().ForEach(
                 (client) =>
                 {
-                    if (client != null)
+                    if (client != null && client.State != ClientState.Disconnected)
                     {
                         Console.WriteLine("Disconnecting " + client.Tcp.Client.RemoteEndPoint);
                         client.User.Client = null;
@@ -529,7 +529,8 @@ namespace SimpleChat
 
             catalog.Catalogs.Add(new AssemblyCatalog(typeof(Server).Assembly));
 
-            catalog.Catalogs.Add(new DirectoryCatalog("..\\..\\Plugins"));
+            //catalog.Catalogs.Add(new DirectoryCatalog("..\\..\\Plugins"));
+            catalog.Catalogs.Add(new DirectoryCatalog("Plugins"));
 
             container = new CompositionContainer(catalog);
             plugins = container.GetExportedValues<IPlugin>();
@@ -725,27 +726,34 @@ namespace SimpleChat
 
             Console.WriteLine("Starting listener...");
 
-            server.Start();
-
-            // Запускаем прослушивание в отдельном потоке
-            server.BeginAcceptTcpClient(
-                callback: new AsyncCallback(OnNewConnection),
-                state: server
-                );
-
-            Console.WriteLine("Listening on {0}...", server.LocalEndpoint);
-
-            bool notStop = true;
-
-            while (notStop)
+            try
             {
-                Console.Write(">");
-                string msg = Console.ReadLine();
+                server.Start();
 
-                if (msg == "e" || msg == "exit")
-                    notStop = false;
-                //else if (!string.IsNullOrEmpty(msg))
-                //    clients.ForEach((a) => { a.PutOutMessage(new CMMessage() { Kind = MessageKind.Text, Message = msg }); });
+                // Запускаем прослушивание в отдельном потоке
+                server.BeginAcceptTcpClient(
+                    callback: new AsyncCallback(OnNewConnection),
+                    state: server
+                    );
+
+                Console.WriteLine("Listening on {0}...", server.LocalEndpoint);
+
+                bool notStop = true;
+
+                while (notStop)
+                {
+                    Console.Write(">");
+                    string msg = Console.ReadLine();
+
+                    if (msg == "e" || msg == "exit")
+                        notStop = false;
+                    //else if (!string.IsNullOrEmpty(msg))
+                    //    clients.ForEach((a) => { a.PutOutMessage(new CMMessage() { Kind = MessageKind.Text, Message = msg }); });
+                }
+            }
+            catch (SocketException e) when (e.SocketErrorCode == SocketError.AddressAlreadyInUse)
+            {
+                Console.WriteLine("Address {server.LocalEndpoint} is already in use");
             }
 
             NewMesagesThread.Abort();

@@ -25,6 +25,8 @@ namespace COMessengerClient.CustomControls
         public ScrollViewer ActualScrollViewer { get; private set; }
         public StackPanel BackgroundStackPanel { get; private set; }
 
+        private object dummy = new object();
+
         public bool IsBusy
         {
             get { return BusyIndicator.Visibility == System.Windows.Visibility.Visible; }
@@ -98,64 +100,67 @@ namespace COMessengerClient.CustomControls
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (ActualScrollViewer == null) //Первичная загрузка
+            lock (dummy)
             {
-                ActualScrollViewer = ScrollViewerHelper.GetChild<ScrollViewer>(ChatBox);
+                if (ActualScrollViewer == null) //Первичная загрузка
+                {
+                    ActualScrollViewer = ScrollViewerHelper.GetChild<ScrollViewer>(ChatBox);
 
-                //ActualScrollViewer.CanContentScroll = false;
+                    //ActualScrollViewer.CanContentScroll = false;
 
-                //Вставка фона
-                UIElement flowdoc = ActualScrollViewer.Content as UIElement;
+                    //Вставка фона
+                    UIElement flowdoc = ActualScrollViewer.Content as UIElement;
 
-                ActualScrollViewer.Content = null;
+                    ActualScrollViewer.Content = null;
 
-                Grid newgrid = new Grid();
+                    Grid newgrid = new Grid();
 
-                //Background_scroll.Content = null;
+                    //Background_scroll.Content = null;
 
-                newgrid.Children.Add(BackgroundStackPanel);
-                newgrid.Children.Add(flowdoc);
+                    newgrid.Children.Add(BackgroundStackPanel);
+                    newgrid.Children.Add(flowdoc);
 
-                BindingOperations.SetBinding(flowdoc, FrameworkElement.WidthProperty, new Binding("ViewportWidth") { Source = ActualScrollViewer });
+                    BindingOperations.SetBinding(flowdoc, FrameworkElement.WidthProperty, new Binding("ViewportWidth") { Source = ActualScrollViewer });
 
-                ActualScrollViewer.Content = newgrid;
+                    ActualScrollViewer.Content = newgrid;
 
-                //ActualScrollViewer.
-
-
-                //Перестановка скроллбара
-                Grid grd = ScrollViewerHelper.GetChild<Grid>(ActualScrollViewer);
-
-                MainGrid.Children.Remove(Header);
-
-                //Меняем описание ширины колонок
-                grd.ColumnDefinitions[0].Width = GridLength.Auto;
-                grd.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
+                    //ActualScrollViewer.
 
 
+                    //Перестановка скроллбара
+                    Grid grd = ScrollViewerHelper.GetChild<Grid>(ActualScrollViewer);
 
-                //Ставим контент в правую колонку
-                grd.Children[1].SetValue(Grid.ColumnProperty, 1);
+                    MainGrid.Children.Remove(Header);
 
-                //ScrollContentPresenter content = grd.Children[1] as ScrollContentPresenter;
-
-                //FrameworkElement ele = content.Content as FrameworkElement;
-
-                //Grid doc = content.Content as Grid;
-
-                //FlowDocumentView doc.Children[1]
+                    //Меняем описание ширины колонок
+                    grd.ColumnDefinitions[0].Width = GridLength.Auto;
+                    grd.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
 
 
-                //doc.Background = new SolidColorBrush(Colors.AliceBlue);
 
-                //А скроллбар в левую
-                grd.Children[2].SetValue(Grid.ColumnProperty, 0);
+                    //Ставим контент в правую колонку
+                    grd.Children[1].SetValue(Grid.ColumnProperty, 1);
+
+                    //ScrollContentPresenter content = grd.Children[1] as ScrollContentPresenter;
+
+                    //FrameworkElement ele = content.Content as FrameworkElement;
+
+                    //Grid doc = content.Content as Grid;
+
+                    //FlowDocumentView doc.Children[1]
 
 
-                //System.Windows.Controls.Primitives.ScrollBar
-                grd.Children.Insert(2, Header);
+                    //doc.Background = new SolidColorBrush(Colors.AliceBlue);
 
-                Header.SetValue(Grid.ColumnProperty, 1);
+                    //А скроллбар в левую
+                    grd.Children[2].SetValue(Grid.ColumnProperty, 0);
+
+
+                    //System.Windows.Controls.Primitives.ScrollBar
+                    grd.Children.Insert(2, Header);
+
+                    Header.SetValue(Grid.ColumnProperty, 1);
+                }
             }
         }
 
