@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UsersPlan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <DomainList>
+    <DomainEntry DomainName="BRYANSK">
+      <MainGroup GroupName="Пользователи домена" />
+      <PermanentRoomGroups>
+        <GroupEntry GroupName="Администраторы домена" />
+        <GroupEntry GroupName="Support" />
+        <GroupEntry GroupName="Analitics" />
+      </PermanentRoomGroups>
+    </DomainEntry>
+    <DomainEntry DomainName="SOFTLAB">
+      <MainGroup GroupName="SUPP_RS-BANK" />
+      <PermanentRoomGroups>
+        <GroupEntry GroupName="* Softlab RS-Bank Stuff Implementation" />
+        <GroupEntry GroupName="* Softlab RS-Bank Dep Support" />
+      </PermanentRoomGroups>
+    </DomainEntry>
+  </DomainList>
+</UsersPlan>
