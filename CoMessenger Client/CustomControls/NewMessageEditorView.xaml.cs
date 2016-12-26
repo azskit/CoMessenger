@@ -351,30 +351,73 @@ namespace COMessengerClient.ChatFace
             }
         }
 
+        //private Image SelectImage()
+        //{
+        //        string filePath = "C:\\secret.gif";
+        //        BitmapImage bitmap = new BitmapImage(new Uri(filePath, UriKind.Absolute));
+        //        Image image = new Image();
+        //        image.Source = bitmap;
+        //        image.Width = bitmap.Width;
+        //        image.Height = bitmap.Height;
+        //        return image;
+        //}
+
         private void NewMessageTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Space)
             {
-                TextRange tr = new TextRange(NewMessageTextBox.Document.ContentStart, NewMessageTextBox.Document.ContentEnd);
+                TextRange tr = new TextRange(NewMessageTextBox.CaretPosition.Paragraph.ContentStart, NewMessageTextBox.CaretPosition);
 
                 if (!string.IsNullOrEmpty(tr.Text))
                 {
-                    if (tr.Text.EndsWith(":)\r\n"))
+                    if (tr.Text.EndsWith(":)", StringComparison.Ordinal))
                     {
-                        TextPointer start = tr.End.GetPositionAtOffset(-4, LogicalDirection.Backward);
+                        TextPointer start = tr.End.GetPositionAtOffset(-(":)".Length), LogicalDirection.Backward);
 
-                        //TextRange smile = new TextRange(start, tr.End);
+                        //Run curRun = start.Parent as Run;
 
-                        NewMessageTextBox.Selection.Select(start, tr.End);
+                        start.DeleteTextInRun(":)".Length);
 
-                        NewMessageTextBox.Selection.Start.InsertLineBreak();
-                        NewMessageTextBox.Selection.Start.Paragraph.Inlines.Add(new MediaElement()
+                        new InlineUIContainer(new MediaElement()
                         {
                             UnloadedBehavior = MediaState.Manual,
                             Source = new Uri("file://C:\\secret.gif"),
                             LoadedBehavior = MediaState.Play,
                             Stretch = Stretch.None
-                        });
+                        }, start);
+
+                        //curRun.
+
+                        //TextRange smile = new TextRange(start, tr.End);
+
+                        //NewMessageTextBox.Selection.Select(start, tr.End);
+
+                        //NewMessageTextBox.Selection.Text = String.Empty;
+                        //Image image = SelectImage();
+
+
+
+                        //if (image != null)
+                        //{
+                        //TextPointer tp = NewMessageTextBox.CaretPosition.GetInsertionPosition(LogicalDirection.Forward);
+                        //    Floater floater = new Floater(new BlockUIContainer(image), tp);
+                        //}
+
+                        //NewMessageTextBox.Selection.Start.InsertLineBreak();
+                        //tp.Paragraph.Inlines.Add(new MediaElement()
+                        //{
+                        //    UnloadedBehavior = MediaState.Manual,
+                        //    Source = new Uri("file://C:\\secret.gif"),
+                        //    LoadedBehavior = MediaState.Play,
+                        //    Stretch = Stretch.None
+                        //});
+
+                        NewMessageTextBox.CaretPosition = NewMessageTextBox.CaretPosition.GetPositionAtOffset(3);
+
+                        IsRichText = true;
+
+                        //((Paragraph)NewMessageTextBox.Document.Blocks.LasteBlock).Blocks.Add(new Run("Hello bitch"));
+                        //NewMessageTextBox.Document.Blocks.Add(new BlockUIContainer(new TextBlock(new Run("biiiiiiiiiiiiitch!"))));
                         //NewMessageTextBox.Selection.
 
                         //MessageBox.Show(smile.Text);

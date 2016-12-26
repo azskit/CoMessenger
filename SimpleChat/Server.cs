@@ -278,7 +278,7 @@ namespace SimpleChat
             clients.FindAll((client) => client.User == FoundUser).ToList().ForEach(
                 (client) =>
                 {
-                    if (client != null)
+                    if (client != null && client.State != ClientState.Disconnected)
                     {
                         Console.WriteLine("Disconnecting " + client.Tcp.Client.RemoteEndPoint);
                         client.User.Client = null;

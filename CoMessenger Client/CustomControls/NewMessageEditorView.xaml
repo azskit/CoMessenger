@@ -54,9 +54,9 @@
                 </Style>
             </RichTextBox.Resources>
             <FlowDocument>
-                <BlockUIContainer>
+                <!--<BlockUIContainer>
                     <MediaElement  x:Name="myGif" UnloadedBehavior="Manual" Source="file://C:\secret.gif" LoadedBehavior="Play" Stretch="None"/>
-                </BlockUIContainer>
+                </BlockUIContainer>-->
             </FlowDocument>
 
         </RichTextBox>
