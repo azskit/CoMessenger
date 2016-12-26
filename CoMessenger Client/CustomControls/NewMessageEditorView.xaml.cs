@@ -44,7 +44,7 @@ namespace COMessengerClient.ChatFace
         public static readonly DependencyProperty IsEditingModeProperty =
             DependencyProperty.Register("IsEditingMode", typeof(bool), typeof(NewMessageEditorView), new UIPropertyMetadata(false));
 
-        
+        public System.Drawing.Bitmap img { get; set; } = (System.Drawing.Bitmap)System.Drawing.Image.FromFile(@"C:\secret.gif");
 
 
         public NewMessageEditorView()
@@ -366,6 +366,9 @@ namespace COMessengerClient.ChatFace
         {
             if (e.Key == Key.Space)
             {
+                if (NewMessageTextBox.CaretPosition.Paragraph == null)
+                    return;
+
                 TextRange tr = new TextRange(NewMessageTextBox.CaretPosition.Paragraph.ContentStart, NewMessageTextBox.CaretPosition);
 
                 if (!string.IsNullOrEmpty(tr.Text))
@@ -378,12 +381,12 @@ namespace COMessengerClient.ChatFace
 
                         start.DeleteTextInRun(":)".Length);
 
-                        new InlineUIContainer(new MediaElement()
+                        new InlineUIContainer(new AnimatedImage()
                         {
-                            UnloadedBehavior = MediaState.Manual,
-                            Source = new Uri("file://C:\\secret.gif"),
-                            LoadedBehavior = MediaState.Play,
-                            Stretch = Stretch.None
+                            AnimatedBitmap = img,
+                            Stretch = Stretch.None,
+                            Name = "smile",
+                            Tag = img
                         }, start);
 
                         //curRun.

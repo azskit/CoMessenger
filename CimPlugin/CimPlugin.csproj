@@ -45,7 +45,6 @@
     <Compile Include="Plugin\Groups\Group.cs" />
     <Compile Include="Plugin\Groups\IGroupCollector.cs" />
     <Compile Include="Plugin\IPlugin.cs" />
-    <Compile Include="Plugin\PluginManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

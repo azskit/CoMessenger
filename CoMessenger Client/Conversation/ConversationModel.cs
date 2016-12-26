@@ -147,11 +147,23 @@ namespace COMessengerClient.Conversation
             {
                 case RoutedMessageKind.RichText:
 
-                    using (MemoryStream stream = new MemoryStream(Compressing.Decompress(value.Body)))
-                    {
-                        tr.Load(stream, DataFormats.XamlPackage);
-                    }
+                    //using (MemoryStream stream = new MemoryStream(Compressing.Decompress(value.Body)))
+                    //{
+                    //    tr.Load(stream, DataFormats.XamlPackage);
+                    //}
 
+
+                    //using (MemoryStream stream = new MemoryStream(Compressing.Decompress(value.Body)))
+                    //using (System.Xaml.XamlReader reader =                     {
+                    //    FlowDocument deserialized = System.Windows.Markup.XamlReader.Load as FlowDocument;
+                    //}
+
+
+
+                    StringReader stringReader = new StringReader(Encoding.UTF8.GetString(Compressing.Decompress(value.Body)));
+                    System.Xml.XmlReader xmlReader = System.Xml.XmlReader.Create(stringReader);
+                    FlowDocument deserialized = System.Windows.Markup.XamlReader.Load(xmlReader) as FlowDocument;
+                    return deserialized.Blocks;
                     break;
                 case RoutedMessageKind.Plaintext:
                     tr.Text = value.Text ?? "";
@@ -350,9 +362,19 @@ namespace COMessengerClient.Conversation
 
             TextRange range = new TextRange(fldoc.ContentStart, fldoc.ContentEnd);
 
+            string savedButton = System.Windows.Markup.XamlWriter.Save(fldoc);
+
+            using (FileStream fstream = new FileStream("debug_message.txt", FileMode.Create))
+            {
+                fstream.Write(Encoding.UTF8.GetBytes(savedButton), 0, Encoding.UTF8.GetBytes(savedButton).Length);
+            }
+
+            return Compressing.Compress(Encoding.UTF8.GetBytes(savedButton));
+
+
             using (MemoryStream streamXAML = new MemoryStream())
             {
-                range.Save(streamXAML, DataFormats.XamlPackage);
+                range.Save(streamXAML, DataFormats.XamlPackage, true);
                 streamXAML.Position = 0;
 
                 BinaryReader reader = new BinaryReader(streamXAML);
@@ -361,6 +383,7 @@ namespace COMessengerClient.Conversation
                     return Compressing.Compress(reader.ReadBytes((int)streamXAML.Length));
                 //}
             }
+
         }
 
         internal static void SendMessage(ConversationView conView, ClientPeer Receiver)
