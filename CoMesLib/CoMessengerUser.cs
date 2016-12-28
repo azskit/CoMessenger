@@ -96,25 +96,6 @@ namespace CorporateMessengerLibrary
 
 
     }
-
-    /*
-    public class CoMessengerUserComparer : Comparer<CoMessengerUser>
-    {
-        public override int Compare(CoMessengerUser x, CoMessengerUser y)
-        {
-            if (x.Status == y.Status)
-                return x.DisplayName.CompareTo(y.DisplayName);
-            else if (x.Status == PeerStatus.Online)
-                return -1;
-            else if (y.Status == PeerStatus.Online)
-                return 1;
-            else
-                return x.DisplayName.CompareTo(y.DisplayName);
-        }
-    
-
-    }
-    */
     public enum PeerStatus
     {
         Online,
@@ -122,58 +103,4 @@ namespace CorporateMessengerLibrary
         Deleted,
         Common
     }
-
-    //public enum RoomStatus
-    //{
-    //    Common
-
-    //}
-
-    public static class MD5Helper
-    {
-        public static string CreateMD5(string input)
-        {
-            // Use input string to calculate MD5 hash
-            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
-            {
-                byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
-                byte[] hashBytes = md5.ComputeHash(inputBytes);
-
-                // Convert the byte array to hexadecimal string
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < hashBytes.Length; i++)
-                {
-                    sb.Append(hashBytes[i].ToString("X2", CultureInfo.InvariantCulture));
-                }
-                return sb.ToString();
-            }
-        }
-    }
-
-    [Serializable]
-    public class CMGroup
-    {
-        public string GroupId { get; private set; }
-        public List<string> UserIds { get; } = new List<string>();
-        public string DisplayName { get; private set; }
-
-        public CMGroup(string displayName, string groupId, IEnumerable<string> userIds)
-        {
-            DisplayName = displayName;
-            GroupId = groupId;
-            UserIds.AddRange(userIds);
-        }
-        //[NonSerialized]
-        //private List<CoMessengerUser> users;
-        //[XmlIgnore]
-        //public List<CoMessengerUser> Users
-        //{
-        //    get { return users; }
-        //    set { users = value; }
-        //}
-
-    }
-
-
-
 }

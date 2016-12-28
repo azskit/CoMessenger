@@ -142,7 +142,7 @@ namespace CorporateMessengerLibrary
                         using (FileStream formattingFileStream = new FileStream(formattingFileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                         {
                             formattingFileStream.Position = position;
-                            value.Body = fmt.Deserialize(formattingFileStream) as byte[];
+                            value.FormattedText = fmt.Deserialize(formattingFileStream) as byte[];
                         }
                     }
                 }
@@ -534,7 +534,7 @@ namespace CorporateMessengerLibrary
                     using (FileStream formattingFileStream = new FileStream(formattingFileName, FileMode.Append, FileAccess.Write, FileShare.Read))
                     {
                         position = formattingFileStream.Position;
-                        fmt.Serialize(formattingFileStream, value.Body);
+                        fmt.Serialize(formattingFileStream, value.FormattedText);
                     }
                 }
             }
