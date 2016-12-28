@@ -28,7 +28,7 @@ namespace CorporateMessengerLibrary
         [Serializable]
         protected class CimCredentials
         {
-            public bool   IsLoggedIn { get; set; }
+            public bool   SingleSignOn { get; set; }
             public string UserName   { get; set; }
             public string Domain     { get; set; }
             public byte[] Password   { get; set; }

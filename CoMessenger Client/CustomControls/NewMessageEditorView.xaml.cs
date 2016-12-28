@@ -415,7 +415,7 @@ namespace COMessengerClient.ChatFace
                         //    Stretch = Stretch.None
                         //});
 
-                        NewMessageTextBox.CaretPosition = NewMessageTextBox.CaretPosition.GetPositionAtOffset(3);
+                        NewMessageTextBox.CaretPosition = NewMessageTextBox.CaretPosition.GetPositionAtOffset(3) ?? NewMessageTextBox.CaretPosition;
 
                         IsRichText = true;
 

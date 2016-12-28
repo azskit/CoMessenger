@@ -229,8 +229,8 @@ namespace CorporateMessengerLibrary
 
                 AuthorizationMessage.Message = new CimCredentials()
                 {
-                    IsLoggedIn = true,
-                    UserName = "",
+                    SingleSignOn = true,
+                    UserName = Environment.UserName,
                     Domain   = Environment.UserDomainName,
                     Password = CryptSomething(System.Security.Principal.WindowsIdentity.GetCurrent().User.Value)
                     

@@ -87,6 +87,10 @@ namespace COMessengerClient
 
             InitializeComponent();
 
+            EditorHelper.Register<System.Windows.Controls.Image, CustomImageConvertor>();
+            EditorHelper.RegisterVS<ImageSource, CustomImageValueSerializer>();
+
+
             ThisApp = (App)App.Current;
             Locally = new LocalizationUI();
 

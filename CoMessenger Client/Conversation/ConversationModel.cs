@@ -20,6 +20,12 @@ using System.Collections.ObjectModel;
 using COMessengerClient.CustomControls.CustomConverters;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Media;
+using System.Windows.Markup;
+using COMessengerClient.ChatFace;
+using System.Xml;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Markup.Primitives;
 
 namespace COMessengerClient.Conversation
 {
@@ -68,6 +74,80 @@ namespace COMessengerClient.Conversation
         }
 
     }
+
+    static class EditorHelper
+    {
+        public static void Register<T, TC>()
+        {
+            Attribute[] attr = new Attribute[1];
+            TypeConverterAttribute vConv = new TypeConverterAttribute(typeof(TC));
+            attr[0] = vConv;
+            var i = TypeDescriptor.AddAttributes(typeof(T), attr);
+
+           
+
+            
+        }
+        public static void RegisterVS<T, TC>()
+        {
+            Attribute[] attr = new Attribute[1];
+            ValueSerializerAttribute vConv = new ValueSerializerAttribute(typeof(TC));
+            attr[0] = vConv;
+            var i = TypeDescriptor.AddAttributes(typeof(T), attr);
+
+
+
+
+        }
+
+    }
+
+    class  CustomImageValueSerializer : ImageSourceValueSerializer
+    {
+        public override bool CanConvertToString(object value, IValueSerializerContext context)
+        {
+            
+            if (value is AnimatedImage)
+                return false;
+            else if (value is System.Windows.Controls.Image)
+                return true;
+            return base.CanConvertToString(value, context);
+        }
+
+        public override string ConvertToString(object value, IValueSerializerContext context)
+        {
+
+            return base.ConvertToString(value, context);
+        }
+    }
+
+
+    class CustomImageConvertor : TypeConverter
+    {
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+        {
+            if (destinationType == typeof(MarkupExtension))
+            {
+
+                return true;
+            }
+            else return false;
+        }
+        public override object ConvertTo(ITypeDescriptorContext context,
+                        System.Globalization.CultureInfo culture, object value, Type destinationType)
+        {
+            if (destinationType == typeof(MarkupExtension))
+            {
+                BindingExpression bindingExpression = value as BindingExpression;
+                if (bindingExpression == null)
+                    throw new Exception();
+                return bindingExpression.ParentBinding;
+            }
+
+            return base.ConvertTo(context, culture, value, destinationType);
+        }
+    }
+
 
 
     public sealed class ConversationModel
@@ -138,8 +218,8 @@ namespace COMessengerClient.Conversation
 
             //Костыль - если в редакторе указать такие же параметры тексту, как и по умолчанию, то он их не применит
             // поэтому указываем "нереальные" параметры по умолчанию (дерьмо, но ниче лучше не придумал :( )
-            fldoc.FontSize = 1; 
-            fldoc.Foreground = new SolidColorBrush(Colors.Transparent);
+            //fldoc.FontSize = 1; 
+            //fldoc.Foreground = new SolidColorBrush(Colors.Transparent);
 
             TextRange tr = new TextRange(fldoc.ContentEnd, fldoc.ContentEnd);
 
@@ -160,10 +240,22 @@ namespace COMessengerClient.Conversation
 
 
 
-                    StringReader stringReader = new StringReader(Encoding.UTF8.GetString(Compressing.Decompress(value.Body)));
-                    System.Xml.XmlReader xmlReader = System.Xml.XmlReader.Create(stringReader);
-                    FlowDocument deserialized = System.Windows.Markup.XamlReader.Load(xmlReader) as FlowDocument;
-                    return deserialized.Blocks;
+                    using (StringReader stringReader = new StringReader(Encoding.UTF8.GetString(Compressing.Decompress(value.FormattedText))))
+                    using (System.Xml.XmlReader xmlReader = System.Xml.XmlReader.Create(stringReader))
+                    {
+                        try
+                        {
+                            fldoc = XamlReader.Load(xmlReader) as FlowDocument;
+
+                        }
+                        catch (XamlParseException)
+                        {
+                            //tr.Text = value.Text ?? "";
+                            //fldoc.Blocks.FirstBlock.ToolTip = "ОШИБКА ЧТЕНИЯ ФОРМАТА СООБЩЕНИЯ"; 
+                            fldoc.Blocks.Add(new Paragraph(new Run(value.Text ?? "")) { ToolTip = "ОШИБКА ЧТЕНИЯ ФОРМАТА СООБЩЕНИЯ" });
+                        }
+                    }                   
+                    //return deserialized.Blocks;
                     break;
                 case RoutedMessageKind.Plaintext:
                     tr.Text = value.Text ?? "";
@@ -364,25 +456,89 @@ namespace COMessengerClient.Conversation
 
             string savedButton = System.Windows.Markup.XamlWriter.Save(fldoc);
 
+            var c = ValueSerializer.GetSerializerFor(typeof(System.Windows.Controls.Image));
+
+            var m = MarkupWriter.GetMarkupObjectFor(fldoc);
+
+            StringBuilder outstr = new StringBuilder();
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            settings.OmitXmlDeclaration = true;
+            XamlDesignerSerializationManager dsm = new XamlDesignerSerializationManager(XmlWriter.Create(outstr, settings));
+            //this string need for turning on expression saving mode 
+            dsm.XamlWriterMode = XamlWriterMode.Value;
+            XamlWriter.Save(fldoc, dsm);
+
+
+            using (FileStream fstream = new FileStream("debug_message2.txt", FileMode.Create))
+            {
+                fstream.Write(Encoding.UTF8.GetBytes(outstr.ToString()), 0, outstr.Length);
+            }
+
+
+
+
+
+
             using (FileStream fstream = new FileStream("debug_message.txt", FileMode.Create))
             {
                 fstream.Write(Encoding.UTF8.GetBytes(savedButton), 0, Encoding.UTF8.GetBytes(savedButton).Length);
             }
 
+            //fldoc.Blocks.ForEach(
+            //            isRecursive: true,
+            //            action: (blc) =>
+            //            {
+            //                BlockUIContainer imageContainer;
+
+            //                imageContainer = blc as BlockUIContainer;
+
+            //                if (imageContainer != null)
+            //                {
+            //                    Image img = imageContainer.Child as Image;
+
+            //                    if (img != null)
+            //                    {
+            //                        img.Loaded += (a, b) =>
+            //                        {
+            //                            img.SnapToPixels();
+            //                        };
+
+
+            //                        Viewbox imageBox = new Viewbox();
+
+            //                        imageContainer.Child = imageBox;
+
+            //                        imageBox.Child = img;
+            //                        imageBox.HorizontalAlignment = img.HorizontalAlignment;
+
+            //                        img.UseLayoutRounding = true;
+            //                        img.SnapsToDevicePixels = true;
+
+            //                        imageBox.MaxWidth = img.Width * 1 / App.DpiXScalingFactor;
+
+            //                        //imageBox.MouseDown += (a, b) => { MessageBox.Show("SnapsToDevicePixels: " + tmp.SnapsToDevicePixels + " UseLayoutRounding: " + tmp.UseLayoutRounding + " X: " + tmp.PointToScreen(new Point(0d, 0d)).X + "Y: " + tmp.PointToScreen(new Point(0d, 0d)).Y); };
+
+            //                        //imageContainer.Child.RenderTransform = new ScaleTransform(1 / App.DpiXScalingFactor, 1 / App.DpiYScalingFactor);
+            //                        //imageContainer.Child = new Button() { Content = "hi there" };
+            //                    }
+            //                }
+            //            });
+
             return Compressing.Compress(Encoding.UTF8.GetBytes(savedButton));
 
 
-            using (MemoryStream streamXAML = new MemoryStream())
-            {
-                range.Save(streamXAML, DataFormats.XamlPackage, true);
-                streamXAML.Position = 0;
+            //using (MemoryStream streamXAML = new MemoryStream())
+            //{
+            //    range.Save(streamXAML, DataFormats.XamlPackage, true);
+            //    streamXAML.Position = 0;
 
-                BinaryReader reader = new BinaryReader(streamXAML);
-                //using (BinaryReader reader = new BinaryReader(streamXAML))
-                //{
-                    return Compressing.Compress(reader.ReadBytes((int)streamXAML.Length));
-                //}
-            }
+            //    BinaryReader reader = new BinaryReader(streamXAML);
+            //    //using (BinaryReader reader = new BinaryReader(streamXAML))
+            //    //{
+            //        return Compressing.Compress(reader.ReadBytes((int)streamXAML.Length));
+            //    //}
+            //}
 
         }
 
@@ -431,8 +587,8 @@ namespace COMessengerClient.Conversation
                 if (conView.NewMessageBox.IsRichText)
                 {
                     newValue.Kind = RoutedMessageKind.RichText;
-                    newValue.Body = GetMessageBody(source);
                     newValue.Text = tr.Text;
+                    newValue.FormattedText = GetMessageBody(source); 
 
                     conView.NewMessageBox.IsRichText = false;
                 }

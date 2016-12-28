@@ -75,11 +75,12 @@ namespace CorporateMessengerLibrary
     [Serializable]
     public class MessageValue
     {
-        public RoutedMessageKind Kind       { get; set; }               //Вид сообщения
-        public string            Text       { get; set; }               //Текст сообщения
-        public byte[]            Body       { get; set; }               //Тело сообщения
-        public DateTime          ChangeTime { get; set; }               //Дата изменения
-        public int               Version    { get; set; }               //Версия сообщения (увеличивается при редактировании)
+        public RoutedMessageKind          Kind              { get; set; }               //Вид сообщения
+        public string                     Text              { get; set; }               //Текст сообщения
+        public byte[]                     FormattedText     { get; set; }               //Форматированный и сжатый текст XAML
+        public Dictionary<string, byte[]> BinaryCollection  { get; set; }               //Двоичные данные (изображения и т.п.)
+        public DateTime                   ChangeTime        { get; set; }               //Дата изменения
+        public int                        Version           { get; set; }               //Версия сообщения (увеличивается при редактировании)
     }
 
     [Serializable]

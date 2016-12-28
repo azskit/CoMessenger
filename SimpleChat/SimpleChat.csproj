@@ -66,6 +66,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Identity\CMGroup.cs" />
     <Compile Include="Identity\CMUser.cs" />
     <Compile Include="Protocol\ServerSideClient.cs" />
     <Compile Include="Server.cs" />
@@ -119,6 +120,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="Plugins\ActiveDirectoryAuthentication.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Plugins\BuiltInAuthentication.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleChat", "SimpleChat\SimpleChat.csproj", "{C8DA2570-FEEB-4F7E-966A-6927E421558E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E5102C8B-37C8-4065-ABDF-709EFAED10B6} = {E5102C8B-37C8-4065-ABDF-709EFAED10B6}
+		{04D09ACC-FF6F-464E-8668-5853B701FF94} = {04D09ACC-FF6F-464E-8668-5853B701FF94}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cml", "CoMesLib\Cml.csproj", "{12D40C8E-0B8A-492E-A1E8-4C81CAAD7F96}"
 EndProject

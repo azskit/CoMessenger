@@ -50,11 +50,6 @@
       <Name>CimPlugin</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\CoMesLib\Cml.csproj">
-      <Project>{12d40c8e-0b8a-492e-a1e8-4c81caad7f96}</Project>
-      <Name>Cml</Name>
-      <Private>False</Private>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
