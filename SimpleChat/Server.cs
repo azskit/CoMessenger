@@ -383,18 +383,18 @@ namespace SimpleChat
         {
             while (true)
             {
-                //lock (clients)
-                //{
+                lock (clients)
+                {
 
                     //foreach (CMClientBase a in clients.AsParallel())
                     //{
                     //    a.ProcessQueue();
                     //}
 
-                List<CMClientBase> copy = new List<CMClientBase>(clients);
+                    List<CMClientBase> copy = new List<CMClientBase>(clients);
 
-                copy.AsParallel().ToList().ForEach((a) => { if (a != null ) a.ProcessQueue(); });
-                //}
+                    copy.AsParallel().ToList().ForEach((a) => { if (a != null) a.ProcessQueue(); });
+                }
 
                 Thread.Sleep(1);
             }

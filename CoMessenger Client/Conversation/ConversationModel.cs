@@ -26,6 +26,7 @@ using System.Xml;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Markup.Primitives;
+using COMessengerClient.Tools;
 
 namespace COMessengerClient.Conversation
 {
@@ -456,25 +457,31 @@ namespace COMessengerClient.Conversation
 
             string savedButton = System.Windows.Markup.XamlWriter.Save(fldoc);
 
-            var c = ValueSerializer.GetSerializerFor(typeof(System.Windows.Controls.Image));
+            //var c = ValueSerializer.GetSerializerFor(typeof(System.Windows.Controls.Image));
 
-            var m = MarkupWriter.GetMarkupObjectFor(fldoc);
+            //var m = MarkupWriter.GetMarkupObjectFor(fldoc);
 
-            StringBuilder outstr = new StringBuilder();
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.OmitXmlDeclaration = true;
-            XamlDesignerSerializationManager dsm = new XamlDesignerSerializationManager(XmlWriter.Create(outstr, settings));
-            //this string need for turning on expression saving mode 
-            dsm.XamlWriterMode = XamlWriterMode.Value;
-            XamlWriter.Save(fldoc, dsm);
+            //StringBuilder outstr = new StringBuilder();
+            //XmlWriterSettings settings = new XmlWriterSettings();
+            //settings.Indent = true;
+            //settings.OmitXmlDeclaration = true;
+            //XamlDesignerSerializationManager dsm = new XamlDesignerSerializationManager(XmlWriter.Create(outstr, settings));
+            ////this string need for turning on expression saving mode 
+            //dsm.XamlWriterMode = XamlWriterMode.Value;
+            //XamlWriter.Save(fldoc, dsm);
 
+            CimSerializer serializer = new CimSerializer();
 
+            string xml = serializer.Serialize(fldoc);
+
+            //using (FileStream fstream = new FileStream("debug_message2.txt", FileMode.Create))
+            //{
+            //    fstream.Write(Encoding.UTF8.GetBytes(outstr.ToString()), 0, outstr.Length);
+            //}
             using (FileStream fstream = new FileStream("debug_message2.txt", FileMode.Create))
             {
-                fstream.Write(Encoding.UTF8.GetBytes(outstr.ToString()), 0, outstr.Length);
+                fstream.Write(Encoding.UTF8.GetBytes(xml), 0, xml.Length);
             }
-
 
 
 
