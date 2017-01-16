@@ -449,7 +449,7 @@ namespace CorporateMessengerLibrary
 
                     reader.Read();
 
-                    int currentVersion = (int)reader[0];
+                    int currentVersion = reader[0] is Int32 ? (int)reader[0] : 0 ;
 
                     reader.Close();
 

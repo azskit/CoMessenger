@@ -53,6 +53,7 @@
     <Compile Include="CMClientBase.cs" />
     <Compile Include="CoMessengerUser.cs" />
     <Compile Include="Compressing.cs" />
+    <Compile Include="ConcurrentList.cs" />
     <Compile Include="CustomUtilites.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="History.cs" />

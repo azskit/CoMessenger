@@ -239,6 +239,19 @@ namespace COMessengerClient.Conversation
                     //    FlowDocument deserialized = System.Windows.Markup.XamlReader.Load as FlowDocument;
                     //}
 
+                    CimSerializer serializer = new CimSerializer();
+                    FlowDocument secondFlDoc = null;
+
+                    using (MemoryStream stream = new MemoryStream(Compressing.Decompress(value.FormattedText)))
+                    {
+                        secondFlDoc = serializer.Deserialize(stream);
+                    }
+
+
+
+
+                    return secondFlDoc.Blocks;
+
 
 
                     using (StringReader stringReader = new StringReader(Encoding.UTF8.GetString(Compressing.Decompress(value.FormattedText))))
@@ -480,7 +493,18 @@ namespace COMessengerClient.Conversation
             //}
             using (FileStream fstream = new FileStream("debug_message2.txt", FileMode.Create))
             {
-                fstream.Write(Encoding.UTF8.GetBytes(xml), 0, xml.Length);
+                fstream.Write(Encoding.UTF8.GetBytes(xml), 0, Encoding.UTF8.GetBytes(xml).Length);
+            }
+            serializer = new CimSerializer();
+            xml = serializer.Serialize2(fldoc);
+
+            //using (FileStream fstream = new FileStream("debug_message2.txt", FileMode.Create))
+            //{
+            //    fstream.Write(Encoding.UTF8.GetBytes(outstr.ToString()), 0, outstr.Length);
+            //}
+            using (FileStream fstream = new FileStream("debug_message3.txt", FileMode.Create))
+            {
+                fstream.Write(Encoding.UTF8.GetBytes(xml), 0, Encoding.UTF8.GetBytes(xml).Length);
             }
 
 
@@ -532,7 +556,8 @@ namespace COMessengerClient.Conversation
             //                }
             //            });
 
-            return Compressing.Compress(Encoding.UTF8.GetBytes(savedButton));
+            //return Compressing.Compress(Encoding.UTF8.GetBytes(savedButton));
+            return Compressing.Compress(Encoding.UTF8.GetBytes(xml));
 
 
             //using (MemoryStream streamXAML = new MemoryStream())
