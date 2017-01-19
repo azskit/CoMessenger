@@ -69,6 +69,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CimLibraryStrings.ru-RU.resx</DependentUpon>
     </Compile>
+    <Compile Include="SHA1Helper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="azskit.pfx" />

@@ -37,6 +37,10 @@ namespace CorporateMessengerLibrary
         private object formattingFileSemafor = new object();
         //private FileStream formattingFileStream;
 
+        private string binaryFileName;
+        private object binaryFileSemafor = new object();
+
+
         //public List<HistoryFile> HistoryFiles { get; private set; }
         //public bool HasNotLoadedFiles { get; set; }
 
@@ -74,6 +78,7 @@ namespace CorporateMessengerLibrary
 
             //Форматированные сообщения
             formattingFileName = Path.Combine(HistoryPath, "history.dat");
+            binaryFileName = Path.Combine(HistoryPath, "cache.dat");
 
             KeepConnection = keepConnection;
         }
@@ -563,6 +568,134 @@ namespace CorporateMessengerLibrary
             cmd.ExecuteNonQuery();
         }
 
+        public void SaveBinary(byte[] uncompressedBytes)
+        {
+            string hash = SHA1Helper.GetHash(uncompressedBytes);
+
+            if (BinaryExists(hash))
+                return;
+
+            byte[] compressedBytes = Compressing.Compress(uncompressedBytes);
+
+
+            long position = -1;
+            lock (binaryFileSemafor)
+            {
+                using (FileStream filestream = new FileStream(binaryFileName, FileMode.Append, FileAccess.Write, FileShare.Read))
+                {
+                    position = filestream.Position;
+                    filestream.Write(compressedBytes, 0, compressedBytes.Length);
+                }
+            }
+
+            long length = compressedBytes.Length;
+
+            OleDbCommand cmd = HistoryDBConnection.CreateCommand();
+            cmd.CommandText = @"INSERT INTO  `BinaryContent`
+		                                                (`SHA1Hash`
+		                                                ,`Length`
+		                                                ,`PositionInFile`)
+	                                                VALUES
+		                                                (@SHA1HASH 
+		                                                ,@LENGTH
+		                                                ,@POSITIONINFILE)";
+
+            cmd.Parameters.Add(new OleDbParameter("SHA1HASH",       hash));
+            cmd.Parameters.Add(new OleDbParameter("LENGTH",         length));
+            cmd.Parameters.Add(new OleDbParameter("POSITIONINFILE", position));
+
+            cmd.ExecuteNonQuery();
+        }
+
+        public byte[] RestoreBinary(string hash)
+        {
+
+            byte[] retval = null;
+
+            OleDbCommand ContentCmd;
+            OleDbDataReader ContentReader;
+
+            ContentCmd = HistoryDBConnection.CreateCommand();
+
+            ContentCmd.CommandText = @"SELECT        `SHA1Hash`
+		                                            ,`Length`
+		                                            ,`PositionInFile`
+	                                            FROM `BinaryContent`
+                                               WHERE SHA1Hash = @SHA1HASH";
+
+            ContentCmd.Parameters.Add(new OleDbParameter("SHA1HASH", hash));
+
+
+            ContentReader = ContentCmd.ExecuteReader();
+
+            if (ContentReader.Read())
+            {
+                long length = (long)(decimal)ContentReader["Length"];
+
+                long position = (long)(decimal)ContentReader["PositionInFile"];
+                lock (binaryFileSemafor)
+                {
+                    try
+                    {
+                        using (FileStream filestream = new FileStream(binaryFileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                        {
+                            filestream.Position = position;
+                            retval = new byte[length];
+                            filestream.Read(retval, 0, retval.Length);
+                        }
+
+                        retval = Compressing.Decompress(retval);
+                    }
+                    catch (FileNotFoundException) { }
+                    catch (InvalidDataException)
+                    {
+                        DeleteBinary(hash);
+                    }
+                }
+
+                
+            }
+
+            ContentReader.Close();
+
+            return retval;
+        }
+
+        private void DeleteBinary(string hash)
+        {
+            OleDbCommand cmd;
+
+            cmd = HistoryDBConnection.CreateCommand();
+
+            cmd.CommandText = @"DELETE FROM [BinaryContent]  WHERE [SHA1Hash] = @SHA1HASH";
+
+            cmd.Parameters.Add(new OleDbParameter("SHA1HASH", hash));
+
+            cmd.ExecuteNonQuery();
+        }
+
+        public bool BinaryExists(string hash)
+        {
+
+            OleDbCommand ContentCmd;
+            OleDbDataReader ContentReader;
+
+            ContentCmd = HistoryDBConnection.CreateCommand();
+
+            ContentCmd.CommandText = @"SELECT        `SHA1Hash`
+		                                            ,`Length`
+		                                            ,`PositionInFile`
+	                                            FROM `BinaryContent`
+                                               WHERE SHA1Hash = @SHA1HASH";
+
+            ContentCmd.Parameters.Add(new OleDbParameter("SHA1HASH", hash));
+
+
+            ContentReader = ContentCmd.ExecuteReader();
+
+            return ContentReader.Read();
+        }
+
         private void Open()
         {
             if (File.Exists(HistoryDBFile))
@@ -646,6 +779,18 @@ namespace CorporateMessengerLibrary
 		                                                            REFERENCES `Messages`    (`AutoID`)
 		                                                            ON UPDATE CASCADE        ON DELETE CASCADE
                                                             )";
+            com.ExecuteNonQuery();
+
+            com = HistoryDBConnection.CreateCommand();
+            com.CommandText = @"CREATE TABLE `BinaryContent` (  `SHA1Hash`       STRING(64)     NOT NULL, 
+	                                                            `Length`         DECIMAL(20, 0) NOT NULL, 
+	                                                            `PositionInFile` DECIMAL(20, 0) NOT NULL
+                                                             )";
+            com.ExecuteNonQuery();
+
+            com = HistoryDBConnection.CreateCommand();
+            com.CommandText = @"CREATE INDEX `SHA1HashIndex`
+	                                      ON `BinaryContent` (`SHA1Hash` DESC)";
             com.ExecuteNonQuery();
         }
 

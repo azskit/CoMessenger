@@ -17,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Xml;
 using System.Xml.Serialization;
 using COMessengerClient.CustomControls;
+using CorporateMessengerLibrary;
 
 namespace COMessengerClient.Tools
 {
@@ -25,7 +26,7 @@ namespace COMessengerClient.Tools
     public class BinaryCacheManager : DependencyObject
     {
 
-        public static Dictionary<string, byte[]> BinaryCache = new Dictionary<string, byte[]>();
+        //public static Dictionary<string, byte[]> BinaryCache = new Dictionary<string, byte[]>();
 
         public static readonly DependencyProperty BinarySourceProperty = DependencyProperty.RegisterAttached(
             "BinarySource", typeof(BinarySource), typeof(Image), new PropertyMetadata(null));
@@ -39,9 +40,6 @@ namespace COMessengerClient.Tools
         {
             return (BinarySource)element.GetValue(BinarySourceProperty);
         }
-
-
-
     }
 
 
@@ -86,42 +84,84 @@ namespace COMessengerClient.Tools
                 ms.Read(newBinarySource.BinarySourceData, 0, newBinarySource.BinarySourceData.Length);
             }
 
-            newBinarySource.BinarySourceId = HashImage(newBinarySource.BinarySourceData);
+            newBinarySource.BinarySourceId = SHA1Helper.GetHash(newBinarySource.BinarySourceData);
 
             return newBinarySource;
         }
 
-        private static string HashImage(byte[] imageData)
-        {
-            using (SHA1Managed sha1 = new SHA1Managed())
-            {
-                return ByteArrayToString(sha1.ComputeHash(imageData));
-            }
-        }
 
-        //stolen from http://stackoverflow.com/questions/311165/how-do-you-convert-byte-array-to-hexadecimal-string-and-vice-versa
-        public static string ByteArrayToString(byte[] ba)
-        {
-            StringBuilder hex = new StringBuilder(ba.Length * 2);
-            foreach (byte b in ba)
-                hex.AppendFormat("{0:x2}", b);
-            return hex.ToString();
-        }
 
         internal ImageSource ToImageSource()
         {
-
+            //BitmapImage
             //Image img = element as Image;
 
             //img.Source = new BitmapImage() { StreamSource = new MemoryStream(BinaryCache[reader.Value]) };
 
+            BitmapImage newBitmaImage = new BitmapImage();
+
             using (MemoryStream stream = new MemoryStream(BinarySourceData))
             {
-                PngBitmapDecoder decoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
 
-                if (decoder.Frames != null && decoder.Frames.Count > 0)
-                    return decoder.Frames[0];
+                newBitmaImage.BeginInit();
+
+
+
+                newBitmaImage.StreamSource = stream;
+
+                newBitmaImage.CacheOption = BitmapCacheOption.OnLoad;
+
+                newBitmaImage.EndInit();
+
+                //PngBitmapDecoder decoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+
+                //if (decoder.Frames != null && decoder.Frames.Count > 0)
+                //    return decoder.Frames[0];
             }
+
+            return newBitmaImage;
+
+            throw new InvalidOperationException("Something went wrong");
+        }
+
+        internal static BinarySource CreateFromAnimatedImage(AnimatedImage animatedImage)
+        {
+            BinarySource newBinarySource = new BinarySource();
+
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                animatedImage.AnimatedBitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Gif);
+                ms.Position = 0;
+                newBinarySource.BinarySourceData = new byte[ms.Length];
+                ms.Read(newBinarySource.BinarySourceData, 0, newBinarySource.BinarySourceData.Length);
+            }
+
+            newBinarySource.BinarySourceId = SHA1Helper.GetHash(newBinarySource.BinarySourceData);
+
+            return newBinarySource;
+        }
+
+
+        internal System.Drawing.Bitmap ToBitmap()
+        {
+
+            //string fname = @"debug" + Guid.NewGuid().ToString() + ".gif";
+
+            //using (FileStream stream = new FileStream(fname, FileMode.Create))
+            //{
+            //    stream.Write(BinarySourceData, 0, BinarySourceData.Length);
+            //    //return System.Drawing.Image.FromStream(stream, true, true) as System.Drawing.Bitmap;
+            //}
+            //return (System.Drawing.Bitmap)System.Drawing.Image.FromFile(fname);
+            ////Image img = element as Image;
+
+            //img.Source = new BitmapImage() { StreamSource = new MemoryStream(BinaryCache[reader.Value]) };
+
+            //using (MemoryStream stream = new MemoryStream(BinarySourceData))
+            //{
+                return System.Drawing.Image.FromStream(new MemoryStream(BinarySourceData)) as System.Drawing.Bitmap;
+            //}
 
             throw new InvalidOperationException("Something went wrong");
         }
@@ -134,6 +174,7 @@ namespace COMessengerClient.Tools
 
         private XmlWriter writer;
         private StringBuilder sb;
+        private List<BinarySource> binaries;
 
         private Dictionary<Type, Dictionary<string, SerializableProperty>> propertiesOfType;
         //private Dictionary<DependencyProperty, PropertyDescriptor> propertyDescriptors;
@@ -289,6 +330,20 @@ namespace COMessengerClient.Tools
                 }.ToDictionary(s => s.Property.Name));
             #endregion
 
+            #region AnimatedImage
+            propertiesOfType.Add(
+
+                key: typeof(AnimatedImage),
+
+                value: new List<SerializableProperty>()
+                {
+                    new SerializableProperty(AnimatedImage.WidthProperty  ),
+                    new SerializableProperty(AnimatedImage.HeightProperty ),
+                    new SerializableProperty(AnimatedImage.StretchProperty),
+                    new SerializableProperty(BinaryCacheManager.BinarySourceProperty)
+                }.ToDictionary(s => s.Property.Name));
+            #endregion
+
             #region TextDecoration
             propertiesOfType.Add(
 
@@ -300,26 +355,16 @@ namespace COMessengerClient.Tools
                 }.ToDictionary(s => s.Property.Name));
             #endregion
 
-
-            //propertyDescriptors = new Dictionary<DependencyProperty, PropertyDescriptor>();
-
-            //foreach (List<DependencyProperty> list in propertiesOfType.Values)
-            //{
-            //    foreach (DependencyProperty dp in list)
-            //    {
-            //        if (!propertyDescriptors.ContainsKey(dp))
-            //        {
-            //            propertyDescriptors.Add(dp, TypeDescriptor.GetProperties(dp.OwnerType)[dp.Name]);
-            //        }
-            //    }
-            //}
         }
 
         public CimSerializer()
         {
             sb = new StringBuilder();
             writer = XmlWriter.Create(sb , new XmlWriterSettings() {  Indent = false, OmitXmlDeclaration = true });
-            
+
+            binaries = new List<BinarySource>();
+            controlsToLoadBinary = new List<FrameworkElement>();
+
 
             initPropertiesOfType();
         }
@@ -382,8 +427,10 @@ namespace COMessengerClient.Tools
             writer.WriteEndElement();
         }
 
-        internal string Serialize2(FlowDocument document)
+        internal string Serialize2(FlowDocument document, out List<BinarySource> newBinaries)
         {
+            binaries.Clear();
+
             var markup = MarkupWriter.GetMarkupObjectFor(document);
 
             foreach (var item in markup.Properties)
@@ -405,6 +452,7 @@ namespace COMessengerClient.Tools
                 WriteBlock(property);
             }
 
+            newBinaries = new List<BinarySource>(binaries);
 
             writer.WriteEndElement();
             writer.Flush();
@@ -532,30 +580,7 @@ namespace COMessengerClient.Tools
                 writer.WriteEndElement();
             }
         }
-
-        //private IEnumerable<KeyValuePair<string, string>> DifferAttributes(TextElement textElement)
-        //{
-        //    foreach (DependencyProperty dp in new List<DependencyProperty>()
-        //                    {
-        //                        TextElement.FontFamilyProperty,
-        //                        TextElement.FontSizeProperty,
-        //                        TextElement.FontStretchProperty,
-        //                        TextElement.FontStyleProperty,
-        //                        TextElement.FontWeightProperty,
-        //                        TextElement.ForegroundProperty,
-        //                        TextElement.BackgroundProperty,
-
-        //                    })
-        //    {
-        //        object value = textElement.GetValue(dp);
-
-        //        if (value != textElement.Parent.GetValue(dp))
-        //        {
-        //            yield return new KeyValuePair<string, string>(dp.Name, value.ToString());
-        //        }
-        //    }
-        //}
-
+        
         private void WriteInline(Inline inline)
         {
             Span span = inline as Span;
@@ -570,6 +595,8 @@ namespace COMessengerClient.Tools
                     WriteInline(spanInline);
                 }
                 writer.WriteEndElement();
+
+                return;
             }
 
             Run run = inline as Run;
@@ -584,12 +611,32 @@ namespace COMessengerClient.Tools
                 writer.WriteString(run.Text);
 
                 writer.WriteEndElement();
+
+                return;
             }
 
             InlineUIContainer inlineUiContainer = inline as InlineUIContainer;
 
             if (inlineUiContainer != null)
             {
+                AnimatedImage animatedImage = inlineUiContainer.Child as AnimatedImage;
+
+                if (animatedImage != null)
+                {
+                    BinarySource imageSource = BinarySource.CreateFromAnimatedImage(animatedImage);
+
+                    BinaryCacheManager.SetCustomValue(animatedImage, imageSource);
+
+                    writer.WriteStartElement("AnimatedImage");
+                    WriteAttributes(animatedImage, typeof(AnimatedImage));
+
+                    binaries.Add(imageSource);
+
+                    writer.WriteEndElement();
+
+                    return;
+                }
+
                 Image image = inlineUiContainer.Child as Image;
 
                 if (image != null)
@@ -602,13 +649,16 @@ namespace COMessengerClient.Tools
                     WriteAttributes(image, typeof(Image));
 
 
-                    if (!BinaryCacheManager.BinaryCache.ContainsKey(imageSource.BinarySourceId))
-                        BinaryCacheManager.BinaryCache.Add(imageSource.BinarySourceId, imageSource.BinarySourceData);
-                    
+                    //if (!BinaryCacheManager.BinaryCache.ContainsKey(imageSource.BinarySourceId))
+                    //    BinaryCacheManager.BinaryCache.Add(imageSource.BinarySourceId, imageSource.BinarySourceData);
+
+                    binaries.Add(imageSource);
+
                     //writer.WriteAttributeString("BinarySource", binaryDataId);
 
                     writer.WriteEndElement();
 
+                    return;
                 }
             }
         } 
@@ -617,10 +667,13 @@ namespace COMessengerClient.Tools
 
 
         private XmlReader reader;
+        private List<FrameworkElement> controlsToLoadBinary;
         //FrameworkContentElement currentElement;
 
-        public FlowDocument Deserialize(Stream stream)
+        public FlowDocument Deserialize(Stream stream, out List<FrameworkElement> needLoadBinary)
         {
+            controlsToLoadBinary.Clear();
+
             reader = XmlReader.Create(stream);
 
             reader.ReadStartElement("FlowDocument");
@@ -631,6 +684,8 @@ namespace COMessengerClient.Tools
             {
                 ReadBlock(fldoc.Blocks);
             } while (reader.Read());
+
+            needLoadBinary = new List<FrameworkElement>(controlsToLoadBinary);
 
             return fldoc;
             
@@ -735,42 +790,20 @@ namespace COMessengerClient.Tools
 
                     ReadAttributes(image);
 
-                    BinarySource imageSource = BinaryCacheManager.GetCustomValue(image);
+                    controlsToLoadBinary.Add(image);
 
-                    byte[] imageData;
+                    collection.Add(new InlineUIContainer(image));
 
-                    if (BinaryCacheManager.BinaryCache.TryGetValue(imageSource.BinarySourceId, out imageData))
-                    {
-                        imageSource.BinarySourceData = imageData;
-                        image.Source = imageSource.ToImageSource();
+                    break;
 
-                        collection.Add(new InlineUIContainer(image));
+                case "AnimatedImage":
+                    AnimatedImage animatedImage = new AnimatedImage();
 
-                    }
-                    else
-                    {
-                        Border imageDownloadingBanner = new Border() { CornerRadius = new CornerRadius(5.0), BorderThickness = new Thickness(1) };
+                    ReadAttributes(animatedImage);
 
-                        imageDownloadingBanner.Background = new SolidColorBrush(Colors.BlanchedAlmond);
+                    controlsToLoadBinary.Add(animatedImage);
 
-                        imageDownloadingBanner.Width = image.Width;
-                        imageDownloadingBanner.Height = image.Height;
-
-                        BusyIndicator busyIndicator = new BusyIndicator();
-
-                        //busyIndicator.MaxHeight = 25;
-                        //busyIndicator.MaxWidth = 25;
-
-                        busyIndicator.MinHeight = 25;
-                        busyIndicator.MinWidth = 25;
-
-                        busyIndicator.VerticalAlignment = VerticalAlignment.Center;
-                        busyIndicator.HorizontalAlignment = HorizontalAlignment.Center;
-
-                        imageDownloadingBanner.Child = busyIndicator;
-                        collection.Add(new InlineUIContainer(imageDownloadingBanner));
-                    }
-
+                    collection.Add(new InlineUIContainer(animatedImage));
 
                     break;
 
@@ -790,10 +823,8 @@ namespace COMessengerClient.Tools
 
                 SerializableProperty property = propertiesOfType[element.GetType()][reader.Name];
 
-                    element.SetValue(property.Property, property.Converter.ConvertFromInvariantString(reader.Value));
+                element.SetValue(property.Property, property.Converter.ConvertFromInvariantString(reader.Value));
             }
-
-            
         }
     }
 }

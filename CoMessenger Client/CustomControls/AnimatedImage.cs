@@ -13,6 +13,7 @@ using System.Windows.Threading;
 
 namespace COMessengerClient.CustomControls
 {
+    //stolen from... не помню откуда
     public class AnimatedImage : System.Windows.Controls.Image
     {
         private BitmapSource[] _BitmapSources = null;
@@ -81,9 +82,6 @@ namespace COMessengerClient.CustomControls
         }
         private void UpdateAnimatedBitmap()
         {
-
-
-
             int nTimeFrames = AnimatedBitmap.GetFrameCount(System.Drawing.Imaging.FrameDimension.Time);
             _nCurrentFrame = 0;
             if (nTimeFrames > 0)
@@ -138,8 +136,8 @@ namespace COMessengerClient.CustomControls
 
                 ImageAnimator.Animate(AnimatedBitmap, new EventHandler(this.OnFrameChanged));
                 _bIsAnimating = true;
+                Source = _BitmapSources[_nCurrentFrame++];
             }
         }
-
     }
 }

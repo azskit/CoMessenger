@@ -19,6 +19,24 @@ namespace COMessengerClient.CustomControls
     /// </summary>
     public partial class BusyIndicator : UserControl
     {
+
+
+        public double Radius
+        {
+            get { return (double)GetValue(RadiusProperty); }
+            set { SetValue(RadiusProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Radius.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty RadiusProperty =
+            DependencyProperty.Register("Radius", typeof(double), typeof(BusyIndicator), new PropertyMetadata((double)0, RadiusChanged));
+
+        private static void RadiusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            BusyIndicator indicator = d as BusyIndicator;
+            indicator.rectangle.SetValue(Border.CornerRadiusProperty, new CornerRadius(0, (double)e.NewValue, (double)e.NewValue, (double)e.NewValue));
+        }
+
         public BusyIndicator()
         {
             InitializeComponent();

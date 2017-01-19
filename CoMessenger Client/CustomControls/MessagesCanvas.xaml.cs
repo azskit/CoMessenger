@@ -102,11 +102,14 @@ namespace COMessengerClient.CustomControls
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            lock (dummy)
-            {
+            //lock (dummy)
+            //{
                 if (ActualScrollViewer == null) //Первичная загрузка
                 {
                     ActualScrollViewer = ScrollViewerHelper.GetChild<ScrollViewer>(ChatBox);
+
+                    if (ActualScrollViewer == null)
+                        return;
 
                     //ActualScrollViewer.CanContentScroll = false;
 
@@ -163,7 +166,7 @@ namespace COMessengerClient.CustomControls
 
                     Header.SetValue(Grid.ColumnProperty, 1);
                 }
-            }
+            //}
         }
 
     }
@@ -218,7 +221,7 @@ namespace COMessengerClient.CustomControls
                     }
                 }
             }
-            throw new InvalidOperationException("Such child is not found");
+            return null;
         }
 
     }

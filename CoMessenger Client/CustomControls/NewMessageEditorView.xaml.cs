@@ -44,12 +44,20 @@ namespace COMessengerClient.ChatFace
         public static readonly DependencyProperty IsEditingModeProperty =
             DependencyProperty.Register("IsEditingMode", typeof(bool), typeof(NewMessageEditorView), new UIPropertyMetadata(false));
 
-        public System.Drawing.Bitmap img { get; set; } = (System.Drawing.Bitmap)System.Drawing.Image.FromFile(@"C:\secret.gif");
+        public System.Drawing.Bitmap img { get; set; }
 
 
         public NewMessageEditorView()
         {
             InitializeComponent();
+
+            img = (System.Drawing.Bitmap)System.Drawing.Image.FromFile(@"C:\secret.gif");
+
+            //using (System.IO.FileStream fs = new System.IO.FileStream(@"C:\secret.gif", System.IO.FileMode.Open))
+            //{
+            //    img = (System.Drawing.Bitmap)System.Drawing.Image.FromStream(fs);
+            //}
+
 
             //При вставке проверяем - xaml ли это
             DataObject.AddPastingHandler(NewMessageTextBox, new DataObjectPastingEventHandler(
@@ -381,6 +389,11 @@ namespace COMessengerClient.ChatFace
 
                         start.DeleteTextInRun(":)".Length);
 
+
+                        //System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+
+                        //sw.Start();
+
                         new InlineUIContainer(new AnimatedImage()
                         {
                             AnimatedBitmap = img,
@@ -388,6 +401,10 @@ namespace COMessengerClient.ChatFace
                             Name = "smile",
                             Tag = img
                         }, start);
+
+                        //sw.Stop();
+
+                        //MessageBox.Show("Добавление смайлика заняло " + sw.ElapsedMilliseconds.ToString() + " миллисекунд");
 
                         //curRun.
 

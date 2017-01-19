@@ -248,6 +248,14 @@ namespace SimpleChat
 
                                     break;
 
+                            case MessageKind.BinaryContent:
+
+                                byte[] content = Compressing.Decompress(incomingMessage.Message as byte[]);
+
+                                TempHistory.SaveBinary(content);
+
+                                break;
+
                                 default:
                                     break;
                             }
@@ -287,6 +295,31 @@ namespace SimpleChat
                         }
                     });
 
+                    break;
+
+                case QueryMessageKind.Binary:
+
+                    string hash = queryMessage.Message as string; 
+
+                    if (hash != null)
+                    {
+                        byte[] binary = TempHistory.RestoreBinary(hash);
+
+                        if (binary != null)
+                            binary = Compressing.Compress(binary);
+
+
+                        clnt.PutOutgoingMessage(new CMMessage()
+                        {
+                            Kind = MessageKind.Answer,
+                            Message = new QueryMessage()
+                            {
+                                Kind = QueryMessageKind.Binary,
+                                MessageId = queryMessage.MessageId,
+                                Message = binary //null if binary not found
+                            }
+                        });
+                    }
 
                     break;
                 default:
