@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -100,11 +102,14 @@ namespace COMessengerClient.CustomControls
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            lock (dummy)
-            {
+            //lock (dummy)
+            //{
                 if (ActualScrollViewer == null) //Первичная загрузка
                 {
                     ActualScrollViewer = ScrollViewerHelper.GetChild<ScrollViewer>(ChatBox);
+
+                    if (ActualScrollViewer == null)
+                        return;
 
                     //ActualScrollViewer.CanContentScroll = false;
 
@@ -161,7 +166,7 @@ namespace COMessengerClient.CustomControls
 
                     Header.SetValue(Grid.ColumnProperty, 1);
                 }
-            }
+            //}
         }
 
     }
@@ -198,7 +203,11 @@ namespace COMessengerClient.CustomControls
                 Retval = res as T;
 
                 if (Retval != null)
+                {
+                    Trace.WriteLine(DateTime.Now.ToString() + ": 1 Найден " + typeof(T).Name + " thread = " + Thread.CurrentThread.Name);
+
                     return Retval;
+                }
 
                 if (VisualTreeHelper.GetChildrenCount(res) > 0)
                 {
@@ -206,7 +215,10 @@ namespace COMessengerClient.CustomControls
                     Retval = res as T;
 
                     if (Retval != null)
+                    {
+                        Trace.WriteLine(DateTime.Now.ToString() + ": 2 Найден " + typeof(T).Name + " thread = " + Thread.CurrentThread.Name);
                         return Retval;
+                    }
                 }
             }
             return null;

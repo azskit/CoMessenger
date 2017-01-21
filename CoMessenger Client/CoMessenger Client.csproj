@@ -133,6 +133,9 @@
       <DependentUpon>FlatTabControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustomControls\GifImage.cs" />
+    <Compile Include="CustomControls\ImageDownloadingBanner.xaml.cs">
+      <DependentUpon>ImageDownloadingBanner.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\InputBox.xaml.cs">
       <DependentUpon>InputBox.xaml</DependentUpon>
     </Compile>
@@ -210,6 +213,7 @@
       <DependentUpon>StartScreenView.xaml</DependentUpon>
     </Compile>
     <Compile Include="StartScreen\StartScreenViewModel.cs" />
+    <Compile Include="Tools\CimSerializer.cs" />
     <Compile Include="Tools\NotifyPropertyChanged.cs" />
     <Page Include="Animations\Animations.xaml">
       <SubType>Designer</SubType>
@@ -239,7 +243,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="CustomControls\CustomConverters\ConvertersDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CustomControls\FlatTabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomControls\ImageDownloadingBanner.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

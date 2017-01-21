@@ -1,0 +1,57 @@
+﻿<UserControl x:Class="COMessengerClient.CustomControls.ImageDownloadingBanner"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:COMessengerClient.CustomControls"
+             xmlns:converters="clr-namespace:COMessengerClient.CustomControls.CustomConverters"
+             xmlns:application="clr-namespace:COMessengerClient"
+             
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300" x:Name="Root" SnapsToDevicePixels="True" UseLayoutRounding="True"
+             
+             DataContext="{x:Static application:App.ThisApp}"
+             
+             >
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!--Плоские кнопки и комбобоксы-->
+                <ResourceDictionary Source="..\Styles\FlatControls.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="CustomConverters\ConvertersDictionary.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>    
+    </UserControl.Resources>
+    <Grid>
+        <Border BorderThickness="1" Background="White" BorderBrush="Black" >
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
+                <!--<TextBlock Text="loading" FontSize="9" Visibility="{Binding ElementName=Root, Path=IsDownloading, Converter={StaticResource b2v}}"/>
+                <TextBlock DockPanel.Dock="Bottom" HorizontalAlignment="Right" Visibility="{Binding ElementName=Root, Path=IsDownloading, Converter={StaticResource b2i}}">
+                    <Hyperlink Click="Hyperlink_Click" x:Name="Link" 
+                        >
+                        <Run x:Name="r" FontSize="9" Text="reload"/>
+                    </Hyperlink>
+                </TextBlock>-->
+
+                <Button Style="{StaticResource HighlightContentOnHover}" 
+                        Click="Hyperlink_Click" 
+                        Visibility="{Binding ElementName=Root, Path=IsDownloading, Converter={StaticResource b2i}}"
+                        ToolTip="{Binding Path=Locally.LocaleStrings[Unable to load image. Click to reload]}"
+                        >
+                    <Grid>
+                        <Ellipse Width="20" Height="20" Stroke="Red" StrokeThickness="2"/>
+                        <TextBlock Text ="!" Foreground="Red" FontFamily="Verdana" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Grid>
+                </Button>
+
+                <local:BusyIndicator Width="{Binding RelativeSource={ RelativeSource Mode=Self}, Path=ActualHeight}" 
+                                     Radius="1" 
+                                     Margin="2" 
+                                     Visibility="{Binding ElementName=Root, Path=IsDownloading, Converter={StaticResource b2v}}"
+                                     ToolTip="{Binding Path=Locally.LocaleStrings[Loading image...]}"
+                        />
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

@@ -24,7 +24,8 @@ namespace CorporateMessengerLibrary
         Answer,
         LeaveRoom,
         NewRoom,
-        CloseRoom
+        CloseRoom,
+        BinaryContent
     }
 
     public enum ErrorKind
@@ -115,7 +116,8 @@ namespace CorporateMessengerLibrary
 
     public enum QueryMessageKind
     {
-        History
+        History,
+        Binary
     }
 
 

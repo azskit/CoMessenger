@@ -14,6 +14,7 @@ using System.ComponentModel.Composition.Hosting;
 using CimPlugin.Plugin;
 using CimPlugin.Plugin.Authentication;
 using CimPlugin.Plugin.Groups;
+using System.Collections.Concurrent;
 
 namespace SimpleChat
 {
@@ -27,7 +28,7 @@ namespace SimpleChat
         static private IEnumerable<IAuthentication> authPlugins;
         static private IEnumerable<IGroupCollector> groupPlugins;
 
-        static private List<ServerSideClient> clients = new List<ServerSideClient>();
+        static private ConcurrentList<ServerSideClient> clients = new ConcurrentList<ServerSideClient>();
         //static internal List<CMUser> CoMessengerUsers = new List<CMUser>();
 
 
@@ -211,7 +212,8 @@ namespace SimpleChat
                                         ReceiversList.Add(newRoom.Room.PeerId, newRoom);
 
                                         //Уведомляем всех
-                                        clients.ForEach((a) => { a.PutOutgoingMessage(new CMMessage() { Kind = MessageKind.UpdatePeer, Message = newRoom.Peer() }); });
+                                        //clients.ForEach((a) => { a.PutOutgoingMessage(new CMMessage() { Kind = MessageKind.UpdatePeer, Message = newRoom.Peer() }); });
+                                        SendTo(clients, new CMMessage() { Kind = MessageKind.UpdatePeer, Message = newRoom.Peer() });
                                     }
 
                                     break;
@@ -231,7 +233,8 @@ namespace SimpleChat
                                             ReceiversList.Remove(RoomToClose.Room.PeerId);
 
                                             //Уведомляем всех
-                                            clients.ForEach((a) => { a.PutOutgoingMessage(new CMMessage() { Kind = MessageKind.UpdatePeer, Message = RoomToClose.Peer() }); });
+                                            //clients.ForEach((a) => { a.PutOutgoingMessage(new CMMessage() { Kind = MessageKind.UpdatePeer, Message = RoomToClose.Peer() }); });
+                                            SendTo(clients, new CMMessage() { Kind = MessageKind.UpdatePeer, Message = RoomToClose.Peer() });
                                         }
                                     }
 
@@ -244,6 +247,14 @@ namespace SimpleChat
                                     ProcessQueryMessage(clnt, incomingMessage.Message as QueryMessage);
 
                                     break;
+
+                            case MessageKind.BinaryContent:
+
+                                byte[] content = Compressing.Decompress(incomingMessage.Message as byte[]);
+
+                                TempHistory.SaveBinary(content);
+
+                                break;
 
                                 default:
                                     break;
@@ -284,6 +295,31 @@ namespace SimpleChat
                         }
                     });
 
+                    break;
+
+                case QueryMessageKind.Binary:
+
+                    string hash = queryMessage.Message as string; 
+
+                    if (hash != null)
+                    {
+                        byte[] binary = TempHistory.RestoreBinary(hash);
+
+                        if (binary != null)
+                            binary = Compressing.Compress(binary);
+
+
+                        clnt.PutOutgoingMessage(new CMMessage()
+                        {
+                            Kind = MessageKind.Answer,
+                            Message = new QueryMessage()
+                            {
+                                Kind = QueryMessageKind.Binary,
+                                MessageId = queryMessage.MessageId,
+                                Message = binary //null if binary not found
+                            }
+                        });
+                    }
 
                     break;
                 default:
@@ -293,6 +329,13 @@ namespace SimpleChat
 
         }
 
+        private static void SendTo(IEnumerable<ServerSideClient> recipients, CMMessage message)
+        {
+            foreach (ServerSideClient client in recipients)
+            {
+                client.PutOutgoingMessage(message);
+            }
+        }
 
         private static void RoutedMessageHandler(CMMessage newmes)
         {
@@ -306,10 +349,10 @@ namespace SimpleChat
 
         }
 
-        internal static void AcceptAuthorization(ServerSideClient clnt, CMUser FoundUser)
+        internal static void AcceptAuthorization(ServerSideClient newClient, CMUser FoundUser)
         {
             //Если уже был авторизован с другой машины - отключаем
-            clients.FindAll((client) => client.User == FoundUser).ToList().ForEach(
+            clients.Where((client) => client.User == FoundUser).ToList().ForEach(
                 (client) =>
                 {
                     if (client != null && client.State != ClientState.Disconnected)
@@ -321,9 +364,8 @@ namespace SimpleChat
                     }
                 });
 
-
-            clnt.User = FoundUser;
-            FoundUser.Client = clnt;
+            newClient.User = FoundUser;
+            FoundUser.Client = newClient;
 
             ServerPersonPeer peer = ReceiversList[FoundUser.AuthData.UserId] as ServerPersonPeer;
 
@@ -332,19 +374,20 @@ namespace SimpleChat
 
             Console.WriteLine(String.Format(CultureInfo.CurrentCulture,
                                 "{1}({0}) Connected",
-                                clnt.Tcp.Client.RemoteEndPoint.ToString(),
-                                clnt.User != null ? clnt.User.UserId : null));
+                                newClient.Tcp.Client.RemoteEndPoint.ToString(),
+                                newClient.User != null ? newClient.User.UserId : null));
 
             //Подтверждаем авторизацию
-            clnt.PutOutgoingMessage(new CMMessage()
+            newClient.PutOutgoingMessage(new CMMessage()
             {
                 Kind = MessageKind.Authorization,
                 Message = FoundUser.UserId
             });
 
-            clients.ForEach((a) => { a.PutOutgoingMessage(new CMMessage() { Kind = MessageKind.UpdatePeer, Message = ReceiversList[FoundUser.UserId].Peer() }); });
+            //clients.ForEach((a) => { a.PutOutgoingMessage(new CMMessage() { Kind = MessageKind.UpdatePeer, Message = ReceiversList[FoundUser.UserId].Peer() }); });
+            SendTo(clients, new CMMessage() { Kind = MessageKind.UpdatePeer, Message = ReceiversList[FoundUser.UserId].Peer() });
 
-            clnt.PutOutgoingMessage(new CMMessage()
+            newClient.PutOutgoingMessage(new CMMessage()
             {
                 Kind = MessageKind.UsersList,
                 Message = ReceiversList.Values.OfType<ServerRoomPeer>().Select<ServerRoomPeer, RoomPeer>(room => room.Room).ToList<RoomPeer>()
@@ -386,14 +429,20 @@ namespace SimpleChat
                 //lock (clients)
                 //{
 
-                    //foreach (CMClientBase a in clients.AsParallel())
-                    //{
-                    //    a.ProcessQueue();
-                    //}
+                //foreach (CMClientBase a in clients.AsParallel())
+                //{
+                //    a.ProcessQueue();
+                //}
 
-                List<CMClientBase> copy = new List<CMClientBase>(clients);
+                //List<CMClientBase> copy = new List<CMClientBase>(clients);
 
-                copy.AsParallel().ToList().ForEach((a) => { if (a != null ) a.ProcessQueue(); });
+                //copy.AsParallel().ToList().ForEach((a) => { if (a != null) a.ProcessQueue(); });
+
+                foreach (ServerSideClient client in clients)
+                {
+                    client.ProcessQueue();
+                }
+
                 //}
 
                 Thread.Sleep(1);
@@ -408,13 +457,13 @@ namespace SimpleChat
             while (true)
             {
                 //Проверяем всех клиентов
-                clients.ForEach((a) => 
+                foreach (ServerSideClient client in clients)
                 {
-                    if ((a.OutgoingMessagesCount == 0) && (a.LastActivity.AddMilliseconds(15000) < DateTime.Now))
+                    if ((client.OutgoingMessagesCount == 0) && (client.LastActivity.AddMilliseconds(15000) < DateTime.Now))
                     { 
-                        a.CheckAlive(); 
+                        client.CheckAlive(); 
                     } 
-                });
+                }
 
                 //Удаляем мертвых
                 //lock (clients)
@@ -465,7 +514,8 @@ namespace SimpleChat
                         if (DisconnectingClient.User != null)
                         {
                             ((ServerPersonPeer)ReceiversList[DisconnectingClient.User.UserId]).Person.State = PeerStatus.Offline;
-                            clients.ForEach((a) => { a.PutOutgoingMessage(new CMMessage() { Kind = MessageKind.UpdatePeer, Message = ReceiversList[DisconnectingClient.User.UserId].Peer() }); });
+                            //clients.ForEach((a) => { a.PutOutgoingMessage(new CMMessage() { Kind = MessageKind.UpdatePeer, Message = ReceiversList[DisconnectingClient.User.UserId].Peer() }); });
+                            SendTo(clients, new CMMessage() { Kind = MessageKind.UpdatePeer, Message = ReceiversList[DisconnectingClient.User.UserId].Peer() });
                         }
 
                         Console.WriteLine(String.Format(CultureInfo.CurrentCulture, 

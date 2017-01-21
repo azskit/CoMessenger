@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using System.Globalization;
 using CorporateMessengerLibrary;
 using System.Windows.Documents;
 using System.IO;
@@ -13,19 +9,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Data;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using COMessengerClient.CustomControls;
-using System.Collections.ObjectModel;
 using COMessengerClient.CustomControls.CustomConverters;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Media;
 using System.Windows.Markup;
-using COMessengerClient.ChatFace;
-using System.Xml;
 using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Markup.Primitives;
+//using System.Drawing;
+using COMessengerClient.Tools;
 
 namespace COMessengerClient.Conversation
 {
@@ -238,6 +227,51 @@ namespace COMessengerClient.Conversation
                     //    FlowDocument deserialized = System.Windows.Markup.XamlReader.Load as FlowDocument;
                     //}
 
+                    CimSerializer serializer = new CimSerializer();
+                    FlowDocument secondFlDoc = null;
+
+                    List<FrameworkElement> images;
+
+                    using (MemoryStream stream = new MemoryStream(Compressing.Decompress(value.FormattedText)))
+                    {
+                        secondFlDoc = serializer.Deserialize(stream, out images);
+                    }
+
+                    foreach (Image image in images)
+                    {
+                        BinarySource imageSource = BinaryCacheManager.GetCustomValue(image);
+
+                        byte[] imageData;
+
+                        imageData = App.ThisApp.History.RestoreBinary(imageSource.BinarySourceId);
+
+                        if (imageData != null)
+                        {
+                            imageSource.BinarySourceData = imageData;
+
+                            if (image is AnimatedImage)
+                                ((AnimatedImage)image).AnimatedBitmap = imageSource.ToBitmap();
+                            else
+                                image.Source = imageSource.ToImageSource();
+
+                            //collection.Add(new InlineUIContainer(image));
+
+                        }
+                        else
+                        {
+                            InlineUIContainer container = image.Parent as InlineUIContainer;
+
+                            ImageDownloadingBanner banner = new ImageDownloadingBanner(image);
+
+                            container.Child = banner;
+
+                            banner.Reload();
+                        }
+                    }
+
+
+                        return secondFlDoc.Blocks;
+
 
 
                     using (StringReader stringReader = new StringReader(Encoding.UTF8.GetString(Compressing.Decompress(value.FormattedText))))
@@ -437,6 +471,24 @@ namespace COMessengerClient.Conversation
         }
 
 
+        private static void Decompose(FlowDocument source, out string format, out List<BinarySource> binaries)
+        {
+            CimSerializer serializer = new CimSerializer();
+
+            format = serializer.Serialize2(source, out binaries);
+
+            //using (FileStream fstream = new FileStream("debug_message2.txt", FileMode.Create))
+            //{
+            //    fstream.Write(Encoding.UTF8.GetBytes(outstr.ToString()), 0, outstr.Length);
+            //}
+            using (FileStream fstream = new FileStream("debug_message3.txt", FileMode.Create))
+            {
+                fstream.Write(Encoding.UTF8.GetBytes(format), 0, Encoding.UTF8.GetBytes(format).Length);
+            }
+
+
+        }
+
         private static byte[] GetMessageBody(FlowDocument source)
         {
             FlowDocument fldoc = new FlowDocument();
@@ -452,27 +504,48 @@ namespace COMessengerClient.Conversation
 
             fldoc.Blocks.AddRange(newblocks);
 
-            TextRange range = new TextRange(fldoc.ContentStart, fldoc.ContentEnd);
+            //TextRange range = new TextRange(fldoc.ContentStart, fldoc.ContentEnd);
 
             string savedButton = System.Windows.Markup.XamlWriter.Save(fldoc);
 
-            var c = ValueSerializer.GetSerializerFor(typeof(System.Windows.Controls.Image));
+            //var c = ValueSerializer.GetSerializerFor(typeof(System.Windows.Controls.Image));
 
-            var m = MarkupWriter.GetMarkupObjectFor(fldoc);
+            //var m = MarkupWriter.GetMarkupObjectFor(fldoc);
 
-            StringBuilder outstr = new StringBuilder();
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.OmitXmlDeclaration = true;
-            XamlDesignerSerializationManager dsm = new XamlDesignerSerializationManager(XmlWriter.Create(outstr, settings));
-            //this string need for turning on expression saving mode 
-            dsm.XamlWriterMode = XamlWriterMode.Value;
-            XamlWriter.Save(fldoc, dsm);
+            //StringBuilder outstr = new StringBuilder();
+            //XmlWriterSettings settings = new XmlWriterSettings();
+            //settings.Indent = true;
+            //settings.OmitXmlDeclaration = true;
+            //XamlDesignerSerializationManager dsm = new XamlDesignerSerializationManager(XmlWriter.Create(outstr, settings));
+            ////this string need for turning on expression saving mode 
+            //dsm.XamlWriterMode = XamlWriterMode.Value;
+            //XamlWriter.Save(fldoc, dsm);
 
+            CimSerializer serializer = new CimSerializer();
 
+            string xml = serializer.Serialize(fldoc);
+
+            //using (FileStream fstream = new FileStream("debug_message2.txt", FileMode.Create))
+            //{
+            //    fstream.Write(Encoding.UTF8.GetBytes(outstr.ToString()), 0, outstr.Length);
+            //}
             using (FileStream fstream = new FileStream("debug_message2.txt", FileMode.Create))
             {
-                fstream.Write(Encoding.UTF8.GetBytes(outstr.ToString()), 0, outstr.Length);
+                fstream.Write(Encoding.UTF8.GetBytes(xml), 0, Encoding.UTF8.GetBytes(xml).Length);
+            }
+            serializer = new CimSerializer();
+
+            List<BinarySource> binaries;
+
+            xml = serializer.Serialize2(fldoc, out binaries);
+
+            //using (FileStream fstream = new FileStream("debug_message2.txt", FileMode.Create))
+            //{
+            //    fstream.Write(Encoding.UTF8.GetBytes(outstr.ToString()), 0, outstr.Length);
+            //}
+            using (FileStream fstream = new FileStream("debug_message3.txt", FileMode.Create))
+            {
+                fstream.Write(Encoding.UTF8.GetBytes(xml), 0, Encoding.UTF8.GetBytes(xml).Length);
             }
 
 
@@ -525,7 +598,8 @@ namespace COMessengerClient.Conversation
             //                }
             //            });
 
-            return Compressing.Compress(Encoding.UTF8.GetBytes(savedButton));
+            //return Compressing.Compress(Encoding.UTF8.GetBytes(savedButton));
+            return Compressing.Compress(Encoding.UTF8.GetBytes(xml));
 
 
             //using (MemoryStream streamXAML = new MemoryStream())
@@ -588,9 +662,30 @@ namespace COMessengerClient.Conversation
                 {
                     newValue.Kind = RoutedMessageKind.RichText;
                     newValue.Text = tr.Text;
-                    newValue.FormattedText = GetMessageBody(source); 
+                    //newValue.FormattedText = GetMessageBody(source); 
+
+                    string FormattedText;
+                    List<BinarySource> binaries;
+
+                    Decompose(source, out FormattedText, out binaries);
+
+                    newValue.FormattedText = GetMessageBody(source);
 
                     conView.NewMessageBox.IsRichText = false;
+
+
+
+                    foreach (BinarySource binary in binaries)
+                    {
+                        //Если это какое-то новое изображение, отправляем серверу
+                        if (!App.ThisApp.History.BinaryExists(binary.BinarySourceId))
+                        {
+                            App.ThisApp.History.SaveBinary(binary.BinarySourceData);
+
+                            ConnectionManager.Client.PutOutgoingMessage(new CMMessage() { Kind = MessageKind.BinaryContent, Message = Compressing.Compress(binary.BinarySourceData) });
+                        }
+                    }
+
                 }
                 else
                 {

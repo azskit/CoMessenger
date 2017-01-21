@@ -35,7 +35,7 @@ namespace COMessengerClient.ChatFace
 
         #region Initialization
 
-        private static RoutedUICommand RegisterNewCommand(string commandDescription, string commandName, ExecutedRoutedEventHandler execHandler, CanExecuteRoutedEventHandler canExecHandler)
+        public static RoutedUICommand RegisterNewCommand(string commandDescription, string commandName, ExecutedRoutedEventHandler execHandler, CanExecuteRoutedEventHandler canExecHandler)
         {
             RoutedUICommand NewCommand = new RoutedUICommand(commandDescription, commandName, typeof(EditingCommandsExtended));
 
