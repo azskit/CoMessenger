@@ -84,14 +84,14 @@ namespace BuiltInAuthentication
                 try
                 {
                     using (Stream fs = new FileStream(usersListFile, FileMode.Open, FileAccess.Read, FileShare.Read))
-                    using (XmlReader xml_reader = new XmlTextReader(fs))
+                    //using (XmlReader xml_reader = new XmlTextReader(fs))
                     {
-                        return serializer.Deserialize(xml_reader) as List<BuiltInUser>;
+                        return serializer.Deserialize(fs) as List<BuiltInUser>;
                     }
                 }
                 catch (Exception e)
                 {
-                    ErrorStream?.WriteLine("An error occured while reading file {0} : {1}", usersListFile, e.Message);
+                    ErrorStream?.WriteLine("An error has occured while reading file {0} : {1}", usersListFile, e.Message);
                     return new List<AuthenticationData>();
                 }
             }

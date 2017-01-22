@@ -28,6 +28,8 @@ namespace SimpleChat
         static private IEnumerable<IAuthentication> authPlugins;
         static private IEnumerable<IGroupCollector> groupPlugins;
 
+        static private List<IPlugin> disabledPlugins;
+
         static private ConcurrentList<ServerSideClient> clients = new ConcurrentList<ServerSideClient>();
         //static internal List<CMUser> CoMessengerUsers = new List<CMUser>();
 
@@ -48,8 +50,8 @@ namespace SimpleChat
                 if (obj is FullUserName)
                 {
                     FullUserName that = (FullUserName)obj;
-                    int d = String.Compare(this.Domain, that.Domain, false);
-                    return d == 0 ? String.Compare(this.UserName, that.UserName, false) : d;
+                    int d = String.Compare(this.Domain, that.Domain, StringComparison.OrdinalIgnoreCase);
+                    return d == 0 ? String.Compare(this.UserName, that.UserName, StringComparison.OrdinalIgnoreCase) : d;
                 }
                 else
                     return 0;
@@ -58,7 +60,10 @@ namespace SimpleChat
 
         static internal SortedDictionary<FullUserName, CMUser> CoMessengerUsers = new SortedDictionary<FullUserName, CMUser>();
         static internal SortedDictionary<string, CMGroup> CoMessengerGroups = new SortedDictionary<string, CMGroup>();
-        static SortedList<string, IMessagable> ReceiversList = new SortedList<string, IMessagable>();
+        static SortedList<string, IMessageReceiver> ReceiversList = new SortedList<string, IMessageReceiver>();
+
+        static internal SortedSet<string> RemovedReceivers = new SortedSet<string>();
+
 
         // set the TcpListener on port 13000
         static int port = 13000;
@@ -120,7 +125,7 @@ namespace SimpleChat
                                     ServerRoomPeer enteredRoom = ReceiversList[(string)incomingMessage.Message] as ServerRoomPeer;
 
                                     //Ищем клиента по ID
-                                    ServerPersonPeer joiner = (ServerPersonPeer)ReceiversList[clnt.User.AuthData.UserId];
+                                    ServerPersonPeer joiner = (ServerPersonPeer)ReceiversList[clnt.User.Authentication.UserId];
 
                                     //Если клиент еще не в комнате, то добавляем
                                     if (!enteredRoom.Participants.Contains(joiner))
@@ -153,7 +158,7 @@ namespace SimpleChat
                                     ServerRoomPeer leavedRoom = ReceiversList[(string)incomingMessage.Message] as ServerRoomPeer;
 
                                     //Ищем клиента по ID
-                                    ServerPersonPeer leaver = (ServerPersonPeer)ReceiversList[clnt.User.AuthData.UserId];
+                                    ServerPersonPeer leaver = (ServerPersonPeer)ReceiversList[clnt.User.Authentication.UserId];
 
                                     //Если клиент еще не в комнате, то добавляем
                                     if (leavedRoom.Participants.Contains(leaver))
@@ -202,10 +207,7 @@ namespace SimpleChat
                                                 PeerType = PeerType.Room,
                                                 IsMainRoom = false,
                                                 State = PeerStatus.Common
-                                            },
-
-                                            //Список присутствующих в комнате для обработки на сервере
-                                            Participants = new List<ServerPersonPeer>()
+                                            }
                                         };
 
                                         //Добавляем в список
@@ -367,7 +369,7 @@ namespace SimpleChat
             newClient.User = FoundUser;
             FoundUser.Client = newClient;
 
-            ServerPersonPeer peer = ReceiversList[FoundUser.AuthData.UserId] as ServerPersonPeer;
+            ServerPersonPeer peer = ReceiversList[FoundUser.Authentication.UserId] as ServerPersonPeer;
 
             peer.Person.State = PeerStatus.Online;
             //FoundUser.Status = PeerStatus.Online;
@@ -393,7 +395,7 @@ namespace SimpleChat
                 Message = ReceiversList.Values.OfType<ServerRoomPeer>().Select<ServerRoomPeer, RoomPeer>(room => room.Room).ToList<RoomPeer>()
             });
 
-            peer.OnAuthorizated();
+            peer.OnAuthorizationConfirmed();
 
             //List<RoomPeer> personlist = ReceiversList.Values.OfType<ServerRoomPeer>().ToList<RoomPeer>();
 
@@ -537,60 +539,9 @@ namespace SimpleChat
         static void Main(string[] args)
         {
 
-            
-
             Console.WriteLine("C-Messenger server v.0.0.0.1 Povyshev Nikolay © ");
-            /*
-            List<string> ab = LdapAuthority.GetDomainList() as List<string>;
 
-            using (DirectoryEntry en = new DirectoryEntry("LDAP://"))
-            using (DirectorySearcher srch = new DirectorySearcher("objectCategory=Domain"))
-            {
-                SearchResultCollection coll = null;
-
-                try
-                {
-                    coll = srch.FindAll();
-                }
-                catch (Exception)
-                {
-                }
-                // Enumerate over each returned domainEntry.
-                foreach (SearchResult rs in coll)
-                {
-                    ResultPropertyCollection resultPropColl = rs.Properties;
-                    foreach (object paramname in resultPropColl.PropertyNames)
-                    {
-                        Console.Write(paramname.ToString() + ": ");
-
-                        foreach (object domainName in resultPropColl[paramname.ToString()])
-                    {
-                        Console.WriteLine(domainName.ToString());
-                    }
-                    }
-                }
-            }
-            */
-
-
-            Console.WriteLine("Loading plugins");
-
-            var catalog = new AggregateCatalog();
-
-            catalog.Catalogs.Add(new AssemblyCatalog(typeof(Server).Assembly));
-
-            //catalog.Catalogs.Add(new DirectoryCatalog("..\\..\\Plugins"));
-            catalog.Catalogs.Add(new DirectoryCatalog("Plugins"));
-
-            container = new CompositionContainer(catalog);
-            plugins = container.GetExportedValues<IPlugin>();
-            authPlugins = container.GetExportedValues<IAuthentication>();
-            groupPlugins = container.GetExportedValues<IGroupCollector>();
-
-            foreach (IPlugin plugin in plugins)
-            {
-                Console.WriteLine("Name: {0}, Author: {1}, Version: {2}", plugin.Name, plugin.Author, plugin.Version);
-            }
+            LoadPlugins();
 
             Thread NewMesagesThread = new Thread(new ThreadStart(NewMessagesIterator));
             NewMesagesThread.Start();
@@ -601,178 +552,9 @@ namespace SimpleChat
             Thread ProcessQueuesThread = new Thread(new ThreadStart(ProcessQueues));
             ProcessQueuesThread.Start();
 
-            //string usersplan = "userplan.xml";
-            //string usersListFile = "builtinusers.xml";
+            UpdateUsers(true);
 
-
-            //Console.WriteLine("Get users plan using {0} ...", usersplan);
-
-            //LdapAuthority LdapAuth = new LdapAuthority() { InfoStream = Console.Out };
-            //UsersPlan Plan = LdapAuthority.GetUsersPlan(usersplan);
-
-            //CoMessengerUsers.AddRange(LdapAuth.GetWindowsUsers(Plan).Where(user => !String.IsNullOrWhiteSpace(user.UserName) && !String.IsNullOrWhiteSpace(user.UserId)));
-
-            //Console.WriteLine("Get builtin users using {0} ...", usersListFile);
-
-            //try
-            //{
-            foreach (IAuthentication plugin in authPlugins)
-            {
-                plugin.ErrorStream = Console.Error;
-                plugin.InfoStream = Console.Out;
-                plugin.WarningStream = Console.Out;
-
-
-                //plugin.ProcessMessage(new MessageArgs<object>(new List<ICimUser>(), Message.CollectingUsers));
-                //Console.WriteLine("Name: {0}, Author: {1}, Version: {2}", plugin.Name, plugin.Author, plugin.Version);
-                //CoMessengerUsers.AddRange(plugin.CollectUsers().Select(i => new CMUser() {);
-                foreach (AuthenticationData auth in plugin.CollectUsers())
-                {
-                    if (CoMessengerUsers.ContainsKey(new FullUserName(auth.Domain ?? String.Empty, auth.UserName)))
-                        Console.WriteLine("Warning, user {0}\\{1} is already exists", auth.Domain, auth.UserName);
-                    else if (new List<string>(){ auth.DisplayName, auth.UserId, auth.UserName}.Any(value => String.IsNullOrWhiteSpace(value)))
-                        Console.WriteLine("Warning, user {0} (Domain = {1}, UserName = {2}, UserId = {3}) ignored: one or more of requered fields are empty", auth.DisplayName, auth.Domain, auth.UserName, auth.UserId);
-                    else
-                        CoMessengerUsers.Add(new FullUserName(auth.Domain??String.Empty, auth.UserName), new CMUser() { AuthData = auth, UserId = auth.UserId });
-                }
-            }
-
-
-            //CoMessengerUsers.AddRange(BuiltInAuthority.GetBuiltInUsers(usersListFile).Where(user => !String.IsNullOrWhiteSpace(user.UserName) && !String.IsNullOrWhiteSpace(user.UserId)));
-
-            //}
-            const string MainGroupID = "{8A4458F4-6AA9-40F4-ADD3-A45491EE8FA0}";
-
-            //Console.WriteLine("done");
-
-            //Основная группа пользователей
-            CMGroup MainGroup =
-                new CMGroup
-                (
-                    displayName: "All users",
-                    groupId: MainGroupID,
-                    userIds: CoMessengerUsers.Values.Select(user => user.UserId)
-
-                    );
-
-            CoMessengerGroups.Add(MainGroup.DisplayName, MainGroup);
-
-
-            //Console.WriteLine("Get groups using {0} ...", usersplan);
-
-            //CoMessengerGroups.AddRange(LdapAuth.GetGroups(Plan));
-            foreach (IGroupCollector plugin in groupPlugins)
-            {
-                plugin.ErrorStream = Console.Error;
-                plugin.InfoStream = Console.Out;
-                plugin.WarningStream = Console.Out;
-
-                foreach (Group group in plugin.CollectGroups())
-                {
-                    if (CoMessengerGroups.ContainsKey(group.DisplayName))
-                        Console.WriteLine("Warning, group {0} is already exists", group.DisplayName);
-                    else
-                        CoMessengerGroups.Add(group.DisplayName, new CMGroup(group.DisplayName, group.GroupId, group.UserIds));
-                }
-            }
-
-
-            //CoMessengerGroups.First().Users = CoMessengerUsers.FindAll(user => CoMessengerGroups.First().UserIDs.Contains(user.UserId));
-
-            //CoMessengerUsers.Values. ForEach(user => 
-            foreach (CMUser user in CoMessengerUsers.Values)
-            {
-                ReceiversList.Add(user.UserId, new ServerPersonPeer()
-                {
-                    User = user,
-                    Person = new PersonPeer()
-                    {
-                        DisplayName = user.AuthData.DisplayName,
-                        PeerId = user.UserId,
-                        PeerType = PeerType.Person,
-                        State = PeerStatus.Offline,
-                        Avatar = File.Exists(Path.Combine(@"Storage/Avatars", string.Concat(user.UserId, ".png"))) ? System.IO.File.ReadAllBytes(Path.Combine(@"Storage/Avatars", string.Concat(user.UserId, ".png"))) : null
-                    }
-                });
-
-            }
-
-            //CoMessengerGroups.ForEach(
-            //    (group) =>
-            foreach (CMGroup group in CoMessengerGroups.Values)
-            {
-                ServerRoomPeer Room = new ServerRoomPeer();
-
-                Room.Room = new RoomPeer()
-                {
-                    DisplayName = group.DisplayName,
-                    PeerId = group.GroupId,
-                    PeerType = PeerType.Room,
-                    IsMainRoom = group.GroupId == MainGroupID ? true : false,
-                    State = PeerStatus.Common
-                };
-
-                Room.Room.Participants.AddRange(group.UserIds.Where(userID => ReceiversList.ContainsKey(userID)). //Выбираем из группы только тех, кто в списке наших пользователей
-                         Select(userID => ((ServerPersonPeer)ReceiversList[userID]).Person). //По ID находим получателей
-                         ToList());
-
-                Room.Participants = group.UserIds.Where(userID => ReceiversList.ContainsKey(userID)).Select(userID => ReceiversList[userID] as ServerPersonPeer).ToList();
-
-
-                ReceiversList.Add(group.GroupId, Room);
-
-            }
-            /*
-            ReceiversList.ToList().ForEach(pair =>
-                {
-                    ServerRoomPeer room = pair.Value as ServerRoomPeer;
-                    if (room != null)
-                    {
-                        room.Init();
-                    }
-                });
-            */
-            //List<Peer> newl = ReceiversList.Select<KeyValuePair<string, IMessagable>, Peer>(pair => { if (pair.Value is ServerPersonPeer) return pair.Value as PersonPeer; else return pair.Value as RoomPeer; }).ToList<Peer>();
-
-            //List<RoomPeer> personlist = ReceiversList.Values.OfType<ServerRoomPeer>().ToList<RoomPeer>();
-
-            //foreach (var Room in personlist)
-            //{
-            //    Console.WriteLine(Room.DisplayName);
-            //}
-
-            //ServerPersonPeer sp = new ServerPersonPeer() { DisplayName = "abc", Receiver = CoMessengerUsers[0], Type = PeerType.Person, PeerID = "1" };
-
-            //PersonPeer pp = (PersonPeer)sp;
-
-            //List<PersonPeer> lp = new List<PersonPeer>();
-
-            //lp.Add(pp);
-
-
-            //System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(List<PersonPeer>), new Type[] { typeof(List<ServerPersonPeer>), typeof(List<ServerRoomPeer>) });
-            ////System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(List<RoomPeer>), new Type[] { typeof(List<ServerRoomPeer>), typeof(List<ServerPersonPeer>) });
-
-            //using (System.IO.StreamWriter writer = new System.IO.StreamWriter("test.xml"))
-            //{
-            //    serializer.Serialize(writer, lp);
-            //}
-
-            int i = 0;
-            Console.WriteLine("Common Users List:");
-
-            if (CoMessengerUsers.Count == 0) Console.WriteLine("No users were found!");
-
-            //CoMessengerUsers.ForEach((element) => 
-            //{
-            //    //element.Status = PeerStatus.Offline;
-            //    Console.WriteLine("{0} {1}", ++i, element.DisplayName); 
-            //});
-
-            foreach (CMUser user in CoMessengerUsers.Values)
-            {
-                Console.WriteLine("{0} {1}", ++i, user.AuthData.DisplayName);
-            }
+            UpdateGroups(true);
 
             Console.WriteLine("Starting listener...");
 
@@ -785,31 +567,260 @@ namespace SimpleChat
                     callback: new AsyncCallback(OnNewConnection),
                     state: server
                     );
-
-                Console.WriteLine("Listening on {0}...", server.LocalEndpoint);
-
-                bool notStop = true;
-
-                while (notStop)
-                {
-                    Console.Write(">");
-                    string msg = Console.ReadLine();
-
-                    if (msg == "e" || msg == "exit")
-                        notStop = false;
-                    //else if (!string.IsNullOrEmpty(msg))
-                    //    clients.ForEach((a) => { a.PutOutMessage(new CMMessage() { Kind = MessageKind.Text, Message = msg }); });
-                }
             }
             catch (SocketException e) when (e.SocketErrorCode == SocketError.AddressAlreadyInUse)
             {
                 Console.WriteLine("Address {server.LocalEndpoint} is already in use");
             }
 
+            Console.WriteLine("Listening on {0}...", server.LocalEndpoint);
+
+            ProcessConsoleInput();
+
+
+
+
             NewMesagesThread.Abort();
             CheckClientsAreAliveThread.Abort();
             ProcessQueuesThread.Abort();
 
+        }
+
+        private static void UpdateGroups(bool IsInitialization)
+        {
+            const string AllUsersGroupId = "{8A4458F4-6AA9-40F4-ADD3-A45491EE8FA0}";
+
+            List<CMGroup> newGroups = new List<CMGroup>();
+
+            if (IsInitialization)
+            {
+
+                CMGroup AllUsersGroup =
+                new CMGroup
+                (
+                    displayName: "All users group",
+                    groupId: AllUsersGroupId,
+                    userIds: CoMessengerUsers.Values.Select(user => user.UserId)
+                );
+
+                //CoMessengerGroups.Add(AllUsersGroup.DisplayName, AllUsersGroup);
+                newGroups.Add(AllUsersGroup);
+            }
+
+
+            foreach (IGroupCollector plugin in groupPlugins)
+            {
+                if (disabledPlugins.Contains(plugin))
+                    continue;
+
+                IEnumerable<Group> ActualGroups;
+
+                try
+                {
+                    plugin.ErrorStream = Console.Error;
+                    plugin.InfoStream = Console.Out;
+                    plugin.WarningStream = Console.Out;
+
+                    ActualGroups = plugin.CollectGroups();
+                }
+                catch (Exception)
+                {
+                    disabledPlugins.Add(plugin);
+                    Console.WriteLine(String.Format(CultureInfo.CurrentUICulture, "An error has occurred in plugin {0}. The plugin has been disabled", plugin.Name));
+                    continue;
+                }
+
+                foreach (CMGroup removedGroup in CoMessengerGroups.Values.Where(group => !ActualGroups.Any(newGroup => newGroup.GroupId == group.GroupId)))
+                {
+                    RemovedReceivers.Add(removedGroup.GroupId);
+                }
+
+
+                foreach (Group group in ActualGroups)
+                {
+                    if (CoMessengerGroups.ContainsKey(group.DisplayName))
+                    {
+                        if (IsInitialization)
+                            Console.WriteLine("Warning, group {0} already exists", group.DisplayName);
+                    }
+                    else if (ReceiversList.ContainsKey(group.GroupId))
+                    {
+                        if (IsInitialization)
+                            Console.WriteLine("Warning, group or user with Id {0} already exists", group.GroupId);
+                    }
+                    else
+                    {
+                        newGroups.Add(new CMGroup(group.DisplayName, group.GroupId, group.UserIds));
+                    }
+                }
+
+            }
+
+            foreach (CMGroup newGroup in newGroups)
+            {
+                CoMessengerGroups.Add(newGroup.DisplayName, newGroup);
+
+                ServerRoomPeer Room = new ServerRoomPeer();
+
+                Room.Room = new RoomPeer()
+                {
+                    DisplayName = newGroup.DisplayName,
+                    PeerId = newGroup.GroupId,
+                    PeerType = PeerType.Room,
+                    IsMainRoom = newGroup.GroupId == AllUsersGroupId ? true : false,
+                    State = PeerStatus.Common
+                };
+
+                Room.Room.Participants.AddRange(newGroup.UserIds.Where(userID => ReceiversList.ContainsKey(userID)). //Выбираем из группы только тех, кто в списке наших пользователей
+                         Select(userID => ((ServerPersonPeer)ReceiversList[userID]).Person)); //По ID находим получателей
+
+                Room.Participants.AddRange(newGroup.UserIds.Where(userID => ReceiversList.ContainsKey(userID)).Select(userID => ReceiversList[userID] as ServerPersonPeer));
+
+
+                ReceiversList.Add(newGroup.GroupId, Room);
+
+            }
+        }
+
+        private static void UpdateUsers(bool IsInitialization)
+        {
+
+            List<AuthenticationData> newUsers = new List<AuthenticationData>();
+
+            foreach (IAuthentication plugin in authPlugins)
+            {
+
+                if (disabledPlugins.Contains(plugin))
+                    continue;
+
+                IEnumerable<AuthenticationData> ActualUsers;
+
+                try
+                {
+                    plugin.ErrorStream = Console.Error;
+                    plugin.InfoStream = Console.Out;
+                    plugin.WarningStream = Console.Out;
+
+                    ActualUsers = plugin.CollectUsers();
+
+                }
+                catch (Exception)
+                {
+                    disabledPlugins.Add(plugin);
+                    Console.WriteLine(String.Format(CultureInfo.CurrentUICulture, "An error has occurred in plugin {0}. The plugin has been disabled", plugin.Name));
+                    continue;
+                }
+
+                foreach (CMUser removedUser in CoMessengerUsers.Values.Where(user => !ActualUsers.Any(newUser => newUser.UserId == user.UserId)))
+                {
+                    RemovedReceivers.Add(removedUser.UserId);
+                }
+
+                foreach (AuthenticationData auth in ActualUsers)
+                {
+                    if (CoMessengerUsers.ContainsKey(new FullUserName(auth.Domain ?? String.Empty, auth.UserName)) ||
+                        newUsers.Any(existingAuth => String.Equals(existingAuth.Domain, auth.Domain, StringComparison.OrdinalIgnoreCase) &&
+                                                     String.Equals(existingAuth.UserName, auth.UserName, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        if (IsInitialization)
+                            Console.WriteLine("Warning, user {0}\\{1} already exists", auth.Domain, auth.UserName);
+                    }
+                    else if (new List<string>() { auth.DisplayName, auth.UserId, auth.UserName }.Any(value => String.IsNullOrWhiteSpace(value)))
+                    {
+                        Console.WriteLine("Warning, user {0} (Domain = {1}, UserName = {2}, UserId = {3}) ignored: one or more of required fields are empty", auth.DisplayName, auth.Domain, auth.UserName, auth.UserId);
+                    }
+                    else if (ReceiversList.ContainsKey(auth.UserId) ||
+                             newUsers.Any(existingAuth => String.Equals(existingAuth.UserId, auth.UserId, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        if (IsInitialization)
+                            Console.WriteLine("Warning, group or user with Id {0} already exists", auth.UserId);
+                    }
+                    else
+                    {
+                        newUsers.Add(auth);
+                    }
+                }
+            }
+
+            foreach (AuthenticationData user in newUsers)
+            {
+                CMUser newUser = new CMUser() { Authentication = user, UserId = user.UserId };
+
+                CoMessengerUsers.Add(new FullUserName(user.Domain ?? String.Empty, user.UserName), newUser);
+
+                ReceiversList.Add(user.UserId, new ServerPersonPeer()
+                {
+                    User = newUser,
+                    Person = new PersonPeer()
+                    {
+                        DisplayName = user.DisplayName,
+                        PeerId = user.UserId,
+                        PeerType = PeerType.Person,
+                        State = PeerStatus.Offline,
+                        Avatar = File.Exists(Path.Combine(@"Storage/Avatars", string.Concat(user.UserId, ".png"))) ? System.IO.File.ReadAllBytes(Path.Combine(@"Storage/Avatars", string.Concat(user.UserId, ".png"))) : null
+                    }
+                });
+            }
+        }
+
+        private static void LoadPlugins()
+        {
+            Console.WriteLine("Loading plugins");
+
+            using (AggregateCatalog catalog = new AggregateCatalog())
+            {
+                catalog.Catalogs.Add(new AssemblyCatalog(typeof(Server).Assembly));
+
+                //catalog.Catalogs.Add(new DirectoryCatalog("..\\..\\Plugins"));
+                catalog.Catalogs.Add(new DirectoryCatalog("Plugins"));
+
+                container = new CompositionContainer(catalog);
+                plugins = container.GetExportedValues<IPlugin>();
+                authPlugins = container.GetExportedValues<IAuthentication>();
+                groupPlugins = container.GetExportedValues<IGroupCollector>();
+
+                disabledPlugins = new List<IPlugin>();
+
+                foreach (IPlugin plugin in plugins)
+                {
+                    Console.WriteLine("Name: {0}, Author: {1}, Version: {2}", plugin.Name, plugin.Author, plugin.Version);
+                }
+            }
+        }
+
+        private static void ProcessConsoleInput()
+        {
+            bool notStop = true;
+
+            while (notStop)
+            {
+                Console.Write(">");
+                string msg = Console.ReadLine().ToUpperInvariant();
+
+                switch (msg)
+                {
+                    case "E":
+                    case "EXIT":
+                        return;
+
+                    case "LIST":
+
+                        Console.WriteLine("Current users");
+
+                        int i = 1;
+
+                        foreach (var User in CoMessengerUsers.Values)
+                        {
+                            Console.WriteLine(String.Format(CultureInfo.CurrentUICulture, "{0} {1}", i++, User.Authentication.DisplayName));
+                        }
+
+                        break;
+
+
+                    default:
+                        break;
+                }
+            }
         }
     }
 }

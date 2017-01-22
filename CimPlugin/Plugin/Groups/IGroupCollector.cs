@@ -7,6 +7,7 @@ namespace CimPlugin.Plugin.Groups
 {
     public interface IGroupCollector : IPlugin
     {
+
         IEnumerable<Group> CollectGroups();
     }
 }
