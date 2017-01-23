@@ -30,7 +30,7 @@ namespace ActiveDirectoryAuthentication
         {
             get
             {
-                return "BuiltInUsersProvider";
+                return "ActiveDirectoryAuthentication";
             }
         }
 
@@ -75,11 +75,19 @@ namespace ActiveDirectoryAuthentication
 
 
 
-        PlanFileReader.UsersPlan plan = PlanFileReader.GetUsersPlan(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "ActiveDirectoryUsers.xml"));
+        PlanFileReader.UsersPlan plan;
 
         private void InitUsersPlan()
         {
-            plan = PlanFileReader.GetUsersPlan(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "ActiveDirectoryUsers.xml"));
+            try
+            {
+                plan = PlanFileReader.GetUsersPlan(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "ActiveDirectoryUsers.xml"));
+            }
+            catch (FileNotFoundException)
+            {
+                ErrorStream?.WriteLine("File ActiveDirectoryUsers.xml is not found");
+                throw;
+            }
         }
 
         /// <summary>

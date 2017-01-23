@@ -11,7 +11,7 @@ namespace SimpleChat.Identity
 {
     public class CMUser : IEquatable<CMUser>
     {
-        public AuthenticationData AuthData { get; set; }
+        public AuthenticationData Authentication { get; set; }
 
         public string UserId { get; set; }
         
@@ -19,13 +19,13 @@ namespace SimpleChat.Identity
 
         public bool Equals(CMUser other)
         {
-            if (other == null || other.AuthData == null)
+            if (other == null || other.Authentication == null)
                 return false;
 
-            if (this.AuthData == null)
+            if (this.Authentication == null)
                 return false;
 
-            return other.AuthData.UserId == this.AuthData.UserId;
+            return other.Authentication.UserId == this.Authentication.UserId;
         }
     }
 }

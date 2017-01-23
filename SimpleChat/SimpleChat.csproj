@@ -51,7 +51,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>azskit.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -66,6 +69,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Identity\CMGroup.cs" />
     <Compile Include="Identity\CMUser.cs" />
     <Compile Include="Protocol\ServerSideClient.cs" />
@@ -87,6 +91,7 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="azskit.pfx" />
     <None Include="Storage\Avatars\FemaleDefaultAvatar.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

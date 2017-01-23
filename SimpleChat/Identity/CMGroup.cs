@@ -6,13 +6,13 @@ using System.Text;
 namespace SimpleChat.Identity
 {
     [Serializable]
-    public class CMGroup
+    internal class CMGroup
     {
-        public string GroupId { get; private set; }
-        public List<string> UserIds { get; } = new List<string>();
-        public string DisplayName { get; private set; }
+        internal string GroupId { get; private set; }
+        internal List<string> UserIds { get; } = new List<string>();
+        internal string DisplayName { get; private set; }
 
-        public CMGroup(string displayName, string groupId, IEnumerable<string> userIds)
+        internal CMGroup(string displayName, string groupId, IEnumerable<string> userIds)
         {
             DisplayName = displayName;
             GroupId = groupId;

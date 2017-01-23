@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Resources;
+using System;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -23,6 +24,9 @@ using System.Resources;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("c24d3210-49dd-4ae5-bf3b-b882dba878ed")]
 
+// Анализатор ругался, мол сборка ваша не комплайэнт! Ну и насрать
+[assembly: CLSCompliant(false)]
+
 // Version information for an assembly consists of the following four values:
 //
 //      Major Version
@@ -35,4 +39,4 @@ using System.Resources;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("0.0.0.1")]
 [assembly: AssemblyFileVersion("0.0.0.1")]
-[assembly: NeutralResourcesLanguageAttribute("en")]
+[assembly: NeutralResourcesLanguage("en")]

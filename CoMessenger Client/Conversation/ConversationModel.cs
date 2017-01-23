@@ -290,7 +290,7 @@ namespace COMessengerClient.Conversation
                     //    }
                     //}                   
                     //return deserialized.Blocks;
-                    break;
+                    //break;
                 case RoutedMessageKind.Plaintext:
                     tr.Text = value.Text ?? "";
                     break;

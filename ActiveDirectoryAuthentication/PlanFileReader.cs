@@ -50,9 +50,9 @@ namespace ActiveDirectoryAuthentication
             if (File.Exists(UsersPlanFileName))
             {
                 using (Stream fs = new FileStream(UsersPlanFileName, FileMode.Open, FileAccess.Read, FileShare.Read))
-                using (XmlReader xml_reader = new XmlTextReader(fs))
+                //using (XmlReader xml_reader = new XmlTextReader(fs))
                 {
-                    return (Users = serializer.Deserialize(xml_reader) as UsersPlan);
+                    return (Users = serializer.Deserialize(fs) as UsersPlan);
                 }
             }
             else

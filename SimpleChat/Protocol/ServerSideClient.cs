@@ -63,7 +63,7 @@ namespace SimpleChat.Protocol
 
 
             string PasswordCheckError = String.Empty;
-            if (FoundUser.AuthData.CheckPassword(DecryptPassword(credentials.Password) as string, out PasswordCheckError))
+            if (FoundUser.Authentication.CheckPassword(DecryptPassword(credentials.Password) as string, out PasswordCheckError))
             {
                 Server.AcceptAuthorization(this, FoundUser);
             }

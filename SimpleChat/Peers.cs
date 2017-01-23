@@ -9,7 +9,7 @@ namespace SimpleChat
     /// <summary>
     /// Получатель сообщения
     /// </summary>
-    public interface IMessagable
+    internal interface IMessageReceiver
     {
         /// <summary>
         /// Обработать адресованное сообщение
@@ -28,7 +28,7 @@ namespace SimpleChat
     /// <summary>
     /// Серверная обертка получателя - человека
     /// </summary>
-    public class ServerPersonPeer : IMessagable
+    public class ServerPersonPeer : IMessageReceiver
     {
         /// <summary>
         /// Получатель - человек
@@ -78,7 +78,7 @@ namespace SimpleChat
             }
         }
 
-        public void OnAuthorizated()
+        public void OnAuthorizationConfirmed()
         {
             //if (History == null)
             //    History = new IndexedHistoryManager("Storage/History", false);
@@ -116,17 +116,16 @@ namespace SimpleChat
     /// <summary>
     /// Серверная обертка получателя-комнаты
     /// </summary>
-    [Serializable]
-    public class ServerRoomPeer : IMessagable
+    internal class ServerRoomPeer : IMessageReceiver
     {
         /// <summary>
         /// Получатель - комната
         /// </summary>
-        public RoomPeer Room { get; set; }
+        internal RoomPeer Room { get; set; }
         /// <summary>
         /// Участники комнаты
         /// </summary>
-        public List<ServerPersonPeer> Participants { get; set; }
+        internal List<ServerPersonPeer> Participants { get; private set; }
 
         public void ProcessMessage(RoutedMessage message)
         {
@@ -157,15 +156,11 @@ namespace SimpleChat
         {
             return Room;
         }
-        /*
-        //Инициализация обертки
-        //TODO переделать вызов этой муйни из конструктора, в конструктор передавать peerID
-        internal void Init()
+
+        internal ServerRoomPeer()
         {
-            History = new IndexedHistoryManager("Storage/History", false);
-            //MessagesBuffer = History.ReadMessages();
+            Participants = new List<ServerPersonPeer>();
         }
-        */
     }
 
 
