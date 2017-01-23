@@ -487,6 +487,8 @@ namespace SimpleChat
 
                 ServerSideClient newclient = new ServerSideClient(server.EndAcceptTcpClient(iar));
 
+                newclient.ErrorStream = newclient.InfoStream = newclient.WarningStream = Console.Out;
+
                 //newclient.ClientCulture = new CultureInfo("ru-RU");
 
                 //Обмениваемся ключами

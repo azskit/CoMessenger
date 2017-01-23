@@ -12,7 +12,7 @@
          <Members>
           <Member Name="#GetUsersPlan(System.String)" Kind="Method" Static="True" Accessibility="Public" ExternallyVisible="True">
            <Messages>
-            <Message TypeName="Не ликвидировать объекты несколько раз" Category="Microsoft.Usage" CheckId="CA2202" Status="Active" Created="2017-01-19 10:31:44Z" FixCategory="DependsOnFix">
+            <Message TypeName="Не ликвидировать объекты несколько раз" Category="Microsoft.Usage" CheckId="CA2202" Status="Active" Created="2017-01-20 16:18:50Z" FixCategory="DependsOnFix">
              <Issue Certainty="75" Level="Warning" Path="D:\Work\Repository\CoMessenger\ActiveDirectoryAuthentication" File="PlanFileReader.cs" Line="55">Объект "'fs'" можно удалять более одного раза в методе 'PlanFileReader.GetUsersPlan(string)'. Чтобы избежать исключения System.ObjectDisposedException, следует вызывать метод "Dispose" для объекта только один раз.: Lines: 55</Issue>
             </Message>
            </Messages>

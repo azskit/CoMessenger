@@ -176,7 +176,6 @@
     </Compile>
     <Compile Include="GroupConversation\GroupConversationViewModel.cs" />
     <Compile Include="IndexedObservableCollection.cs" />
-    <Compile Include="Language\Localization.cs" />
     <Compile Include="Log\LogWindow.xaml.cs">
       <DependentUpon>LogWindow.xaml</DependentUpon>
     </Compile>

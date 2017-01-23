@@ -274,21 +274,21 @@ namespace COMessengerClient.Conversation
 
 
 
-                    using (StringReader stringReader = new StringReader(Encoding.UTF8.GetString(Compressing.Decompress(value.FormattedText))))
-                    using (System.Xml.XmlReader xmlReader = System.Xml.XmlReader.Create(stringReader))
-                    {
-                        try
-                        {
-                            fldoc = XamlReader.Load(xmlReader) as FlowDocument;
+                    //using (StringReader stringReader = new StringReader(Encoding.UTF8.GetString(Compressing.Decompress(value.FormattedText))))
+                    //using (System.Xml.XmlReader xmlReader = System.Xml.XmlReader.Create(stringReader))
+                    //{
+                    //    try
+                    //    {
+                    //        fldoc = XamlReader.Load(xmlReader) as FlowDocument;
 
-                        }
-                        catch (XamlParseException)
-                        {
-                            //tr.Text = value.Text ?? "";
-                            //fldoc.Blocks.FirstBlock.ToolTip = "ОШИБКА ЧТЕНИЯ ФОРМАТА СООБЩЕНИЯ"; 
-                            fldoc.Blocks.Add(new Paragraph(new Run(value.Text ?? "")) { ToolTip = "ОШИБКА ЧТЕНИЯ ФОРМАТА СООБЩЕНИЯ" });
-                        }
-                    }                   
+                    //    }
+                    //    catch (XamlParseException)
+                    //    {
+                    //        //tr.Text = value.Text ?? "";
+                    //        //fldoc.Blocks.FirstBlock.ToolTip = "ОШИБКА ЧТЕНИЯ ФОРМАТА СООБЩЕНИЯ"; 
+                    //        fldoc.Blocks.Add(new Paragraph(new Run(value.Text ?? "")) { ToolTip = "ОШИБКА ЧТЕНИЯ ФОРМАТА СООБЩЕНИЯ" });
+                    //    }
+                    //}                   
                     //return deserialized.Blocks;
                     break;
                 case RoutedMessageKind.Plaintext:

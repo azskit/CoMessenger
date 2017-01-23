@@ -12,7 +12,7 @@
          <Members>
           <Member Name="#GetBuiltInUsers(System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="False">
            <Messages>
-            <Message TypeName="Не ликвидировать объекты несколько раз" Category="Microsoft.Usage" CheckId="CA2202" Status="Active" Created="2017-01-19 10:31:40Z" FixCategory="DependsOnFix">
+            <Message TypeName="Не ликвидировать объекты несколько раз" Category="Microsoft.Usage" CheckId="CA2202" Status="Active" Created="2017-01-20 16:18:47Z" FixCategory="DependsOnFix">
              <Issue Certainty="75" Level="Warning" Path="D:\Work\Repository\CoMessenger\BuiltInUsersProvider" File="BuiltInAuthentication.cs" Line="89">Объект "'fs'" можно удалять более одного раза в методе 'BuiltInAuthentication.GetBuiltInUsers(string)'. Чтобы избежать исключения System.ObjectDisposedException, следует вызывать метод "Dispose" для объекта только один раз.: Lines: 89</Issue>
             </Message>
            </Messages>

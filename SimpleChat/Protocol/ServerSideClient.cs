@@ -46,7 +46,7 @@ namespace SimpleChat.Protocol
             }
 
             //Уже авторизован на своей машине, тогда вместо пароля должен быть Id
-            if (credentials.SingleSignOn)
+            if (credentials.IsCurrentUser)
             {
                 if (FoundUser.UserId == DecryptSomething(credentials.Password) as string)
                     Server.AcceptAuthorization(this, FoundUser);

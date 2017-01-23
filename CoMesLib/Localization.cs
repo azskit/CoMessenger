@@ -10,7 +10,7 @@ using System.Xml;
 using System.Globalization;
 using System.Diagnostics;
 
-namespace COMessengerClient
+namespace CorporateMessengerLibrary
 {
     
     /// <summary>

@@ -57,18 +57,9 @@
     <Compile Include="CustomUtilites.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="History.cs" />
+    <Compile Include="Localization.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\LocalizingString\CimLibraryStrings.Designer.cs">
-      <DependentUpon>CimLibraryStrings.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Resources\LocalizingString\CimLibraryStrings.ru-RU.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CimLibraryStrings.ru-RU.resx</DependentUpon>
-    </Compile>
     <Compile Include="SHA1Helper.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -84,16 +75,6 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\LocalizingString\CimLibraryStrings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>CimLibraryStrings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\LocalizingString\CimLibraryStrings.ru-RU.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>CimLibraryStrings.ru-RU.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

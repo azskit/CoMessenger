@@ -431,21 +431,21 @@ namespace COMessengerClient.Tools
         {
             binaries.Clear();
 
-            var markup = MarkupWriter.GetMarkupObjectFor(document);
+            //var markup = MarkupWriter.GetMarkupObjectFor(document);
 
-            foreach (var item in markup.Properties)
-            {
-                Console.WriteLine(item.StringValue);
+            //foreach (var item in markup.Properties)
+            //{
+            //    Console.WriteLine(item.StringValue);
 
-                if (item.Value is IXmlSerializable)
-                {
-                    var i = 1;
-                }
-            }
+            //    if (item.Value is IXmlSerializable)
+            //    {
+            //        var i = 1;
+            //    }
+            //}
 
 
 
-            writer.WriteStartElement(markup.ObjectType.Name);
+            writer.WriteStartElement("FlowDocument");
 
             foreach (Block property in document.Blocks)
             {

@@ -28,7 +28,7 @@ namespace CorporateMessengerLibrary
         [Serializable]
         protected class CimCredentials
         {
-            public bool   SingleSignOn { get; set; }
+            public bool   IsCurrentUser { get; set; }
             public string UserName   { get; set; }
             public string Domain     { get; set; }
             public byte[] Password   { get; set; }
@@ -36,7 +36,9 @@ namespace CorporateMessengerLibrary
 
         public CultureInfo ClientCulture { get; set; } = CultureInfo.CurrentUICulture;
 
-        private ResourceManager Strings = new ResourceManager("CorporateMessengerLibrary.Resources.LocalizingString.CimLibraryStrings", typeof(CMClientBase).Assembly);
+        //private ResourceManager Strings = new ResourceManager("CorporateMessengerLibrary.Resources.LocalizingString.CimLibraryStrings", typeof(CMClientBase).Assembly);
+
+        protected LocalizationUI Strings = new LocalizationUI();
 
         public TcpClient Tcp { get; protected set; }
 
@@ -66,6 +68,30 @@ namespace CorporateMessengerLibrary
 
         protected delegate void DelegateConnectTo(string server, int port);
 
+        public TextWriter InfoStream { get; set; }
+        public TextWriter WarningStream { get; set; }
+        public TextWriter ErrorStream { get; set; }
+
+        private void LogInfo(string text)
+        {
+            string format = "{0} {1}: {2}";
+
+            InfoStream?.WriteLine(format, DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.InvariantCulture), Tcp?.Client.RemoteEndPoint, text);
+        }
+
+        private void LogWarning(string text)
+        {
+            string format = "{0} {1}: {2}";
+
+            WarningStream?.WriteLine(format, DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.InvariantCulture), Tcp?.Client.RemoteEndPoint, text);
+        }
+
+        private void LogError(string text)
+        {
+            string format = "{0} {1}: {2}";
+
+            ErrorStream?.WriteLine(format, DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.InvariantCulture), Tcp?.Client.RemoteEndPoint, text);
+        }
 
         /// <summary>
         /// Конструктор
@@ -194,21 +220,28 @@ namespace CorporateMessengerLibrary
                     //Console.WriteLine("Отправлено {0} :", DateTime.Now.TimeOfDay.TotalSeconds);
 
 #if DEBUG
-                    if (mes.Kind == MessageKind.RoutedMessage)
-                    {
-                        //Console.WriteLine("{0}: Отправлено сообщение", DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.InvariantCulture));
-                        Console.WriteLine(String.Format("{0}: {1}", DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.InvariantCulture), Strings.GetString("MessageHasBeenSent", ClientCulture)));
-                    }
-                    else if (mes.Kind == MessageKind.Ping)
-                    {
-                        //Console.WriteLine("{0}: Ping sent", Tcp.Client.RemoteEndPoint);
-                        Console.WriteLine(Strings.GetString("PingSent", ClientCulture), Tcp.Client.RemoteEndPoint);
-                    }
-                    else if (mes.Kind == MessageKind.Disconnect)
-                    {
-                        //Console.WriteLine("{0}: Disconnect sent", Tcp.Client.RemoteEndPoint);
-                        Console.WriteLine(Strings.GetString("DisconnectSent", ClientCulture), Tcp.Client.RemoteEndPoint);
-                    }
+
+                    LogInfo(string.Format("{0} has been sent", mes.Kind.ToString()));
+
+                    //if (mes.Kind == MessageKind.RoutedMessage)
+                    //{
+
+                    //    LogInfo(Strings.LocaleStrings["RoutedMessage has been sent"]);
+
+                    //    //Console.WriteLine("{0}: Отправлено сообщение", DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.InvariantCulture));
+                    //    //Console.WriteLine(String.Format("{0}: {1}", DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.InvariantCulture), Strings.GetString("MessageHasBeenSent", ClientCulture)));
+                    //}
+                    //else if (mes.Kind == MessageKind.Ping)
+                    //{
+                    //    LogInfo(Strings.LocaleStrings["Ping has been sent"]);
+                    //    //Console.WriteLine("{0}: Ping sent", Tcp.Client.RemoteEndPoint);
+                    //    Console.WriteLine(Strings.LocaleStrings["{0} {1}: Ping has been sent"], Tcp.Client.RemoteEndPoint);
+                    //}
+                    //else if (mes.Kind == MessageKind.Disconnect)
+                    //{
+                    //    //Console.WriteLine("{0}: Disconnect sent", Tcp.Client.RemoteEndPoint);
+                    //    Console.WriteLine(Strings.LocaleStrings["Disconnection notification has been sent"], Tcp.Client.RemoteEndPoint);
+                    //}
 
 #endif
                     //Сообщение, ожидающее ответа
@@ -253,7 +286,7 @@ namespace CorporateMessengerLibrary
             }
             else
             {
-                throw new InvalidOperationException(Strings.GetString("NoConnection", ClientCulture));
+                throw new InvalidOperationException(Strings.LocaleStrings["Client is not connected!"]);
             }
 
         }
@@ -261,7 +294,6 @@ namespace CorporateMessengerLibrary
         /// <summary>
         /// Проверка существования канала
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Не передавать литералы в качестве локализованных параметров", MessageId = "System.Console.WriteLine(System.String,System.Object,System.Object)")]
         public void CheckAlive()
         {
             CMMessage ping = new CMMessage();
