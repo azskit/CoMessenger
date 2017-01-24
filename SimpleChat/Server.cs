@@ -18,19 +18,28 @@ using System.Collections.Concurrent;
 
 namespace SimpleChat
 {
-    class Server
+    public class Server
     {
-        static private CompositionContainer container;
+
+        enum ServerState
+        {
+            Stopped,
+            Running
+        }
+
+        ServerState state;
+
+        private CompositionContainer container;
 
 
         [ImportMany]
-        static private IEnumerable<IPlugin> plugins;
-        static private IEnumerable<IAuthentication> authPlugins;
-        static private IEnumerable<IGroupCollector> groupPlugins;
+        private IEnumerable<IPlugin> plugins;
+        private IEnumerable<IAuthentication> authPlugins;
+        private IEnumerable<IGroupCollector> groupPlugins;
 
-        static private List<IPlugin> disabledPlugins;
+        private List<IPlugin> disabledPlugins;
 
-        static private ConcurrentList<ServerSideClient> clients = new ConcurrentList<ServerSideClient>();
+        private ConcurrentList<ServerSideClient> clients = new ConcurrentList<ServerSideClient>();
         //static internal List<CMUser> CoMessengerUsers = new List<CMUser>();
 
 
@@ -58,23 +67,43 @@ namespace SimpleChat
             }
         }
 
-        static internal SortedDictionary<FullUserName, CMUser> CoMessengerUsers = new SortedDictionary<FullUserName, CMUser>();
-        static internal SortedDictionary<string, CMGroup> CoMessengerGroups = new SortedDictionary<string, CMGroup>();
-        static SortedList<string, IMessageReceiver> ReceiversList = new SortedList<string, IMessageReceiver>();
+        internal SortedDictionary<FullUserName, CMUser> CoMessengerUsers = new SortedDictionary<FullUserName, CMUser>();
+        internal SortedDictionary<string, CMGroup> CoMessengerGroups = new SortedDictionary<string, CMGroup>();
+        SortedList<string, IMessageReceiver> ReceiversList = new SortedList<string, IMessageReceiver>();
 
-        static internal SortedSet<string> RemovedReceivers = new SortedSet<string>();
+        internal SortedSet<string> RemovedReceivers = new SortedSet<string>();
 
 
         // set the TcpListener on port 13000
-        static int port = 13000;
-        static TcpListener server = new TcpListener(IPAddress.Any, port);
+        int port = 13000;
+        TcpListener server;
 
-        static internal IndexedHistoryManager RoomsHistory = new IndexedHistoryManager("Storage\\History\\Rooms", true);
-        static internal IndexedHistoryManager TempHistory = new IndexedHistoryManager("Storage\\History\\Temporary", true);
+        internal static IndexedHistoryManager RoomsHistory = new IndexedHistoryManager("Storage\\History\\Rooms", true);
+        internal static IndexedHistoryManager TempHistory = new IndexedHistoryManager("Storage\\History\\Temporary", true);
 
-        static void NewMessagesIterator()
+        private Server()
         {
-            while (true)
+            server = new TcpListener(IPAddress.Any, port);
+        }
+
+
+        private static Server instance;
+
+        public static Server Instance
+        {
+            get
+            {
+                if (instance == null)
+                    instance = new Server();
+
+                return instance;
+            }
+        }
+
+
+        void NewMessagesIterator()
+        {
+            while (state == ServerState.Running)
             {
                 //lock (clients)
                 //{
@@ -273,7 +302,7 @@ namespace SimpleChat
             }
         }
 
-        private static void ProcessQueryMessage(CMClientBase clnt, QueryMessage queryMessage)
+        private void ProcessQueryMessage(CMClientBase clnt, QueryMessage queryMessage)
         {
             switch (queryMessage.Kind)
             {
@@ -339,7 +368,7 @@ namespace SimpleChat
             }
         }
 
-        private static void RoutedMessageHandler(CMMessage newmes)
+        private void RoutedMessageHandler(CMMessage newmes)
         {
             RoutedMessage routedMessage = (RoutedMessage)newmes.Message;
 
@@ -351,7 +380,7 @@ namespace SimpleChat
 
         }
 
-        internal static void AcceptAuthorization(ServerSideClient newClient, CMUser FoundUser)
+        internal void AcceptAuthorization(ServerSideClient newClient, CMUser FoundUser)
         {
             //Если уже был авторизован с другой машины - отключаем
             clients.Where((client) => client.User == FoundUser).ToList().ForEach(
@@ -424,9 +453,9 @@ namespace SimpleChat
         /// <summary>
         /// Обработчик очередей сообщений
         /// </summary>
-        static void ProcessQueues()
+        void ProcessQueues()
         {
-            while (true)
+            while (state == ServerState.Running)
             {
                 //lock (clients)
                 //{
@@ -454,9 +483,9 @@ namespace SimpleChat
         /// <summary>
         /// Отслеживаем мертвых клиентов.
         /// </summary>
-        static void CheckClientsAreAlive()
+        void CheckClientsAreAlive()
         {
-            while (true)
+            while (state == ServerState.Running)
             {
                 //Проверяем всех клиентов
                 foreach (ServerSideClient client in clients)
@@ -477,7 +506,7 @@ namespace SimpleChat
             }
         }
 
-        static void OnNewConnection(IAsyncResult iar)
+        void OnNewConnection(IAsyncResult iar)
         {
 
             try
@@ -538,8 +567,10 @@ namespace SimpleChat
 
 
 
-        static void Main(string[] args)
+        public void Start()
         {
+            state = ServerState.Running;
+
 
             Console.WriteLine("C-Messenger server v.0.0.0.1 Povyshev Nikolay © ");
 
@@ -577,18 +608,24 @@ namespace SimpleChat
 
             Console.WriteLine("Listening on {0}...", server.LocalEndpoint);
 
-            ProcessConsoleInput();
+            //ProcessConsoleInput();
 
 
 
 
-            NewMesagesThread.Abort();
-            CheckClientsAreAliveThread.Abort();
-            ProcessQueuesThread.Abort();
 
         }
 
-        private static void UpdateGroups(bool IsInitialization)
+
+        public void Stop()
+        {
+            state = ServerState.Stopped;
+            //NewMesagesThread.Abort();
+            //CheckClientsAreAliveThread.Abort();
+            //ProcessQueuesThread.Abort();
+        }
+
+        private void UpdateGroups(bool IsInitialization)
         {
             const string AllUsersGroupId = "{8A4458F4-6AA9-40F4-ADD3-A45491EE8FA0}";
 
@@ -684,7 +721,7 @@ namespace SimpleChat
             }
         }
 
-        private static void UpdateUsers(bool IsInitialization)
+        private void UpdateUsers(bool IsInitialization)
         {
 
             List<AuthenticationData> newUsers = new List<AuthenticationData>();
@@ -765,7 +802,7 @@ namespace SimpleChat
             }
         }
 
-        private static void LoadPlugins()
+        private void LoadPlugins()
         {
             Console.WriteLine("Loading plugins");
 
@@ -790,7 +827,7 @@ namespace SimpleChat
             }
         }
 
-        private static void ProcessConsoleInput()
+        public void ProcessConsoleInput()
         {
             bool notStop = true;
 

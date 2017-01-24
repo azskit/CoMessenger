@@ -58,6 +58,20 @@ namespace COMessengerClient.StartScreen
 
         }
 
+        private bool opened = false;
+        private void ShowLog(object sender, RoutedEventArgs e)
+        {
+            if (!opened)
+            {
+                App.Log.Show();
+                opened = true;
+            }
+            else
+            {
+                App.Log.Activate();
+            }
+
+        }
 
         // minimize to system tray when applicaiton is closed
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)

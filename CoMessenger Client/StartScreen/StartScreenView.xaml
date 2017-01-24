@@ -40,6 +40,9 @@
                               Command       ="{x:Static application:CMClientCommands.SignOutCommand}"/>
                     <!--Настройки-->
                     <MenuItem Header="{Binding Path=Locally.LocaleStrings[Options]}" Click="ShowOptions" />
+
+                    <!--Логи-->
+                    <MenuItem Header="{Binding Path=Locally.LocaleStrings[Log]}" Click="ShowLog" />
                     
                     <!--Выход натипа-->
                     <MenuItem Header="{Binding Path=Locally.LocaleStrings[Exit]}" Click="ExitClicked"/>

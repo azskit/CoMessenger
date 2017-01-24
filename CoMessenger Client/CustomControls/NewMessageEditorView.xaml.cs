@@ -14,6 +14,7 @@ using COMessengerClient.CustomControls;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace COMessengerClient.ChatFace
 {
@@ -51,7 +52,9 @@ namespace COMessengerClient.ChatFace
         {
             InitializeComponent();
 
-            img = (System.Drawing.Bitmap)System.Drawing.Image.FromFile(@"C:\secret.gif");
+
+            if (File.Exists(@"C:\secret.gif"))
+                img = (System.Drawing.Bitmap)System.Drawing.Image.FromFile(@"C:\secret.gif");
 
             //using (System.IO.FileStream fs = new System.IO.FileStream(@"C:\secret.gif", System.IO.FileMode.Open))
             //{

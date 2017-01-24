@@ -35,7 +35,7 @@ namespace SimpleChat.Protocol
                 return;
             }
 
-            if (!Server.CoMessengerUsers.TryGetValue(new Server.FullUserName(credentials.Domain,credentials.UserName), out FoundUser))
+            if (!Server.Instance.CoMessengerUsers.TryGetValue(new Server.FullUserName(credentials.Domain,credentials.UserName), out FoundUser))
             {
                 PutOutgoingMessage(new CMMessage()
                 {
@@ -49,7 +49,7 @@ namespace SimpleChat.Protocol
             if (credentials.IsCurrentUser)
             {
                 if (FoundUser.UserId == DecryptSomething(credentials.Password) as string)
-                    Server.AcceptAuthorization(this, FoundUser);
+                    Server.Instance.AcceptAuthorization(this, FoundUser);
                 else
                     PutOutgoingMessage(new CMMessage()
                     {
@@ -65,7 +65,7 @@ namespace SimpleChat.Protocol
             string PasswordCheckError = String.Empty;
             if (FoundUser.Authentication.CheckPassword(DecryptPassword(credentials.Password) as string, out PasswordCheckError))
             {
-                Server.AcceptAuthorization(this, FoundUser);
+                Server.Instance.AcceptAuthorization(this, FoundUser);
             }
             else
             {
