@@ -823,6 +823,23 @@ namespace SimpleChat
 
                         break;
 
+                    case "ERASE":
+
+                        int count = 0;
+
+                        foreach (ServerRoomPeer room in ReceiversList.Values.OfType<ServerRoomPeer>())
+                        {
+                            foreach (RoutedMessage message in RoomsHistory.GetRoomMessages(room.Room.PeerId, "", 0))
+                            {
+                                RoomsHistory.Delete(message);
+                                count++;
+                            }
+
+                        }
+
+                        Console.WriteLine("Removed {0} messages", count);
+
+                        break;
 
                     default:
                         break;

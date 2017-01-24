@@ -95,9 +95,12 @@ namespace COMessengerClient.Conversation
             if (((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control) && (e.Key == Key.Enter))
             {
                 SendMessage(Peer);
+
+                NewMessageBox.NewMessageTextBox.UndoLimit = 0;
+                NewMessageBox.NewMessageTextBox.UndoLimit = 10;
             }
         }
-        
+
         //Клик по ссылке
         private void OnNavigationRequest(object sender, RoutedEventArgs e)
         {

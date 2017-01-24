@@ -91,38 +91,29 @@ namespace COMessengerClient.Tools
         }
 
 
+        internal static Dictionary<string, BitmapImage> ImageSourceCache = new Dictionary<string, BitmapImage>();
 
         internal ImageSource ToImageSource()
         {
-            //BitmapImage
-            //Image img = element as Image;
+            BitmapImage newBitmaImage;
 
-            //img.Source = new BitmapImage() { StreamSource = new MemoryStream(BinaryCache[reader.Value]) };
-
-            BitmapImage newBitmaImage = new BitmapImage();
-
-            using (MemoryStream stream = new MemoryStream(BinarySourceData))
+            if (!ImageSourceCache.TryGetValue(BinarySourceId, out newBitmaImage))
             {
+                newBitmaImage = new BitmapImage();
+                using (MemoryStream stream = new MemoryStream(BinarySourceData))
+                {
 
-                newBitmaImage.BeginInit();
+                    newBitmaImage.BeginInit();
 
+                    newBitmaImage.StreamSource = stream;
 
+                    newBitmaImage.CacheOption = BitmapCacheOption.OnLoad;
 
-                newBitmaImage.StreamSource = stream;
-
-                newBitmaImage.CacheOption = BitmapCacheOption.OnLoad;
-
-                newBitmaImage.EndInit();
-
-                //PngBitmapDecoder decoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
-
-                //if (decoder.Frames != null && decoder.Frames.Count > 0)
-                //    return decoder.Frames[0];
+                    newBitmaImage.EndInit();
+                }
+                ImageSourceCache.Add(BinarySourceId, newBitmaImage);
             }
-
             return newBitmaImage;
-
-            throw new InvalidOperationException("Something went wrong");
         }
 
         internal static BinarySource CreateFromAnimatedImage(AnimatedImage animatedImage)
@@ -144,27 +135,18 @@ namespace COMessengerClient.Tools
         }
 
 
+        internal static Dictionary<string, System.Drawing.Bitmap> BitmapCache = new Dictionary<string, System.Drawing.Bitmap>();
+
         internal System.Drawing.Bitmap ToBitmap()
         {
+            System.Drawing.Bitmap retval = null;
 
-            //string fname = @"debug" + Guid.NewGuid().ToString() + ".gif";
-
-            //using (FileStream stream = new FileStream(fname, FileMode.Create))
-            //{
-            //    stream.Write(BinarySourceData, 0, BinarySourceData.Length);
-            //    //return System.Drawing.Image.FromStream(stream, true, true) as System.Drawing.Bitmap;
-            //}
-            //return (System.Drawing.Bitmap)System.Drawing.Image.FromFile(fname);
-            ////Image img = element as Image;
-
-            //img.Source = new BitmapImage() { StreamSource = new MemoryStream(BinaryCache[reader.Value]) };
-
-            //using (MemoryStream stream = new MemoryStream(BinarySourceData))
-            //{
-                return System.Drawing.Image.FromStream(new MemoryStream(BinarySourceData)) as System.Drawing.Bitmap;
-            //}
-
-            throw new InvalidOperationException("Something went wrong");
+            if (!BitmapCache.TryGetValue(BinarySourceId, out retval))
+            {
+                retval = System.Drawing.Image.FromStream(new MemoryStream(BinarySourceData)) as System.Drawing.Bitmap;
+                BitmapCache.Add(BinarySourceId, retval);
+            }
+            return retval;
         }
     }
 

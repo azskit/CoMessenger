@@ -372,6 +372,8 @@ namespace COMessengerClient.ChatFace
 
         private void NewMessageTextBox_KeyDown(object sender, KeyEventArgs e)
         {
+
+
             if (e.Key == Key.Space)
             {
                 if (NewMessageTextBox.CaretPosition.Paragraph == null)

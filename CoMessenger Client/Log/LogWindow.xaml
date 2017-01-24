@@ -10,6 +10,6 @@
         
         Title="LogWindow" Height="300" Width="600">
     <Grid>
-        <TextBox Name="LogTextBox"  AcceptsReturn="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextWrapping="Wrap"/>
+        <TextBox Name="LogTextBox"  AcceptsReturn="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
     </Grid>
 </Window>

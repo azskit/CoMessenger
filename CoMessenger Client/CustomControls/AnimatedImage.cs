@@ -1,39 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Text;
+using System.Drawing.Imaging;
+using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using COMessengerClient.ChatFace;
 
 namespace COMessengerClient.CustomControls
 {
     //stolen from... не помню откуда
     public class AnimatedImage : System.Windows.Controls.Image
     {
+        const int PropertyTagFrameDelay = 0x5100;
+
         private BitmapSource[] _BitmapSources = null;
-        private int _nCurrentFrame = 0;
-        private static int count = 0;
-        public static int Count { get { return count; }
-            set
-            {
-                count = value;
 
-                //((StartScreen.StartScreenView)App.ThisApp.MainWindow).ConnectionStatusBar.Items.Clear();
-                //((StartScreen.StartScreenView)App.ThisApp.MainWindow).ConnectionStatusBar.Items.Add(new TextBlock(new System.Windows.Documents.Run(count.ToString())));
-            }
-        }
+        private int currentFrame = 0;
+        private int frameTimer = 0;
+        private int currentFrameDelay;
+        private int frameCount;
+        private int[] frameDelays;
+        private bool theFrameHasBeenChanged;
 
-        private bool _bIsAnimating = false;
+        private bool isAnimating = false;
 
         public bool IsAnimating
         {
-            get { return _bIsAnimating; }
+            get { return isAnimating; }
         }
 
         static AnimatedImage()
@@ -50,6 +45,7 @@ namespace COMessengerClient.CustomControls
         private void AnimatedImage_Loaded(object sender, RoutedEventArgs e)
         {
             StartAnimate();
+            this.SnapToPixels();
         }
 
         private void AnimatedImage_Unloaded(object sender, RoutedEventArgs e)
@@ -106,19 +102,37 @@ namespace COMessengerClient.CustomControls
         {
             RaiseEvent(args);
         }
+
+        /// <summary>
+        /// Инициализация данных для анимации
+        /// </summary>
         private void UpdateAnimatedBitmap()
         {
-            int nTimeFrames = AnimatedBitmap.GetFrameCount(System.Drawing.Imaging.FrameDimension.Time);
-            _nCurrentFrame = 0;
-            if (nTimeFrames > 0)
+            frameCount = AnimatedBitmap.GetFrameCount(FrameDimension.Time);
+
+            if (frameCount > 0)
             {
+                PropertyItem frameDelayItem = AnimatedBitmap.GetPropertyItem(PropertyTagFrameDelay);
 
-                _BitmapSources = new BitmapSource[nTimeFrames];
+                //Считываем временные отрезки жизни кадров
+                if (frameDelayItem != null)
+                {
+                    frameDelays = new int[frameCount];
 
-                for (int i = 0; i < nTimeFrames; i++)
+                    byte[] values = frameDelayItem.Value;
+                    for (int i = 0; i < frameCount; ++i)
+                    {
+                        frameDelays[i] = values[i * 4] + 256 * values[i * 4 + 1] + 256 * 256 * values[i * 4 + 2] + 256 * 256 * 256 * values[i * 4 + 3];
+                    }
+                }
+
+                //Разбираем изображение на кадры
+                _BitmapSources = new BitmapSource[frameCount];
+
+                for (int i = 0; i < frameCount; i++)
                 {
 
-                    AnimatedBitmap.SelectActiveFrame(System.Drawing.Imaging.FrameDimension.Time, i);
+                    AnimatedBitmap.SelectActiveFrame(FrameDimension.Time, i);
                     Bitmap bitmap = new Bitmap(AnimatedBitmap);
                     bitmap.MakeTransparent();
 
@@ -126,55 +140,116 @@ namespace COMessengerClient.CustomControls
                         bitmap.GetHbitmap(),
                         IntPtr.Zero,
                         Int32Rect.Empty,
-                        System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+                        BitmapSizeOptions.FromEmptyOptions());
                 }
-                //StartAnimate();
             }
         }
         private delegate void VoidDelegate();
 
-        private void OnFrameChanged(object o, EventArgs e)
+        private void OnFrameChanged()
         {
             Dispatcher.BeginInvoke(DispatcherPriority.Render, new VoidDelegate(delegate { ChangeSource(); }));
 
         }
+
         void ChangeSource()
         {
-            App.Log.Add("animation", Name + " animated");
-
-            Source = _BitmapSources[_nCurrentFrame++];
-            _nCurrentFrame = _nCurrentFrame % _BitmapSources.Length;
-            ImageAnimator.UpdateFrames();
-
+            Source = _BitmapSources[currentFrame];
+            theFrameHasBeenChanged = false;
         }
 
         public void StopAnimate()
         {
-            if (_bIsAnimating)
+            if (isAnimating)
             {
-                //Count--;
+                lock (currentlyAnimating)
+                {
+                    currentlyAnimating.Remove(this);
+                }
 
-                App.Log.Add("animation", Name + " removed");
-
-                ImageAnimator.StopAnimate(AnimatedBitmap, new EventHandler(this.OnFrameChanged));
-                _bIsAnimating = false;
+                isAnimating = false;
             }
         }
 
         public void StartAnimate()
         {
-            if (!_bIsAnimating)
+            if (!isAnimating)
             {
-                Name = "anim" + Count++.ToString();
-                App.Log.Add("animation", Name + " added");
-                //((StartScreen.StartScreenView)App.ThisApp.MainWindow).ConnectionStatusBar.Items.Clear();
-                //((StartScreen.StartScreenView)App.ThisApp.MainWindow).ConnectionStatusBar.Items.Add(new TextBlock(new System.Windows.Documents.Run()));
+                isAnimating = true;
 
-                ImageAnimator.Animate(AnimatedBitmap, new EventHandler(this.OnFrameChanged));
-                _bIsAnimating = true;
-                Source = _BitmapSources[_nCurrentFrame++];
+                lock (currentlyAnimating)
+                {
+                    currentlyAnimating.Add(this);
+                }
+
+                currentFrame = 0;
+                Source = _BitmapSources[currentFrame];
+                frameTimer = 0;
+                currentFrameDelay = frameDelays[currentFrame];
+            }
+
+            if (animationThread == null)
+            {
+                animationThread = new Thread(new ThreadStart(AnimationRoutine));
+                animationThread.Name = "Animation Thread";
+                animationThread.IsBackground = true;
+                animationThread.Start();
             }
         }
+
+
+        /// <summary>
+        /// Отдельный поток для отсчета времени жизни кадров (один для всех изображений)
+        /// </summary>
+        static Thread animationThread;
+
+        /// <summary>
+        /// Набор анимируемых в данный момент изображений
+        /// </summary>
+        private static List<AnimatedImage> currentlyAnimating = new List<AnimatedImage>();
+
+        ///Интервал отсчета времени жизни кадра, 5\100 секунды 
+        private const int interval = 5;
+
+        /// <summary>
+        /// Поток для отсчета времени жизни кадров. Создается вместе с 1-ым изображением и заканчивает работу, когда удаляется последнее
+        /// </summary>
+        static void AnimationRoutine()
+        {
+
+            while (currentlyAnimating.Count > 0)
+            {
+
+                List<AnimatedImage> snapshot;
+                lock (currentlyAnimating)
+                {
+                    snapshot = new List<AnimatedImage>(currentlyAnimating);
+                }
+
+
+                foreach (AnimatedImage currentImage in snapshot)
+                {
+
+                    currentImage.frameTimer += interval;
+                    if (currentImage.frameTimer >= currentImage.currentFrameDelay)
+                    {
+
+                        currentImage.currentFrame = ++currentImage.currentFrame % currentImage.frameCount;
+                        currentImage.currentFrameDelay = currentImage.frameDelays[currentImage.currentFrame];
+
+                        currentImage.frameTimer = 0;
+
+                        //Если UI поток не успел сменить кадр, то пропускаем
+                        if (!currentImage.theFrameHasBeenChanged)
+                        {
+                            currentImage.theFrameHasBeenChanged = true;
+                            currentImage.OnFrameChanged();
+                        }
+                    }
+                }
+                Thread.Sleep(interval*10);
+            }
+            animationThread = null;
+        }
     }
-    
 }

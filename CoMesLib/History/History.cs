@@ -171,7 +171,7 @@ namespace CorporateMessengerLibrary.History
 
             string NextID = FirstMessageID;
 
-            while (!String.IsNullOrEmpty(NextID) && retList.Count < MessagesToLoad)
+            while (!String.IsNullOrEmpty(NextID) && (MessagesToLoad == 0 || retList.Count < MessagesToLoad))
             {
                 RoutedMessage message = RestoreMessageFromHistory(NextID);
 
@@ -864,7 +864,34 @@ namespace CorporateMessengerLibrary.History
 
         }
 
-    
+        //public void EraseHistory(string peer)
+        //{
+        //    if (HistoryDBConnection == null)
+        //    {
+        //        if (!File.Exists(HistoryDBFile))
+        //            return;
+        //        else
+        //            Open();
+        //    }
+
+        //    if (HistoryDBConnection != null)
+        //    {
+        //        OleDbCommand cmd;
+
+        //        cmd = HistoryDBConnection.CreateCommand();
+
+        //        cmd.CommandText = @"DELETE FROM [Messages]  WHERE [Sender] = @SENDER OR [Receiver] = @RECEIVER";
+
+        //        cmd.Parameters.Add(new OleDbParameter("SENDER", peer));
+        //        cmd.Parameters.Add(new OleDbParameter("RECEIVER", peer));
+
+        //        cmd.ExecuteNonQuery();
+        //    }
+
+        //    if (!KeepConnection)
+        //        HistoryDBConnection = null;
+        //}
+
     }
 
 }

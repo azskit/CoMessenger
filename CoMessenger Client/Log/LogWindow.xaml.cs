@@ -30,6 +30,9 @@ namespace COMessengerClient.Log
             {
 
                 LogTextBox.AppendText(String.Format(CultureInfo.CurrentCulture, "{0} {1}: {2}\r\n", DateTime.Now.ToString(CultureInfo.CurrentCulture), title, text));
+
+                LogTextBox.ScrollToEnd();
+
             }));
         }
     }
