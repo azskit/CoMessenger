@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 
 [assembly: CLSCompliant(true)]
-namespace CorporateMessengerLibrary
+namespace CorporateMessengerLibrary.Messaging
 {
     public enum MessageKind
     {
@@ -39,7 +39,12 @@ namespace CorporateMessengerLibrary
 
     public static class Serializer
     {
-        public static readonly BinaryFormatter Formatter = new BinaryFormatter();
+        public static BinaryFormatter Formatter { get; private set; }
+
+        static Serializer()
+        {
+            Formatter = new BinaryFormatter();
+        }
     }
 
     [Serializable]
@@ -79,7 +84,7 @@ namespace CorporateMessengerLibrary
         public RoutedMessageKind          Kind              { get; set; }               //Вид сообщения
         public string                     Text              { get; set; }               //Текст сообщения
         public byte[]                     FormattedText     { get; set; }               //Форматированный и сжатый текст XAML
-        public Dictionary<string, byte[]> BinaryCollection  { get; set; }               //Двоичные данные (изображения и т.п.)
+        //public Dictionary<string, byte[]> BinaryCollection  { get; set; }               //Двоичные данные (изображения и т.п.)
         public DateTime                   ChangeTime        { get; set; }               //Дата изменения
         public int                        Version           { get; set; }               //Версия сообщения (увеличивается при редактировании)
     }

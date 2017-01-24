@@ -5,8 +5,10 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using CorporateMessengerLibrary.Messaging;
+using CorporateMessengerLibrary.Tools;
 
-namespace CorporateMessengerLibrary
+namespace CorporateMessengerLibrary.History
 {
 
     [Serializable]
@@ -371,7 +373,7 @@ namespace CorporateMessengerLibrary
         public void Delete(RoutedMessage message)
         {
             if (message == null)
-                throw new ArgumentNullException("msg");
+                throw new ArgumentNullException("message");
 
             Delete(message.MessageId);
         }
@@ -568,14 +570,14 @@ namespace CorporateMessengerLibrary
             cmd.ExecuteNonQuery();
         }
 
-        public void SaveBinary(byte[] uncompressedBytes)
+        public void SaveBinary(byte[] uncompressedValue)
         {
-            string hash = SHA1Helper.GetHash(uncompressedBytes);
+            string hash = Sha1Helper.GetHash(uncompressedValue);
 
             if (BinaryExists(hash))
                 return;
 
-            byte[] compressedBytes = Compressing.Compress(uncompressedBytes);
+            byte[] compressedValue = Compressing.Compress(uncompressedValue);
 
 
             long position = -1;
@@ -584,11 +586,11 @@ namespace CorporateMessengerLibrary
                 using (FileStream filestream = new FileStream(binaryFileName, FileMode.Append, FileAccess.Write, FileShare.Read))
                 {
                     position = filestream.Position;
-                    filestream.Write(compressedBytes, 0, compressedBytes.Length);
+                    filestream.Write(compressedValue, 0, compressedValue.Length);
                 }
             }
 
-            long length = compressedBytes.Length;
+            long length = compressedValue.Length;
 
             OleDbCommand cmd = HistoryDBConnection.CreateCommand();
             cmd.CommandText = @"INSERT INTO  `BinaryContent`

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CorporateMessengerLibrary
+namespace CorporateMessengerLibrary.Collections
 {
     public class ConcurrentList<T> : IEnumerable<T>
     {

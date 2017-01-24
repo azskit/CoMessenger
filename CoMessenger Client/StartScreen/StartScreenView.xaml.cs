@@ -83,5 +83,11 @@ namespace COMessengerClient.StartScreen
         {
             App.ThisApp.Shutdown();
         }
+
+        private void ConnectionStatusBar_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            App.Log.Show();
+            App.Log.Activate();
+        }
     }
 }

@@ -141,7 +141,7 @@
 
             <!--Язык интерфейса-->
             <Label  Grid.Column="0" Grid.Row="2"  Margin="3" Content="{Binding Path=Locally.LocaleStrings[Language], FallbackValue=Language}"></Label>
-            <custom:LanguageSelection   Margin="3" Grid.Column="1" Grid.Row="2"/>
+            <custom:LanguageSelection   Margin="3" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left"/>
 
             <!--Фон сообщений-->
             <Label  Grid.Column="0" Grid.Row="3"  Margin="3" Content="{Binding Path=Locally.LocaleStrings[Incoming Message Background Color], FallbackValue=Incoming Message Background Color}"></Label>

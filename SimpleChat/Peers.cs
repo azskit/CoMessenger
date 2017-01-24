@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using CorporateMessengerLibrary;
 using System.Globalization;
 using SimpleChat.Identity;
+using CorporateMessengerLibrary.Messaging;
+using CorporateMessengerLibrary.CimProtocol;
 
 namespace SimpleChat
 {

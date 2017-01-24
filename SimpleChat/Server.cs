@@ -15,6 +15,11 @@ using CimPlugin.Plugin;
 using CimPlugin.Plugin.Authentication;
 using CimPlugin.Plugin.Groups;
 using System.Collections.Concurrent;
+using CorporateMessengerLibrary.Collections;
+using CorporateMessengerLibrary.CimProtocol;
+using CorporateMessengerLibrary.Messaging;
+using CorporateMessengerLibrary.History;
+using CorporateMessengerLibrary.Tools;
 
 namespace SimpleChat
 {
@@ -273,7 +278,7 @@ namespace SimpleChat
             }
         }
 
-        private static void ProcessQueryMessage(CMClientBase clnt, QueryMessage queryMessage)
+        private static void ProcessQueryMessage(ServerSideClient clnt, QueryMessage queryMessage)
         {
             switch (queryMessage.Kind)
             {

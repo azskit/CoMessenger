@@ -48,6 +48,7 @@
             <StatusBar Name="ConnectionStatusBar"
                        DockPanel.Dock="Bottom" 
                        DataContext="{Binding Source={x:Static application:App.ThisApp}, Path=Client.ViewModel, Mode=OneWay}"
+                       MouseDoubleClick="ConnectionStatusBar_MouseDoubleClick"
                               >
                 <StatusBarItem >
                     <Binding Path='ConnectionStatus' Mode='OneWay' FallbackValue='Disconnected'/>

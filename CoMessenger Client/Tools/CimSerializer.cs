@@ -18,25 +18,26 @@ using System.Xml;
 using System.Xml.Serialization;
 using COMessengerClient.CustomControls;
 using CorporateMessengerLibrary;
+using CorporateMessengerLibrary.Tools;
 
 namespace COMessengerClient.Tools
 {
 
 
-    public class BinaryCacheManager : DependencyObject
+    internal class BinaryCacheManager : DependencyObject
     {
 
         //public static Dictionary<string, byte[]> BinaryCache = new Dictionary<string, byte[]>();
 
-        public static readonly DependencyProperty BinarySourceProperty = DependencyProperty.RegisterAttached(
+        internal static readonly DependencyProperty BinarySourceProperty = DependencyProperty.RegisterAttached(
             "BinarySource", typeof(BinarySource), typeof(Image), new PropertyMetadata(null));
 
-        public static void SetCustomValue(DependencyObject element, BinarySource value)
+        internal static void SetCustomValue(DependencyObject element, BinarySource value)
         {
             element.SetValue(BinarySourceProperty, value);
         }
 
-        public static BinarySource GetCustomValue(DependencyObject element)
+        internal static BinarySource GetCustomValue(DependencyObject element)
         {
             return (BinarySource)element.GetValue(BinarySourceProperty);
         }
@@ -68,7 +69,7 @@ namespace COMessengerClient.Tools
         public string BinarySourceId { get; set; }
         public byte[] BinarySourceData { get; set; }
 
-        public static BinarySource CreateFromImage(Image image)
+        internal static BinarySource CreateFromImage(Image image)
         {
 
             BinarySource newBinarySource = new BinarySource();
@@ -84,7 +85,7 @@ namespace COMessengerClient.Tools
                 ms.Read(newBinarySource.BinarySourceData, 0, newBinarySource.BinarySourceData.Length);
             }
 
-            newBinarySource.BinarySourceId = SHA1Helper.GetHash(newBinarySource.BinarySourceData);
+            newBinarySource.BinarySourceId = Sha1Helper.GetHash(newBinarySource.BinarySourceData);
 
             return newBinarySource;
         }
@@ -137,7 +138,7 @@ namespace COMessengerClient.Tools
                 ms.Read(newBinarySource.BinarySourceData, 0, newBinarySource.BinarySourceData.Length);
             }
 
-            newBinarySource.BinarySourceId = SHA1Helper.GetHash(newBinarySource.BinarySourceData);
+            newBinarySource.BinarySourceId = Sha1Helper.GetHash(newBinarySource.BinarySourceData);
 
             return newBinarySource;
         }
@@ -408,7 +409,7 @@ namespace COMessengerClient.Tools
                 writer.WriteAttributeString(item.Name, item.StringValue);
             }
 
-            if (content != null && (content.StringValue.EndsWith(" ") || content.StringValue.StartsWith(" ")))
+            if (content != null && (content.StringValue.EndsWith(" ", StringComparison.OrdinalIgnoreCase) || content.StringValue.StartsWith(" ", StringComparison.OrdinalIgnoreCase)))
                 writer.WriteAttributeString("xml", "space", "", "preserve");
 
             foreach (MarkupProperty item in composites)
@@ -562,7 +563,7 @@ namespace COMessengerClient.Tools
             Run run = element as Run;
             if (run != null)
             {
-                if (run.Text.EndsWith(" ") || run.Text.StartsWith(" "))
+                if (run.Text.EndsWith(" ", StringComparison.OrdinalIgnoreCase) || run.Text.StartsWith(" ", StringComparison.OrdinalIgnoreCase))
                     writer.WriteAttributeString("xml", "space", "", "preserve");
             }
 

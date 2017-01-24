@@ -27,8 +27,6 @@ namespace COMessengerClient.CustomControls
         public ScrollViewer ActualScrollViewer { get; private set; }
         public StackPanel BackgroundStackPanel { get; private set; }
 
-        private object dummy = new object();
-
         public bool IsBusy
         {
             get { return BusyIndicator.Visibility == System.Windows.Visibility.Visible; }

@@ -100,7 +100,7 @@
       <DependentUpon>ContactListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ContactList\ContactListViewModel.cs" />
-    <Compile Include="Conversation\ConversationModel.cs" />
+    <Compile Include="Conversation\MessagingService.cs" />
     <Compile Include="Credentials\CredentialForm.xaml.cs">
       <DependentUpon>CredentialForm.xaml</DependentUpon>
     </Compile>
@@ -132,7 +132,6 @@
     <Compile Include="CustomControls\FlatTabControl.xaml.cs">
       <DependentUpon>FlatTabControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CustomControls\GifImage.cs" />
     <Compile Include="CustomControls\ImageDownloadingBanner.xaml.cs">
       <DependentUpon>ImageDownloadingBanner.xaml</DependentUpon>
     </Compile>

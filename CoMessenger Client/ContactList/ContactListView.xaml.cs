@@ -15,6 +15,7 @@ using CorporateMessengerLibrary;
 using System.Windows.Media.Animation;
 using COMessengerClient.Conversation;
 using COMessengerClient.StartScreen;
+using CorporateMessengerLibrary.Messaging;
 
 namespace COMessengerClient.ContactList
 {

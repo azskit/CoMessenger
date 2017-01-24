@@ -18,7 +18,16 @@ namespace COMessengerClient.CustomControls
     {
         private BitmapSource[] _BitmapSources = null;
         private int _nCurrentFrame = 0;
+        private static int count = 0;
+        public static int Count { get { return count; }
+            set
+            {
+                count = value;
 
+                //((StartScreen.StartScreenView)App.ThisApp.MainWindow).ConnectionStatusBar.Items.Clear();
+                //((StartScreen.StartScreenView)App.ThisApp.MainWindow).ConnectionStatusBar.Items.Add(new TextBlock(new System.Windows.Documents.Run(count.ToString())));
+            }
+        }
 
         private bool _bIsAnimating = false;
 
@@ -31,6 +40,23 @@ namespace COMessengerClient.CustomControls
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(AnimatedImage), new FrameworkPropertyMetadata(typeof(AnimatedImage)));
         }
+
+        public AnimatedImage()
+        {
+            Loaded += AnimatedImage_Loaded;
+            Unloaded += AnimatedImage_Unloaded;
+        }
+
+        private void AnimatedImage_Loaded(object sender, RoutedEventArgs e)
+        {
+            StartAnimate();
+        }
+
+        private void AnimatedImage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            StopAnimate();
+        }
+
         public Bitmap AnimatedBitmap
         {
             get { return (Bitmap)GetValue(AnimatedBitmapProperty); }
@@ -102,7 +128,7 @@ namespace COMessengerClient.CustomControls
                         Int32Rect.Empty,
                         System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
                 }
-                StartAnimate();
+                //StartAnimate();
             }
         }
         private delegate void VoidDelegate();
@@ -114,6 +140,8 @@ namespace COMessengerClient.CustomControls
         }
         void ChangeSource()
         {
+            App.Log.Add("animation", Name + " animated");
+
             Source = _BitmapSources[_nCurrentFrame++];
             _nCurrentFrame = _nCurrentFrame % _BitmapSources.Length;
             ImageAnimator.UpdateFrames();
@@ -124,6 +152,10 @@ namespace COMessengerClient.CustomControls
         {
             if (_bIsAnimating)
             {
+                //Count--;
+
+                App.Log.Add("animation", Name + " removed");
+
                 ImageAnimator.StopAnimate(AnimatedBitmap, new EventHandler(this.OnFrameChanged));
                 _bIsAnimating = false;
             }
@@ -133,6 +165,10 @@ namespace COMessengerClient.CustomControls
         {
             if (!_bIsAnimating)
             {
+                Name = "anim" + Count++.ToString();
+                App.Log.Add("animation", Name + " added");
+                //((StartScreen.StartScreenView)App.ThisApp.MainWindow).ConnectionStatusBar.Items.Clear();
+                //((StartScreen.StartScreenView)App.ThisApp.MainWindow).ConnectionStatusBar.Items.Add(new TextBlock(new System.Windows.Documents.Run()));
 
                 ImageAnimator.Animate(AnimatedBitmap, new EventHandler(this.OnFrameChanged));
                 _bIsAnimating = true;
@@ -140,4 +176,5 @@ namespace COMessengerClient.CustomControls
             }
         }
     }
+    
 }

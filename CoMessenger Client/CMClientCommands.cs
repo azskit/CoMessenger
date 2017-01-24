@@ -6,6 +6,7 @@ using System.Windows.Input;
 using CorporateMessengerLibrary;
 using System.Globalization;
 using System.Windows;
+using CorporateMessengerLibrary.CimProtocol;
 
 namespace COMessengerClient
 {

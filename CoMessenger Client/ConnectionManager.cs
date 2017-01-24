@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using CorporateMessengerLibrary;
+using CorporateMessengerLibrary.CimProtocol;
+using CorporateMessengerLibrary.Messaging;
 
 namespace COMessengerClient
 {

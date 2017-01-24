@@ -4,9 +4,9 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace CorporateMessengerLibrary
+namespace CorporateMessengerLibrary.Tools
 {
-    public class SHA1Helper
+    public static class Sha1Helper
     {
         public static string GetHash(byte[] imageData)
         {
@@ -17,7 +17,7 @@ namespace CorporateMessengerLibrary
         }
 
         //stolen from http://stackoverflow.com/questions/311165/how-do-you-convert-byte-array-to-hexadecimal-string-and-vice-versa
-        public static string ByteArrayToString(byte[] ba)
+        private static string ByteArrayToString(byte[] ba)
         {
             StringBuilder hex = new StringBuilder(ba.Length * 2);
             foreach (byte b in ba)

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.IO.Compression;
 
-namespace CorporateMessengerLibrary
+namespace CorporateMessengerLibrary.Tools
 {
     public static class Compressing
     {
