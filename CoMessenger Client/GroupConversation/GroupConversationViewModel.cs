@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using CorporateMessengerLibrary;
 using System.Windows.Data;
 using System.ComponentModel;
+using CorporateMessengerLibrary.Messaging;
 
 namespace COMessengerClient.GroupConversation
 {

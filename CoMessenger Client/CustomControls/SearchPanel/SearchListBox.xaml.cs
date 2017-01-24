@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using COMessengerClient.Conversation;
 using CorporateMessengerLibrary;
+using CorporateMessengerLibrary.Messaging;
 
 namespace COMessengerClient.CustomControls.SearchPanel
 {

@@ -45,7 +45,7 @@ namespace COMessengerClient.ChatFace
         public static readonly DependencyProperty IsEditingModeProperty =
             DependencyProperty.Register("IsEditingMode", typeof(bool), typeof(NewMessageEditorView), new UIPropertyMetadata(false));
 
-        public System.Drawing.Bitmap img { get; set; }
+        System.Drawing.Image img;
 
 
         public NewMessageEditorView()
@@ -375,6 +375,8 @@ namespace COMessengerClient.ChatFace
 
         private void NewMessageTextBox_KeyDown(object sender, KeyEventArgs e)
         {
+
+
             if (e.Key == Key.Space)
             {
                 if (NewMessageTextBox.CaretPosition.Paragraph == null)
@@ -393,17 +395,19 @@ namespace COMessengerClient.ChatFace
                         start.DeleteTextInRun(":)".Length);
 
 
+                        AnimatedImage amg = new AnimatedImage()
+                        {
+                            AnimatedBitmap = img as System.Drawing.Bitmap,
+                            Stretch = Stretch.None,
+                            Name = "smile",
+                            Tag = img
+                        };
+
                         //System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 
                         //sw.Start();
 
-                        new InlineUIContainer(new AnimatedImage()
-                        {
-                            AnimatedBitmap = img,
-                            Stretch = Stretch.None,
-                            Name = "smile",
-                            Tag = img
-                        }, start);
+                        new InlineUIContainer(amg, start);
 
                         //sw.Stop();
 

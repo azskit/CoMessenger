@@ -5,8 +5,10 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using CorporateMessengerLibrary.Messaging;
+using CorporateMessengerLibrary.Tools;
 
-namespace CorporateMessengerLibrary
+namespace CorporateMessengerLibrary.History
 {
 
     [Serializable]
@@ -169,7 +171,7 @@ namespace CorporateMessengerLibrary
 
             string NextID = FirstMessageID;
 
-            while (!String.IsNullOrEmpty(NextID) && retList.Count < MessagesToLoad)
+            while (!String.IsNullOrEmpty(NextID) && (MessagesToLoad == 0 || retList.Count < MessagesToLoad))
             {
                 RoutedMessage message = RestoreMessageFromHistory(NextID);
 
@@ -371,7 +373,7 @@ namespace CorporateMessengerLibrary
         public void Delete(RoutedMessage message)
         {
             if (message == null)
-                throw new ArgumentNullException("msg");
+                throw new ArgumentNullException("message");
 
             Delete(message.MessageId);
         }
@@ -568,14 +570,14 @@ namespace CorporateMessengerLibrary
             cmd.ExecuteNonQuery();
         }
 
-        public void SaveBinary(byte[] uncompressedBytes)
+        public void SaveBinary(byte[] uncompressedValue)
         {
-            string hash = SHA1Helper.GetHash(uncompressedBytes);
+            string hash = Sha1Helper.GetHash(uncompressedValue);
 
             if (BinaryExists(hash))
                 return;
 
-            byte[] compressedBytes = Compressing.Compress(uncompressedBytes);
+            byte[] compressedValue = Compressing.Compress(uncompressedValue);
 
 
             long position = -1;
@@ -584,11 +586,11 @@ namespace CorporateMessengerLibrary
                 using (FileStream filestream = new FileStream(binaryFileName, FileMode.Append, FileAccess.Write, FileShare.Read))
                 {
                     position = filestream.Position;
-                    filestream.Write(compressedBytes, 0, compressedBytes.Length);
+                    filestream.Write(compressedValue, 0, compressedValue.Length);
                 }
             }
 
-            long length = compressedBytes.Length;
+            long length = compressedValue.Length;
 
             OleDbCommand cmd = HistoryDBConnection.CreateCommand();
             cmd.CommandText = @"INSERT INTO  `BinaryContent`
@@ -862,7 +864,34 @@ namespace CorporateMessengerLibrary
 
         }
 
-    
+        //public void EraseHistory(string peer)
+        //{
+        //    if (HistoryDBConnection == null)
+        //    {
+        //        if (!File.Exists(HistoryDBFile))
+        //            return;
+        //        else
+        //            Open();
+        //    }
+
+        //    if (HistoryDBConnection != null)
+        //    {
+        //        OleDbCommand cmd;
+
+        //        cmd = HistoryDBConnection.CreateCommand();
+
+        //        cmd.CommandText = @"DELETE FROM [Messages]  WHERE [Sender] = @SENDER OR [Receiver] = @RECEIVER";
+
+        //        cmd.Parameters.Add(new OleDbParameter("SENDER", peer));
+        //        cmd.Parameters.Add(new OleDbParameter("RECEIVER", peer));
+
+        //        cmd.ExecuteNonQuery();
+        //    }
+
+        //    if (!KeepConnection)
+        //        HistoryDBConnection = null;
+        //}
+
     }
 
 }

@@ -10,8 +10,10 @@ using System.Security;
 using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Resources;
+using CorporateMessengerLibrary.Messaging;
+using CorporateMessengerLibrary.Localization;
 
-namespace CorporateMessengerLibrary
+namespace CorporateMessengerLibrary.CimProtocol
 {
     public enum ClientState
     {
@@ -34,11 +36,11 @@ namespace CorporateMessengerLibrary
             public byte[] Password   { get; set; }
         }
 
-        public CultureInfo ClientCulture { get; set; } = CultureInfo.CurrentUICulture;
+        public CultureInfo RemoteclientCulture { get; set; } = CultureInfo.CurrentUICulture;
 
         //private ResourceManager Strings = new ResourceManager("CorporateMessengerLibrary.Resources.LocalizingString.CimLibraryStrings", typeof(CMClientBase).Assembly);
 
-        protected LocalizationUI Strings = new LocalizationUI();
+        protected LocalizationUI Strings { get; set; } = new LocalizationUI();
 
         public TcpClient Tcp { get; protected set; }
 
@@ -72,21 +74,21 @@ namespace CorporateMessengerLibrary
         public TextWriter WarningStream { get; set; }
         public TextWriter ErrorStream { get; set; }
 
-        private void LogInfo(string text)
+        protected void LogInfo(string text)
         {
             string format = "{0} {1}: {2}";
 
             InfoStream?.WriteLine(format, DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.InvariantCulture), Tcp?.Client.RemoteEndPoint, text);
         }
 
-        private void LogWarning(string text)
+        protected void LogWarning(string text)
         {
             string format = "{0} {1}: {2}";
 
             WarningStream?.WriteLine(format, DateTime.Now.ToString("HH:mm:ss.ffff", CultureInfo.InvariantCulture), Tcp?.Client.RemoteEndPoint, text);
         }
 
-        private void LogError(string text)
+        protected void LogError(string text)
         {
             string format = "{0} {1}: {2}";
 
@@ -221,7 +223,7 @@ namespace CorporateMessengerLibrary
 
 #if DEBUG
 
-                    LogInfo(string.Format("{0} has been sent", mes.Kind.ToString()));
+                    LogInfo(string.Format(CultureInfo.CurrentUICulture, Strings.LocaleStrings["{0} has been sent"], mes.Kind.ToString()));
 
                     //if (mes.Kind == MessageKind.RoutedMessage)
                     //{

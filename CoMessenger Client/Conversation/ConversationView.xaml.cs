@@ -23,6 +23,11 @@ using System.Threading.Tasks;
 using System.Xaml;
 using System.Globalization;
 using COMessengerClient.Conversation;
+using CorporateMessengerLibrary.History;
+using CorporateMessengerLibrary.Messaging;
+using COMessengerClient.CustomControls.CustomConverters;
+using COMessengerClient.Tools;
+using CorporateMessengerLibrary.Tools;
 
 namespace COMessengerClient.Conversation
 {
@@ -89,10 +94,13 @@ namespace COMessengerClient.Conversation
             //Нажали Ctrl+Enter
             if (((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control) && (e.Key == Key.Enter))
             {
-                ConversationModel.SendMessage(this, Peer);
+                SendMessage(Peer);
+
+                NewMessageBox.NewMessageTextBox.UndoLimit = 0;
+                NewMessageBox.NewMessageTextBox.UndoLimit = 10;
             }
         }
-        
+
         //Клик по ссылке
         private void OnNavigationRequest(object sender, RoutedEventArgs e)
         {
@@ -161,7 +169,7 @@ namespace COMessengerClient.Conversation
                         }
                         else
                         {
-                            ConversationModel.LoadFewMessageFromHistory(this, 5);
+                            LoadFewMessageFromHistory(5);
                         }
 
 
@@ -218,8 +226,7 @@ namespace COMessengerClient.Conversation
                         {
                             App.ThisApp.History.SaveMessages(history.Content);
 
-                            ConversationModel.LoadMessages(
-                                             conView: this,
+                            LoadMessages(
                                              entriesToLoad: history.Content.Take(5).ToList() //Отсортировано по убыванию
                                             );
                         }
@@ -299,161 +306,11 @@ namespace COMessengerClient.Conversation
         //При прокрутке сообщений вверх когда самый верх достигнут
         private void MessageArea_ScrollViewerStartPositionReached(object sender, EventArgs e)
         {
-            ConversationModel.LoadFewMessageFromHistory(this, 3);
+            LoadFewMessageFromHistory(3);
         }
 
 
         #endregion Обработчики
-
-
-        # region Поиск
-
-        //Встроенный поиск выпилен и заменен окошком поиска
-            /*
-        private void SearchBackward(object sender, RoutedEventArgs e)
-        {
-            //LookFor(SearchTextBox.Text, LookingDirection.Backward);
-        }
-
-        private void SearchForward(object sender, RoutedEventArgs e)
-        {
-            //LookFor(SearchTextBox.Text, LookingDirection.Forward);
-        }
-
-        private void FindAllClicked(object sender, RoutedEventArgs e)
-        {
-            //FindAll(SearchTextBox.Text);
-        }
-
-        //Список выделений во время поиска
-        private List<Tuple<TextRange, Brush>> UndoSearchHighlighting = new List<Tuple<TextRange, Brush>>();
-
-        //private List<MessageForeground> ResultSet;
-
-        private void FindAll(string Text)
-        {
-
-            //ResultsWindow.SearchList.MessageDoubleClicked += (s, args) =>
-            //    {
-            //        LookAt(args.SearchResult.ContentStart);
-            //    };
-
-
-            //ResultsWindow.Show();
-        }
-
-        private void LookFor(string Text, LookingDirection direction)
-        {
-
-            if (String.IsNullOrWhiteSpace(Text))
-                return;
-
-
-
-
-            Block msg = MessageArea.ChatBox.Selection.Start.Parent as Block ?? MessageArea.ChatBox.Selection.Start.Paragraph as Block;
-
-            int idx;
-
-            //Курсор позиционирован на каком-либо сообщении
-            if (msg != null)
-            {
-                while (!(msg is MessageForeground))
-                {
-                    msg = msg.Parent as Block;
-                }
-
-                idx = MessagesList.FindIndex(item => item == msg);
-            }
-            //Курсор не спозиционирован - начинаем с края документа
-            else
-            {
-                idx = direction == LookingDirection.Backward ? MessagesList.Count : 0;
-            }
-
-            IEnumerable<MessageForeground> FirstScope = null;
-            IEnumerable<MessageForeground> SecondScope = null;
-            switch (direction)
-            {
-                case LookingDirection.Backward:
-
-                    FirstScope = MessagesList.Take(idx).Reverse();
-                    SecondScope = MessagesList.Skip(idx + 1).Reverse();
-
-                    break;
-                case LookingDirection.Forward:
-
-                    FirstScope = MessagesList.Skip(idx + 1);
-                    SecondScope = MessagesList.Take(idx);
-
-                    break;
-            }
-            if (ScanScope(Text, FirstScope)) return;
-            if (ScanScope(Text, SecondScope)) return;
-
-            App.ThisApp.Client.ViewModel.ConnectionStatus = "Ничего не найдено";
-        }
-
-        private bool ScanScope(string Text, IEnumerable<MessageForeground> FirstScope)
-        {
-
-            foreach (MessageForeground item in FirstScope)
-            {
-                if (item.Text.Contains(Text))
-                {
-                    //откатываем все выделения, сделанные предыдущим поиском
-                    UndoSearchHighlighting.ForEach(tuple => tuple.Item1.ApplyPropertyValue(TextElement.BackgroundProperty, tuple.Item2));
-                    UndoSearchHighlighting.Clear();
-
-                    //Пролистываем до найденного сообщения (BringIntoView как то не канает, хз почему)
-                    //MessageArea.ActualScrollViewer.ScrollToVerticalOffset(item.ContentStart.GetCharacterRect(LogicalDirection.Forward).Top);
-                    //MessageArea.ActualScrollViewer.ScrollToVerticalOffset(MessageArea.ActualScrollViewer.VerticalOffset - MessageArea.ActualScrollViewer.ViewportHeight + item.Top);
-                    //MessageArea.ChatBox.Selection.Select(item.ContentStart, item.ContentStart);
-
-                    //TODO переписать это говно
-                    TextPointer text = item.ContentStart;
-                    TextPointer sta  = null;
-                    TextPointer end = null;
-                    while (true)
-                    {
-                        TextPointer next = text.GetNextContextPosition(LogicalDirection.Forward);
-
-                        if (next == null || next.CompareTo(item.ContentEnd) >= 0)
-                        {
-                            break;
-                        }
-                        TextRange txt = new TextRange(text, next);
-
-                        int indx = txt.Text.IndexOf(Text);
-                        if (indx >= 0)
-                        {
-                            sta = text.GetPositionAtOffset(indx);
-                            end = text.GetPositionAtOffset(indx + Text.Length);
-                            TextRange textR = new TextRange(sta, end);
-
-                            //Запоминаем старое выделение, чтобы потом вернуть как было
-                            UndoSearchHighlighting.Add(new Tuple<TextRange, Brush>(textR, textR.GetPropertyValue(TextElement.BackgroundProperty) as Brush));
-
-                            textR.ApplyPropertyValue(TextElement.BackgroundProperty, new SolidColorBrush(Colors.Yellow));
-                        }
-                        text = next;
-                    }
-
-                    LookAt(sta);
-
-                    MessageArea.ChatBox.Selection.Select(item.ContentStart, item.ContentStart);
-
-
-
-                    return true;
-                }
-            }
-            return false;
-        }
-
-       */
-        #endregion Поиск
-
 
 
         private void LookAt(TextPointer sta)
@@ -470,7 +327,412 @@ namespace COMessengerClient.Conversation
 
             LookAt(message.ContentStart);
         }
-        
+
+        private void AddNewMessage(RoutedMessage message)
+        {
+            //Возможно мы уже загрузили это сообщение ранее, ищем по ID
+            MessageForeground existing_message;
+            //Нашли
+            if (IndexById.TryGetValue(message.MessageId, out existing_message))
+            {
+                //Отправитель совпадает - значит это редактирование сообщения
+                if (existing_message.Message.Sender == message.Sender
+                    && existing_message.Message.Values.Last().Value.Version < message.Values.Last().Value.Version)
+                {
+                    existing_message.Update(message);
+
+                    existing_message.DisplayVersion(message.Values.Last().Value.Version);
+                }
+            }
+            else
+            {
+                //Если не 0 версия, значит прислали исправление к сообщению, которое еще не загружено.
+                if (message.Values.First().Value.Version != 0)
+                    return;
+
+
+                MessageBackground messageBackground = null;
+                MessageForeground newblock = null;
+
+
+                ClientPeer peer = App.FoundPeer(message.Sender);
+
+
+                newblock = new MessageForeground(message);
+
+                newblock.PrepareMessage();
+
+                newblock.DisplayVersion(message.Values.Last().Value.Version);
+
+                newblock.EditClick += (a, b) =>
+                {
+                    LoadMessageForEditing(newblock);
+                };
+
+
+
+                messageBackground = new MessageBackground();
+
+
+                messageBackground.DataContext = newblock;
+                BindingOperations.SetBinding(messageBackground.Avatar.Background, ImageBrush.ImageSourceProperty, new Binding("Peer.Avatar") { Source = peer, Converter = new NullImageConverter() });
+
+                messageBackground.Avatar.HorizontalAlignment = peer.Peer.PeerId == App.ThisApp.CurrentPeer.Peer.PeerId ? HorizontalAlignment.Right : HorizontalAlignment.Left;
+
+
+                InsertMessageIntoView(messageBackground, newblock);
+
+
+                MessagesList.Add(newblock);
+                IndexById.Add(message.MessageId, newblock);
+                MessagesList.Sort(MessageForeground.ComparerByTime);
+            }
+        }
+
+        private void InsertMessageIntoView(MessageBackground messageBackground, MessageForeground newblock)
+        {
+
+            if (MessagesList.Count == 0) //Добавляем первое сообщение
+            {
+                MessageArea.BackgroundStackPanel.Children.Add(messageBackground);
+                MessageArea.ChatBox.Document.Blocks.Add(newblock);
+
+                FirstMessageTime = newblock.MessageTime;
+                LastMessageTime = newblock.MessageTime;
+            }
+            else //Уже есть сообщения
+            {
+                //Сообщение позднее чем самое позднее (99% случаев), добавляем в конец
+                if (newblock.MessageTime > LastMessageTime)
+                {
+                    //Trace.WriteLine(DateTime.Now.ToString("HH:mm:ss.ffff") + " Вставляем");
+                    MessageArea.BackgroundStackPanel.Children.Add(messageBackground);
+                    MessageArea.ChatBox.Document.Blocks.Add(newblock);
+
+                    LastMessageTime = newblock.MessageTime;
+                }
+                //Сообщение более раннее чем самое раннее (если загружаем историю), добавляем в начало
+                else if (newblock.MessageTime < FirstMessageTime)
+                {
+                    MessageArea.ChatBox.Document.Blocks.InsertBefore(MessageArea.ChatBox.Document.Blocks.FirstBlock, newblock);
+                    MessageArea.BackgroundStackPanel.Children.Insert(0, messageBackground);
+
+                    FirstMessageTime = newblock.MessageTime;
+                }
+                //С какого то перепуга сообщение пришло прямо в середину переписки, возможно собеседник отправил его в момент отсутствия сети
+                else
+                {   //Ищем место куда втулить это сообщение
+                    int? idx = MessagesList.FindEqualOrAboveIndex(newblock, MessageForeground.ComparerByTime);
+
+                    if (idx == null)
+                    {
+                        MessageArea.BackgroundStackPanel.Children.Add(messageBackground);
+                        MessageArea.ChatBox.Document.Blocks.Add(newblock);
+
+                        LastMessageTime = newblock.MessageTime;
+                    }
+                    else
+                    {
+                        MessageArea.ChatBox.Document.Blocks.InsertBefore(MessagesList[(int)idx], newblock);
+                        MessageArea.BackgroundStackPanel.Children.Insert((int)idx, messageBackground);
+                    }
+                }
+            }
+        }
+
+
+
+        private void LoadMessageForEditing(MessageForeground MessageToEdit)
+        {
+            //Редактировали это же самое сообщение - отменяем режим редактирования
+            if (NewMessageBox.CurrentEditingMessage == MessageToEdit)
+            {
+                NewMessageBox.IsEditingMode = false;
+                MessageToEdit.IsEditing = false;
+                NewMessageBox.CurrentEditingMessage = null;
+
+                NewMessageBox.NewMessageTextBox.Document.Blocks.Clear();
+            }
+            else
+            {
+                NewMessageBox.IsEditingMode = true;
+                MessageToEdit.IsEditing = true;
+                NewMessageBox.NewMessageTextBox.Document.Blocks.Clear();
+
+                MessageValue currentValue = MessageToEdit.Message.Values[MessageToEdit.DisplayedVersion];
+
+                switch (currentValue.Kind)
+                {
+                    case RoutedMessageKind.RichText:
+                        NewMessageBox.NewMessageTextBox.Document.Blocks.AddRange(MessagingService.ExtractBlocks(currentValue).ToList());
+                        NewMessageBox.IsRichText = true;
+
+                        break;
+                    case RoutedMessageKind.Plaintext:
+                        NewMessageBox.NewMessageTextBox.AppendText(currentValue.Text);
+
+                        break;
+                }
+
+                //Если уже редактировали другое сообщение - то отменяем
+                if (NewMessageBox.CurrentEditingMessage != null)
+                    NewMessageBox.CurrentEditingMessage.IsEditing = false;
+
+                NewMessageBox.CurrentEditingMessage = MessageToEdit;
+            }
+        }
+
+
+        internal void LoadMessages(List<RoutedMessage> entriesToLoad)
+        {
+            entriesToLoad.ForEach(historyEntry =>
+            App.ThisApp.Dispatcher.Invoke(new Action(() =>
+            {
+
+                AddNewMessage(historyEntry);
+
+
+            }), System.Windows.Threading.DispatcherPriority.Loaded));
+        }
+
+        internal void LoadFewMessageFromHistory(int MessagesToLoad)
+        {
+            MessageArea.IsBusy = true;
+
+            string lastLoadedMessage = MessagesList.Count > 0 ? MessagesList.First().Message.MessageId : String.Empty;
+
+            List<RoutedMessage> ExistingMessages;
+            if (Peer.Peer.PeerType == PeerType.Person)
+                ExistingMessages = App.ThisApp.History.GetPrivateMessages(App.ThisApp.CurrentPeer.Peer.PeerId, Peer.Peer.PeerId, lastLoadedMessage, MessagesToLoad);
+            else
+                ExistingMessages = App.ThisApp.History.GetRoomMessages(Peer.Peer.PeerId, lastLoadedMessage, MessagesToLoad);
+
+            LoadMessages(
+            entriesToLoad: ExistingMessages
+                        );
+
+            MessageArea.IsBusy = false;
+
+            //Если получили из истории меньше чем просили - то отправим запрос на сервер
+
+            int notLoaded = MessagesToLoad - ExistingMessages.Count;
+
+            if (notLoaded > 0 && Peer.Peer.PeerType == PeerType.Room)
+            {
+
+                MessageArea.IsBusy = true;
+
+                HistoryQuery query = new HistoryQuery();
+
+                string lastStoredMessage = String.Empty;
+                if (ExistingMessages.Count > 0)
+                    lastStoredMessage = ExistingMessages.Last().MessageId;
+                else
+                    lastStoredMessage = lastLoadedMessage;
+
+                query.PeerId = Peer.Peer.PeerId;
+                query.From = lastStoredMessage; //С последнего сообщения на сервере
+                query.To = String.Empty; //До нашего последнего сообщения
+                //query.QueryID = Guid.NewGuid().ToString();
+
+                ConnectionManager.Client.PutOutgoingMessage(new CMMessage()
+                {
+                    Kind = MessageKind.Query,
+                    Message = new QueryMessage()
+                    {
+                        Kind = QueryMessageKind.History,
+                        Message = query,
+                        MessageId = Guid.NewGuid().ToString(),
+
+                        //При получении ответа загрузим то , что недогрузили
+                        SuccessAction = (a) =>
+                        {
+                            HistoryQuery history = a.Message as HistoryQuery;
+
+                            if (history.Content.Count > 0)
+                            {
+                                App.ThisApp.History.SaveMessages(history.Content);
+
+                                //int skip = history.Content.Count - notLoaded;
+
+                                //if (skip > 0)
+                                //{
+                                LoadMessages(
+                                             entriesToLoad: history.Content.Take(notLoaded).ToList()
+                                            );
+                                //}
+                                //else
+                                //{
+                                //    LoadMessages(
+                                //                 conView: conView,
+                                //                 entriesToLoad: history.Content
+                                //                );
+                                //}
+                            }
+
+                            MessageArea.IsBusy = false;
+
+                        },
+                        TimeoutAction = () =>
+                        {
+                            MessageBox.Show("Истекло время ожидания ответа от сервера");
+                            MessageArea.IsBusy = false;
+                        }
+                    }
+                });
+
+
+            }
+
+        }
+
+        private void SendMessage(ClientPeer Receiver)
+        {
+
+            FlowDocument source = NewMessageBox.NewMessageTextBox.Document;
+
+            TextRange tr = new TextRange(source.ContentStart, source.ContentEnd);
+
+            if (!string.IsNullOrEmpty(tr.Text))
+            {
+
+                RoutedMessage newMessage = new RoutedMessage();
+                MessageValue newValue = new MessageValue();
+
+                if (NewMessageBox.IsEditingMode)
+                {
+                    RoutedMessage oldMessage = NewMessageBox.CurrentEditingMessage.Message;
+
+                    newMessage.Receiver = oldMessage.Receiver;
+                    newMessage.Sender = oldMessage.Sender;
+                    newMessage.SendTime = oldMessage.SendTime;
+                    newMessage.MessageId = oldMessage.MessageId;
+
+                    newValue.Version = oldMessage.Values.Last().Value.Version + 1;
+                    newValue.ChangeTime = DateTime.UtcNow;
+
+                    NewMessageBox.CurrentEditingMessage.IsEditing = false;
+                    NewMessageBox.IsEditingMode = false;
+
+                }
+                else
+                {
+                    newMessage.Receiver = Receiver.Peer.PeerId;
+                    newMessage.Sender = App.ThisApp.CurrentUserId;
+                    newMessage.SendTime = DateTime.UtcNow;
+                    newMessage.MessageId = Guid.NewGuid().ToString("N");
+
+                    newValue.Version = 0;
+                    newValue.ChangeTime = newMessage.SendTime;
+                }
+
+                if (NewMessageBox.IsRichText)
+                {
+                    newValue.Kind = RoutedMessageKind.RichText;
+                    newValue.Text = tr.Text;
+                    //newValue.FormattedText = GetMessageBody(source); 
+
+                    string FormattedText;
+                    List<BinarySource> binaries;
+
+                    MessagingService.Decompose(source, out FormattedText, out binaries);
+
+                    //todo: избавиться от GetMessageBody
+                    newValue.FormattedText = MessagingService.GetMessageBody(source);
+
+                    NewMessageBox.IsRichText = false;
+
+
+
+                    foreach (BinarySource binary in binaries)
+                    {
+                        //Если это какое-то новое изображение, отправляем серверу
+                        if (!App.ThisApp.History.BinaryExists(binary.BinarySourceId))
+                        {
+                            App.ThisApp.History.SaveBinary(binary.BinarySourceData);
+
+                            ConnectionManager.Client.PutOutgoingMessage(new CMMessage() { Kind = MessageKind.BinaryContent, Message = Compressing.Compress(binary.BinarySourceData) });
+                        }
+                    }
+
+                }
+                else
+                {
+                    newValue.Kind = RoutedMessageKind.Plaintext;
+                    newValue.Text = tr.Text;
+                }
+
+                newMessage.Values.Add(newValue.Version, newValue);
+
+                //Сообщения комнат сохраняем когда получим ответ от сервера
+                if (Receiver.Peer.PeerType == PeerType.Person)
+                {
+                    newMessage.PreviousMessageId = App.ThisApp.History.GetLastMessageBetween(newMessage.Sender, newMessage.Receiver, newMessage.SendTime);
+                    App.ThisApp.History.Save(newMessage);
+                    newMessage.PreviousMessageId = null;
+                }
+
+                ConnectionManager.Client.PutOutgoingMessage(new CMMessage() { Kind = MessageKind.RoutedMessage, Message = newMessage });
+
+                AddNewMessage(newMessage);
+
+                source.Blocks.Clear();
+                NewMessageBox.CurrentEditingMessage = null;
+
+                MessageArea.ActualScrollViewer.ScrollToEnd();
+
+
+            }
+
+        }
+
+        internal void ProcessNewMessage(RoutedMessage newMessage)
+        {
+
+            MessageArea.ChatBox.Dispatcher.Invoke(new Action(() =>
+            {
+
+                //Если переписка с этим пиром уже открывалась и область сообщений пролистана в самый низ, 
+                // то запомним этот факт, чтобы после добавления нового сообщения пролистаем в низ.
+                bool HaveToScrollToEnd;
+
+                if (MessageArea.ActualScrollViewer != null)
+                    HaveToScrollToEnd = MessageArea.ActualScrollViewer.ScrollableHeight == 0 || MessageArea.ActualScrollViewer.VerticalOffset / MessageArea.ActualScrollViewer.ScrollableHeight > 0.95;
+                else
+                    HaveToScrollToEnd = false;
+
+                //Tuple<BlockCollection, string> extracted = null;
+
+                //extracted = ExtractBlocks(newMessage);
+
+                //Отправитель - если личное сообщение, то сам пир, если комната - то ищем отправителя по id
+                //ClientPeer Sender = conView.Peer.Peer.Type == PeerType.Person ? conView.Peer : App.FoundPeer(newMessage.Sender);
+
+                //AddNewMessage(ExtractBlocks(newMessage), conView, Sender, newMessage.SendTime, newMessage.MessageID, newMessage.Text);
+                AddNewMessage(newMessage);
+
+                //Trace.WriteLine("isActive = " + conView.ParentWindow.IsActive, "hasUnreadMessage");
+                //Trace.WriteLine("conView visibility = " + conView.Visibility, "hasUnreadMessage");
+
+                if (!ParentWindow.IsActive || Visibility != Visibility.Visible)
+                {
+                    Peer.ViewModel.HasUnreadMessages = true;
+
+                    //Пиликнуть
+                    App.ThisApp.Sound.Play("NewMessage");
+
+                    //И поморгать
+                    var helper = new FlashWindowHelper(Application.Current);
+                    helper.FlashApplicationWindow();
+                }
+
+                if (HaveToScrollToEnd)
+                    MessageArea.ActualScrollViewer.ScrollToEnd();
+            }));
+
+            //App.ThisApp.Client.ViewModel.ConnectionStatus = App.ThisApp.Client.ViewModel.ConnectionStatus + " Обработка окончена через:" + App.sw.ElapsedMilliseconds;
+            //App.sw.Reset();
+        }
     }
 
 }

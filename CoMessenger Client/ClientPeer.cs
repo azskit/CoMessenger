@@ -5,6 +5,7 @@ using System.Windows.Media;
 using COMessengerClient.Conversation;
 using CorporateMessengerLibrary;
 using System.Linq;
+using CorporateMessengerLibrary.Messaging;
 
 namespace COMessengerClient
 {
@@ -250,9 +251,9 @@ namespace COMessengerClient
             App.ThisApp.History.Save(routedMessage);
 
             //Trace.WriteLine(DateTime.Now.ToString("HH:mm:ss.ffff") + " Сообщение сохранено");
-             
 
-            ConversationModel.NewMessageHandler(routedMessage, View);
+
+            View.ProcessNewMessage(routedMessage);
 
             OnPropertyChanged("ViewModel");
 

@@ -50,18 +50,18 @@
                 </Border.Background>
             </Border>
 
-                <!--Статус-->
-            <Border UseLayoutRounding   ="True"
-                    SnapsToDevicePixels ="True"
-                    Height              ="15" 
-                    Width               ="{Binding RelativeSource={RelativeSource Mode=Self},Path=ActualHeight}"
-                    CornerRadius        ="5" 
-                    BorderBrush         ="Black"
-                    BorderThickness     ="1" 
-                    Margin              ="2" 
-                    VerticalAlignment   ="Bottom" 
-                    HorizontalAlignment ="Right" 
-                    Background          ="White">
+                    <!--Статус-->
+                    <Border UseLayoutRounding   ="False"
+                            SnapsToDevicePixels ="False"
+                            Height              ="15" 
+                            Width               ="{Binding RelativeSource={RelativeSource Mode=Self},Path=ActualHeight}"
+                            CornerRadius        ="5" 
+                            BorderBrush         ="#48000000"
+                            BorderThickness     ="1" 
+                            Margin              ="2" 
+                            VerticalAlignment   ="Bottom" 
+                            HorizontalAlignment ="Right" 
+                            Background          ="White">
                         <Border  UseLayoutRounding   ="False"
                                  SnapsToDevicePixels ="False"
                                  Margin="1"
@@ -69,12 +69,12 @@
                                  CornerRadius="4" 
                                  VerticalAlignment="Stretch" 
                                  HorizontalAlignment="Stretch">
-                    <Border.Background>
-                        <SolidColorBrush Color="{Binding ViewModel.StatusColor}" />
-                    </Border.Background>
-                </Border>
-            </Border>
-            </Grid>
+                            <Border.Background>
+                                <SolidColorBrush Color="{Binding ViewModel.StatusColor}" />
+                            </Border.Background>
+                        </Border>
+                    </Border>
+                </Grid>
             
             <!--Наименование контакта-->
             <Grid>

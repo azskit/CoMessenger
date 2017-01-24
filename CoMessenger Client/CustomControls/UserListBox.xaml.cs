@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CorporateMessengerLibrary;
 using System.Windows.Media.Animation;
+using CorporateMessengerLibrary.Messaging;
 
 namespace COMessengerClient.CustomControls
 {

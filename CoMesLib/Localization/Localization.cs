@@ -9,44 +9,11 @@ using System.IO;
 using System.Xml;
 using System.Globalization;
 using System.Diagnostics;
+using CorporateMessengerLibrary.Collections;
 
-namespace CorporateMessengerLibrary
+namespace CorporateMessengerLibrary.Localization
 {
-    
-    /// <summary>
-    /// Обертка для SortedList, позволяющая не выбрасывать исключение в случае если указанного элемента нет в коллекции, а возвращать TKey
-    /// </summary>
-    /// <typeparam name="TKey">Тип ключа</typeparam>
-    /// <typeparam name="TValue">Тип значения</typeparam>
-    public class BackedSortedList<TKey, TValue>
-    {
-        private SortedList<string, string> back = new SortedList<string, string>();
 
-        public string this[string key]
-        {
-            get 
-            {
-                //string tmp;
-
-                if (back.ContainsKey(key))
-                    return back[key];
-                else
-                    return key;
-
-            }
-            set
-            {
-                back[key] = value;
-            }
-        }
-
-        public void Add(string key, string value)
-        {
-            back.Add(key, value);
-        }
-
-        public int Count { get { return back.Count; } }
-    }
 
     /// <summary>
     /// Транслируемая запись
@@ -66,9 +33,14 @@ namespace CorporateMessengerLibrary
     /// </summary>
     public class LocalizationUI : INotifyPropertyChanged
     {
+        /// <summary> 
+        /// Хранилище строк перевода
+        /// </summary>
+        public BackedSortedList<string> LocaleStrings { get; private set; }
+
         public LocalizationUI()
         {
-            LocaleStrings = new BackedSortedList<string, string>();
+            LocaleStrings = new BackedSortedList<string>();
         }
 
         private static XmlSerializer serializer = new XmlSerializer(typeof(List<LocalizationEntry>));
@@ -85,7 +57,9 @@ namespace CorporateMessengerLibrary
 
             List<LocalizationEntry> StringSet;
 
-            LocaleStrings = new BackedSortedList<string, string>();
+            //LocaleStrings = new BackedSortedList<string>();
+
+            LocaleStrings.Clear();
 
             string FilePath = Path.Combine("Language", String.Concat(info.Name, ".xml"));
 
@@ -108,11 +82,6 @@ namespace CorporateMessengerLibrary
                 }
             }
         }
-
-        /// <summary> 
-        /// Хранилище строк перевода
-        /// </summary>
-        public BackedSortedList<string, string> LocaleStrings { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

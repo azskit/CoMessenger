@@ -11,6 +11,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Reflection;
 using System.Diagnostics;
 using COMessengerClient.CustomControls;
+using CorporateMessengerLibrary.History;
+using CorporateMessengerLibrary.Messaging;
+using CorporateMessengerLibrary.Localization;
 //using System.Windows.Media.Imaging;
 //using System.Drawing;
 
@@ -87,8 +90,8 @@ namespace COMessengerClient
 
             InitializeComponent();
 
-            EditorHelper.Register<System.Windows.Controls.Image, CustomImageConvertor>();
-            EditorHelper.RegisterVS<ImageSource, CustomImageValueSerializer>();
+            //EditorHelper.Register<System.Windows.Controls.Image, CustomImageConvertor>();
+            //EditorHelper.RegisterVS<ImageSource, CustomImageValueSerializer>();
 
 
             ThisApp = (App)App.Current;

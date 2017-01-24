@@ -10,7 +10,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Globalization;
 
-namespace CorporateMessengerLibrary
+namespace CorporateMessengerLibrary.Messaging
 {
     public enum PeerType
     {

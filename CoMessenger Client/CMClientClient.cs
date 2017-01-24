@@ -17,6 +17,8 @@ using System.IO;
 using System.Security;
 using System.Net;
 using COMessengerClient.Credentials;
+using CorporateMessengerLibrary.CimProtocol;
+using CorporateMessengerLibrary.Messaging;
 
 namespace CorporateMessengerLibrary
 {

@@ -15,6 +15,7 @@ using COMessengerClient.Conversation;
 using COMessengerClient.ChatFace;
 using System.Collections.ObjectModel;
 using System.Windows.Media.Animation;
+using CorporateMessengerLibrary.Messaging;
 
 namespace COMessengerClient.CustomControls
 {
@@ -324,7 +325,7 @@ namespace COMessengerClient.CustomControls
             MessageValue Value = Message.Values[version];
 
             Content.Blocks.Clear();
-            Content.Blocks.AddRange(ConversationModel.ExtractBlocks(Value).ToList());
+            Content.Blocks.AddRange(MessagingService.ExtractBlocks(Value).ToList());
 
             Content.Blocks.ForEach(
                         isRecursive: true,

@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using CorporateMessengerLibrary;
 using System.ComponentModel;
 using COMessengerClient.Conversation;
+using CorporateMessengerLibrary.Messaging;
 
 namespace COMessengerClient.GroupConversation
 {

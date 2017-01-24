@@ -15,6 +15,11 @@ using CimPlugin.Plugin;
 using CimPlugin.Plugin.Authentication;
 using CimPlugin.Plugin.Groups;
 using System.Collections.Concurrent;
+using CorporateMessengerLibrary.Collections;
+using CorporateMessengerLibrary.CimProtocol;
+using CorporateMessengerLibrary.Messaging;
+using CorporateMessengerLibrary.History;
+using CorporateMessengerLibrary.Tools;
 
 namespace SimpleChat
 {
@@ -855,6 +860,23 @@ namespace SimpleChat
 
                         break;
 
+                    case "ERASE":
+
+                        int count = 0;
+
+                        foreach (ServerRoomPeer room in ReceiversList.Values.OfType<ServerRoomPeer>())
+                        {
+                            foreach (RoutedMessage message in RoomsHistory.GetRoomMessages(room.Room.PeerId, "", 0))
+                            {
+                                RoomsHistory.Delete(message);
+                                count++;
+                            }
+
+                        }
+
+                        Console.WriteLine("Removed {0} messages", count);
+
+                        break;
 
                     default:
                         break;

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using CorporateMessengerLibrary;
+using CorporateMessengerLibrary.CimProtocol;
+using CorporateMessengerLibrary.Messaging;
 using SimpleChat.Identity;
 
 namespace SimpleChat.Protocol

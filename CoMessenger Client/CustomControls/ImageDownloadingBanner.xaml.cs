@@ -14,6 +14,8 @@ using System.Windows.Shapes;
 using COMessengerClient.ChatFace;
 using COMessengerClient.Tools;
 using CorporateMessengerLibrary;
+using CorporateMessengerLibrary.Messaging;
+using CorporateMessengerLibrary.Tools;
 
 namespace COMessengerClient.CustomControls
 {
@@ -55,7 +57,7 @@ namespace COMessengerClient.CustomControls
             Loaded += Root_Loaded;
         }
 
-        public ImageDownloadingBanner(Image image): this()
+        internal ImageDownloadingBanner(Image image): this()
         {
             replacedImage = image;
 

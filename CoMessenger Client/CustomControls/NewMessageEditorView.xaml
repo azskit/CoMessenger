@@ -54,14 +54,14 @@
                     <Setter Property="Margin" Value="0"/>
                 </Style>
             </RichTextBox.Resources>
-            <FlowDocument>
+            <!--<FlowDocument>
                 <BlockUIContainer>
-                    <!--<MediaElement  x:Name="myGif" UnloadedBehavior="Manual" Source="file://C:\secret.gif" LoadedBehavior="Play" Stretch="None"/>-->
+                    --><!--<MediaElement  x:Name="myGif" UnloadedBehavior="Manual" Source="file://C:\secret.gif" LoadedBehavior="Play" Stretch="None"/>-->
                     <!--<custom:GifImage  x:Name="gifImage" Stretch="None" GifSource="file://C:\65.gif" AutoStart="True" />-->
-                    <custom:AnimatedImage AnimatedBitmap="{Binding Path=img, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:NewMessageEditorView}}" Height="20" Width="20" />
-                    <!--<Image gif:AnimationBehavior.SourceUri="file://C:\65.gif" Stretch="None" />-->
+                    <!--<custom:AnimatedImage AnimatedBitmap="{Binding Path=img, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:NewMessageEditorView}}" Height="20" Width="20" />-->
+                    <!--<Image gif:AnimationBehavior.SourceUri="file://C:\65.gif" Stretch="None" />--><!--
                 </BlockUIContainer>
-            </FlowDocument>
+            </FlowDocument>-->
 
         </RichTextBox>
 
