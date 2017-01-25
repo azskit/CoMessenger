@@ -76,6 +76,23 @@ namespace CorporateMessengerLibrary.Messaging
             Values = new SortedList<int, MessageValue>();
         }
 
+#if DEBUG
+        public RoutedMessage(bool isDesignTime) : this()
+        {
+            Sender = "";
+            Receiver = "";
+            SendTime = DateTime.Now;
+            Values.Add(0,
+                            new MessageValue()
+                            {
+                                ChangeTime = DateTime.Now,
+                                Kind = RoutedMessageKind.Plaintext,
+                                Text = "Hello world!",
+                                Version = 0
+                            });
+        } 
+#endif
+
     }
 
     [Serializable]

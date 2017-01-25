@@ -1,0 +1,30 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:COMessengerClient.Resources.Images">
+    <PathGeometry x:Key="MaleSingle">
+        M98,101 L108,147 97,156 86,147 z 
+        M68,79 C55,79 44,90 44,103 L52,160 C54,175 63,184 76,184 L117,184 C130,184 138,177 141,160 L149,103 C149,91 139,80 126,80 L125,79 125,80 C118,86 108,90 97,90 87,90 77,86 70,80 L70,79 z 
+        M97,13 C77,13 60,30 60,51 60,71 77,88 97,88 118,88 135,71 135,51 135,30 118,13 97,13 z 
+        M1,1 L196,1 196,196 1,196 z
+    </PathGeometry>
+
+    <DrawingImage x:Key="DefaultPersonAvatar">
+        <DrawingImage.Drawing>
+            <GeometryDrawing Geometry="{StaticResource MaleSingle}" Brush="Gray">
+                <GeometryDrawing.Pen>
+                    <Pen Brush="Red" Thickness="1"/>
+                </GeometryDrawing.Pen>
+            </GeometryDrawing>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="DefaultRoomAvatar">
+        <DrawingImage.Drawing>
+            <GeometryDrawing Geometry="{StaticResource MaleSingle}" Brush="Brown">
+                <GeometryDrawing.Pen>
+                    <Pen Brush="Blue" Thickness="1"/>
+                </GeometryDrawing.Pen>
+            </GeometryDrawing>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+</ResourceDictionary>

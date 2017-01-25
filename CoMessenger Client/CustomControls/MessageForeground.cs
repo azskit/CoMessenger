@@ -409,7 +409,7 @@ namespace COMessengerClient.CustomControls
         {
             get
             {
-                return headerHeight;
+                return Math.Round(headerHeight);
             }
         }
 
@@ -420,7 +420,7 @@ namespace COMessengerClient.CustomControls
         {
             get
             {
-                return height;
+                return Math.Round(height);
             }
         }
 

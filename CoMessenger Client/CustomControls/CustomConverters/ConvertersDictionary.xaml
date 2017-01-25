@@ -3,4 +3,5 @@
                     xmlns:converters="clr-namespace:COMessengerClient.CustomControls.CustomConverters">
     <converters:BoolToVisibilityConverter x:Key="b2v"/>
     <converters:BoolToInvisibilityConverter x:Key="b2i"/>
+    <converters:NullImageConverter x:Key="nullImageConverter"/>
 </ResourceDictionary>

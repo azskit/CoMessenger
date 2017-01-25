@@ -5,26 +5,29 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:props="clr-namespace:COMessengerClient.Properties"
              xmlns:system      ="clr-namespace:System;assembly=mscorlib"
+             xmlns:cmccc="clr-namespace:COMessengerClient.CustomControls"
              mc:Ignorable="d" 
              d:DesignWidth="500"
-             d:DesignHeight="100">
+             d:DesignHeight="100"
+             >
+    <!--d:DataContext="{d:DesignInstance Type=cmccc:MessageForeground, IsDesignTimeCreatable=False}"-->
     <Grid>
         <StackPanel Name="HeaderAndBackground">
             <!--Отступ для заголовка-->
             <Border Opacity="0"
-                Height="{Binding HeaderHeight}" >
-
+                Height="{Binding HeaderHeight, FallbackValue=10}">
+                
             </Border>
             <Grid>
             <!--Фон для сообщения-->
             <Border CornerRadius="5"                 
-                        Margin="{Binding Padding}"
-                        Height="{Binding Height}" 
-                        BorderThickness="1"
+                        Margin="{Binding Padding, FallbackValue=0}"
+                        Height="{Binding Height, FallbackValue=145}" 
+                        BorderThickness="0"
                         d:DesignHeight="145">
                 <Border.Background>
                     <LinearGradientBrush>
-                        <GradientStop Color="{Binding BackgroundColor1}" Offset="0"/>
+                        <GradientStop Color="{Binding BackgroundColor1, FallbackValue=AliceBlue}" Offset="0"/>
                         <GradientStop Color="{Binding BackgroundColor2}" Offset="1"/>
                     </LinearGradientBrush>
                 </Border.Background>
@@ -45,18 +48,17 @@
             <Border Name="Avatar"
                     CornerRadius="0, 5, 5, 5"
                  BorderBrush="Gray" 
-                 Margin="10,-3,3,0"
+                 Margin="10,0,3,0"
                  BorderThickness="0.5" 
                  MaxHeight="25" 
                  Height="{Binding Path=Height, FallbackValue=25}" 
                  Width="{Binding RelativeSource={RelativeSource Mode=Self},Path=ActualHeight}" 
                  Opacity="0.8"
+                    HorizontalAlignment="Left"
                  VerticalAlignment="Top"
                  UseLayoutRounding="False"
-                 SnapsToDevicePixels="False">
-                    <Border.Background>
-                    <ImageBrush />
-                </Border.Background>
+                 SnapsToDevicePixels="False"
+                    Style="{StaticResource Avatar}">
             </Border>
             </Grid>
         </StackPanel>

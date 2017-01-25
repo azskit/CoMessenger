@@ -23,8 +23,8 @@
              >
 
     <UserControl.Resources>
-        <converters:BoolToVisibilityConverter x:Key="visibilityConverter" />
-        <converters:NullImageConverter x:Key="nullImageConverter"/>
+
+
     </UserControl.Resources>
     <Grid  PreviewKeyDown="ChatBox_PreviewKeyDown">
         <Grid.RowDefinitions>
@@ -41,13 +41,10 @@
                 <!--Аватар-->
         <Border Width="50" 
                 Margin="8" 
-                Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}"
-                HorizontalAlignment="Left"
+                HorizontalAlignment="Left" 
                 CornerRadius="3"
+                Style="{StaticResource Avatar}"
                 >
-                <Border.Background>
-                    <ImageBrush ImageSource="{Binding Peer.Avatar, Converter={StaticResource nullImageConverter}}"></ImageBrush>
-                </Border.Background>
             </Border>
 
                     <!--Статус-->

@@ -11,13 +11,65 @@
                 <ResourceDictionary Source="SystemCollections.xaml"></ResourceDictionary>
                 <!--Анимации-->
                 <ResourceDictionary Source="Animations\Animations.xaml"></ResourceDictionary>
-                
-                
-                
-                
-                
-                
+                <!--Векторные изображения-->
+                <ResourceDictionary Source="Resources\Images\XamlImages.xaml"></ResourceDictionary>
+                <!--Векторные изображения-->
+                <ResourceDictionary Source="CustomControls\CustomConverters\ConvertersDictionary.xaml"></ResourceDictionary>
+
+
+
             </ResourceDictionary.MergedDictionaries>
+
+
+
+            <Style x:Key="Avatar" TargetType="Border">
+
+                <Style.Setters>
+                    <Setter Property="Height">
+                        <Setter.Value>
+                            <!--<Binding RelativeSource="{RelativeSource Self}, Path=ActualWidth}"/>-->
+                            <Binding RelativeSource="{RelativeSource Self}" Path="ActualWidth"/>
+                        </Setter.Value>
+                    </Setter>
+                </Style.Setters>
+                
+                <Style.Triggers>
+                    
+                    <DataTrigger Binding="{Binding Peer.PeerType}" Value="Room">
+                        <DataTrigger.Setters>
+                            <Setter Property="Border.Background">
+                                <Setter.Value>
+                                    <ImageBrush>
+                                        <ImageBrush.ImageSource>
+                                            <Binding Path="Peer.Avatar" 
+                                                                     Converter="{StaticResource nullImageConverter}"
+                                                                     FallbackValue="{StaticResource DefaultRoomAvatar}">
+                                            </Binding>
+                                        </ImageBrush.ImageSource>
+                                    </ImageBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger.Setters>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Peer.PeerType}" Value="Person">
+                        <DataTrigger.Setters>
+                            <Setter Property="Border.Background">
+                                <Setter.Value>
+                                    <ImageBrush>
+                                        <ImageBrush.ImageSource>
+                                            <Binding Path="Peer.Avatar" 
+                                                                     Converter="{StaticResource nullImageConverter}"
+                                                                     FallbackValue="{StaticResource DefaultPersonAvatar}">
+                                            </Binding>
+                                        </ImageBrush.ImageSource>
+                                    </ImageBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger.Setters>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
         </ResourceDictionary>
         
         
