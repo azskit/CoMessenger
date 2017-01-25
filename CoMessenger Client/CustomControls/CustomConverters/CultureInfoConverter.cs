@@ -15,6 +15,9 @@ namespace COMessengerClient.CustomControls.CustomConverters
         {
             CultureInfo cultureInfo = (CultureInfo)value;
 
+            if (!cultureInfo.IsNeutralCulture)
+                cultureInfo = cultureInfo.Parent;
+
             return String.Format(CultureInfo.InvariantCulture, "{0} ({1})", cultureInfo.NativeName, cultureInfo.EnglishName);
         }
 

@@ -9,21 +9,25 @@
              xmlns:converters="clr-namespace:COMessengerClient.CustomControls.CustomConverters"
              xmlns:validation="clr-namespace:COMessengerClient.CustomControls.CustomValidationRules"
              xmlns:sections="clr-namespace:COMessengerClient.Options.Sections"
+             xmlns:settingsCommands="clr-namespace:COMessengerClient.Properties"
+             
              mc:Ignorable="d" 
              
              DataContext="{x:Static application:App.ThisApp}"
+             
+             
              
              d:DesignHeight="400" d:DesignWidth="600">
     <!--Ресурсы-->
     <UserControl.Resources>
 
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <!--Источники данных для комбобоксов-->
+            <!--<ResourceDictionary.MergedDictionaries>
+                --><!--Источники данных для комбобоксов--><!--
                 <ResourceDictionary Source="..\SystemCollections.xaml"></ResourceDictionary>
-                <!--Плоские кнопки-->
+                --><!--Плоские кнопки--><!--
                 <ResourceDictionary Source="..\Styles\FlatControls.xaml"></ResourceDictionary>
-            </ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary.MergedDictionaries>-->
             <!--<Style TargetType="Label">
                 <Setter Property="Width" Value="150"/>
             </Style>-->
@@ -39,13 +43,17 @@
     <Grid>
 
         <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" MinWidth="150"/>
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <!--Список разделов настроек-->
             
-            <ListBox Margin="5">
+            <ListBox Margin="5" Grid.RowSpan="2">
                 <ListBoxItem Margin="2" IsSelected="True" Name="AppearanceSection">
                     <Label Content="{Binding Path=Locally.LocaleStrings[Appearance], FallbackValue=Appearance}"/>
                 </ListBoxItem>
@@ -94,7 +102,7 @@
                 </TextBox>
                 
                 <!--Учетная запись-->
-                <custom:CredentialForm Grid.Row="1" Grid.ColumnSpan="2" Margin="3"/>
+                <!--<custom:CredentialForm Grid.Row="1" Grid.ColumnSpan="2" Margin="3"/>-->
                 
                 <!--Подключаться автоматически при входе-->
                 <CheckBox  Grid.Row="2" Grid.ColumnSpan="2"  Margin="3">
@@ -110,13 +118,20 @@
 
             </Grid>
             
-            <!--<StackPanel Grid.Column="1"  Visibility="{Binding ElementName=ConnectionSection, Path=IsSelected, Converter={StaticResource visibilityConverter}, FallbackValue=Collapsed}">
-                <Label Content="Some Stuff"/>
-            </StackPanel>-->
-
             <!--Прочее-->
             <sections:Others Grid.Column="1" Visibility="{Binding ElementName=OtherSection, Path=IsSelected, Converter={StaticResource visibilityConverter}}"/>
 
+
+            <StackPanel Grid.Row ="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="{Binding Locally.LocaleStrings[Save], FallbackValue=Save}"
+                        Command="settingsCommands:SettingsCommands.SaveSettings"
+                        Style="{StaticResource FlatButton}"
+                        Margin="4"/>
+                <Button Content="{Binding Locally.LocaleStrings[Cancel], FallbackValue=Cancel}"
+                        Command="settingsCommands:SettingsCommands.RevertSettings"
+                        Style="{StaticResource FlatButton}"
+                        Margin="4"/>
+            </StackPanel>
 
         </Grid>
     </Grid>

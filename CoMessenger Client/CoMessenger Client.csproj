@@ -116,9 +116,6 @@
     <Compile Include="CustomControls\AdvancedColorPicker.xaml.cs">
       <DependentUpon>AdvancedColorPicker.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CustomControls\CredentialForm.xaml.cs">
-      <DependentUpon>CredentialForm.xaml</DependentUpon>
-    </Compile>
     <Compile Include="CustomControls\CustomConverters\BoolToOppositeBoolConverter.cs" />
     <Compile Include="CustomControls\CustomConverters\BoolToVisibilityConverter.cs" />
     <Compile Include="CustomControls\CustomConverters\BoolToInvisibilityConverter.cs" />
@@ -206,6 +203,7 @@
     <Compile Include="Options\OptionsWindow.xaml.cs">
       <DependentUpon>OptionsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Properties\SettingsCommands.cs" />
     <Compile Include="SoundManager.cs" />
     <Compile Include="StartScreen\StartScreenView.xaml.cs">
       <DependentUpon>StartScreenView.xaml</DependentUpon>
@@ -235,10 +233,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CustomControls\AdvancedColorPicker.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="CustomControls\CredentialForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

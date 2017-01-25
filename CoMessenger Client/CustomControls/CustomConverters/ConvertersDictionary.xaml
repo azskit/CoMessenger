@@ -4,4 +4,7 @@
     <converters:BoolToVisibilityConverter x:Key="b2v"/>
     <converters:BoolToInvisibilityConverter x:Key="b2i"/>
     <converters:NullImageConverter x:Key="nullImageConverter"/>
+    <converters:BoolToOppositeBoolConverter x:Key="oppositeConverter" />
+    <converters:StringToVisibilityConverter x:Key="strVisibilityConverter" />
+    <converters:UserDomainConverter         x:Key="userDomainConverter" />
 </ResourceDictionary>

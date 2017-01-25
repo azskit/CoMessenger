@@ -164,7 +164,7 @@
 
         
         <!--Разделитель-->
-        <Line Grid.Row="2" Margin="20,5" X1="0" X2="1500" Y1="0" Y2="0" Stroke="Black" StrokeThickness="1px" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <Line UseLayoutRounding="True" SnapsToDevicePixels="True" Grid.Row="2" Margin="20,5" X1="0" X2="1500" Y1="0" Y2="0" Stroke="Black" StrokeThickness="1.1px" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
 
         <GridSplitter Grid.Row="2" 
                       Height="10"

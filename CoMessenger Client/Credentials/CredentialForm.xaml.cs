@@ -32,23 +32,24 @@ namespace COMessengerClient.Credentials
             CredentialFormModel.FillViewModel(this.PasswordBoxElement);
 
             DataContext = viewModel;
-
-            //CredentialFormModel.FillViewModel(DataContext as CredentialFormViewModel, PasswordBoxElement);
-
-            //string login = Properties.Settings.Default.UserLogin;
-            //string domain = Properties.Settings.Default.UserDomain;
-            //System.Net.NetworkCredential 
-            //Коль домена нет, то суем логин
-            //if (String.IsNullOrEmpty(domain))
-            //    LoginTextBox.Text = login;
-            //else
-            //    LoginTextBox.Text = string.Format(CultureInfo.InvariantCulture, App.ThisApp.Locally.LocaleStrings["{0}\\{1}"], domain, login);
         }
 
         //PasswordBox не поддерживает биндинг поля Password - поэтому обновляем ViewModel сами
         private void PasswordBoxElement_PasswordChanged(object sender, RoutedEventArgs e)
         {
             viewModel.Password = PasswordBoxElement.SecurePassword;
+        }
+
+        private void LoginTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && !String.IsNullOrWhiteSpace(LoginTextBox.Text))
+                PasswordBoxElement.Focus();
+        }
+
+        private void PasswordBoxElement_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && CMClientCommands.SignInCommand.CanExecute(this, null))
+                CMClientCommands.SignInCommand.Execute(this, null);
         }
     }
 }
