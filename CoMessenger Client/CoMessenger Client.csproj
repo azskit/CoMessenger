@@ -75,6 +75,7 @@
     <ApplicationIcon>Resources\Icons\Petal.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Expression.Controls, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -119,6 +120,7 @@
     <Compile Include="CustomControls\CustomConverters\BoolToOppositeBoolConverter.cs" />
     <Compile Include="CustomControls\CustomConverters\BoolToVisibilityConverter.cs" />
     <Compile Include="CustomControls\CustomConverters\BoolToInvisibilityConverter.cs" />
+    <Compile Include="CustomControls\CustomConverters\MathConverter.cs" />
     <Compile Include="CustomControls\CustomConverters\NullImageConverter.cs" />
     <Compile Include="CustomControls\CustomConverters\ServerPortConverter.cs" />
     <Compile Include="CustomControls\CustomConverters\StringToVisibilityConverter.cs" />
@@ -174,6 +176,9 @@
     <Compile Include="IndexedObservableCollection.cs" />
     <Compile Include="Log\LogWindow.xaml.cs">
       <DependentUpon>LogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\BaseNotification.xaml.cs">
+      <DependentUpon>BaseNotification.xaml</DependentUpon>
     </Compile>
     <Compile Include="Options\Sections\AppearanceView.xaml.cs">
       <DependentUpon>AppearanceView.xaml</DependentUpon>
@@ -293,6 +298,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Log\LogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Notifications\BaseNotification.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Notifications\NotificationStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

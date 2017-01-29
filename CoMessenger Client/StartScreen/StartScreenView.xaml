@@ -64,12 +64,15 @@
                     <ColumnDefinition Width="{Binding Source={x:Static props:Settings.Default}, Path=ContactListWidth, Mode=TwoWay}"/>
                 </Grid.ColumnDefinitions>
 
+                
                 <!--<TabControl OverridesDefaultStyle="True"></TabControl>-->
 
                 <CustomControls:LogOnScreen Grid.ColumnSpan="3" Visibility="{Binding IsLogonMode, Converter={StaticResource b2v}}"/>
 
 
                 <Grid x:Name="ConversationsHost" Visibility="{Binding IsLogonMode, Converter={StaticResource b2i}}"/>
+
+                <Button Click="Button_Click" >Show Notification</Button>
 
                 <GridSplitter Grid.Column="1"  Width="20" ShowsPreview="True" VerticalAlignment="Stretch" HorizontalAlignment="Center" Background="Transparent" Visibility="{Binding IsLogonMode, Converter={StaticResource b2i}}"/>
                 <ContactList:ContactListView 

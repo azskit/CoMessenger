@@ -15,6 +15,8 @@
                 <ResourceDictionary Source="Resources\Images\XamlImages.xaml"></ResourceDictionary>
                 <!--Векторные изображения-->
                 <ResourceDictionary Source="CustomControls\CustomConverters\ConvertersDictionary.xaml"></ResourceDictionary>
+                <!--Оповещения-->
+                <ResourceDictionary Source="Notifications\NotificationStyles.xaml"></ResourceDictionary>
 
 
 
@@ -69,6 +71,19 @@
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
+            <DrawingBrush x:Key="Cross" Viewbox="0,0,14.911,14.769" ViewboxUnits="Absolute">
+                <DrawingBrush.Drawing>
+                    <GeometryDrawing Brush="#FF9494CF">
+                        <GeometryDrawing.Pen>
+                            <Pen Brush="#FFFD6262"/>
+                        </GeometryDrawing.Pen>
+                        <GeometryDrawing.Geometry>
+                            <PathGeometry Figures="M0.50047863,16.166523 L0.5,16.167002 C0.5,16.167002 0.50000018,16.167002 0.50047857,16.166523 z M0.50001413,0.5 L8.3736048,8.2933971 16.167001,0.50000116 C12.984678,3.6823258 10.448758,6.218248 8.4279404,8.2390663 L8.3736076,8.293399 16.328015,16.16679 C16.328015,16.16679 16.379508,16.320841 8.3500547,8.3329021 L8.3420591,8.3249466 8.1970472,8.4699594 C1.1097721,15.557237 0.54830712,16.118696 0.50382698,16.163176 L0.50047863,16.166523 8.3420572,8.3249446 8.111557,8.095607 C6.104526,6.0984546 3.6072588,3.6073019 0.50001413,0.5 z">
+                            </PathGeometry>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingBrush.Drawing>
+            </DrawingBrush>
 
         </ResourceDictionary>
         
