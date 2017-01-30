@@ -14,6 +14,7 @@ using COMessengerClient.CustomControls;
 using CorporateMessengerLibrary.History;
 using CorporateMessengerLibrary.Messaging;
 using CorporateMessengerLibrary.Localization;
+using System.Windows.Controls;
 //using System.Windows.Media.Imaging;
 //using System.Drawing;
 
@@ -164,6 +165,23 @@ namespace COMessengerClient
             {
                     Log.Show();
                     Log.Activate();
+            };
+
+
+
+            ContextMenu menu = new ContextMenu();
+
+            menu.Items.Add(new MenuItem() { Header = "Hello there!" });
+            menu.Items.Add(new MenuItem() { Header = "Hello there2!" });
+
+            TrayIcon.Click += (a, b) =>
+            {
+                if ((b as System.Windows.Forms.MouseEventArgs).Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    menu.IsOpen = true;
+                }
+                else
+                    MainWindow.Show();
             };
 
 
