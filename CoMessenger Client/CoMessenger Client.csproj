@@ -120,7 +120,11 @@
     <Compile Include="CustomControls\CustomConverters\BoolToVisibilityConverter.cs" />
     <Compile Include="CustomControls\CustomConverters\BoolToInvisibilityConverter.cs" />
     <Compile Include="CustomControls\CustomConverters\NullImageConverter.cs" />
+    <Compile Include="CustomControls\CustomConverters\ProportionalCornerRadius.cs" />
+    <Compile Include="CustomControls\CustomConverters\ThicknessProportional.cs" />
+    <Compile Include="CustomControls\CustomConverters\PetalCornerRadiusPropotional.cs" />
     <Compile Include="CustomControls\CustomConverters\ServerPortConverter.cs" />
+    <Compile Include="CustomControls\CustomConverters\ProportionalDoubleConverter.cs" />
     <Compile Include="CustomControls\CustomConverters\StringToVisibilityConverter.cs" />
     <Compile Include="CustomControls\CustomConverters\UserDomainConverter.cs" />
     <Compile Include="CustomControls\CustomConverters\CultureInfoConverter.cs" />

@@ -334,5 +334,17 @@ namespace COMessengerClient.Properties {
                 this["ContactListWidth"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("20")]
+        public double AvatarHeightContactList {
+            get {
+                return ((double)(this["AvatarHeightContactList"]));
+            }
+            set {
+                this["AvatarHeightContactList"] = value;
+            }
+        }
     }
 }

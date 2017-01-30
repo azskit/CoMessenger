@@ -1,10 +1,14 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:converters="clr-namespace:COMessengerClient.CustomControls.CustomConverters">
-    <converters:BoolToVisibilityConverter x:Key="b2v"/>
-    <converters:BoolToInvisibilityConverter x:Key="b2i"/>
-    <converters:NullImageConverter x:Key="nullImageConverter"/>
-    <converters:BoolToOppositeBoolConverter x:Key="oppositeConverter" />
-    <converters:StringToVisibilityConverter x:Key="strVisibilityConverter" />
-    <converters:UserDomainConverter         x:Key="userDomainConverter" />
+    <converters:BoolToVisibilityConverter    x:Key="b2v"/>
+    <converters:BoolToInvisibilityConverter  x:Key="b2i"/>
+    <converters:NullImageConverter           x:Key="nullImageConverter"/>
+    <converters:BoolToOppositeBoolConverter  x:Key="oppositeConverter" />
+    <converters:StringToVisibilityConverter  x:Key="strVisibilityConverter" />
+    <converters:UserDomainConverter          x:Key="userDomainConverter" />
+    <converters:ProportionalDoubleConverter  x:Key="proportional"/>
+    <converters:PetalCornerRadiusPropotional x:Key="petalCorners"/>
+    <converters:ProportionalCornerRadius     x:Key="proportionalRadius"/>
+    <converters:ThicknessProportional        x:Key="proportionalThickness"/>
 </ResourceDictionary>

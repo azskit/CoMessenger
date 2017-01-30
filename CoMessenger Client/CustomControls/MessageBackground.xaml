@@ -45,21 +45,23 @@
 
                 </Border>
             <!--Аватарка-->
-            <Border Name="Avatar"
+                <Grid  Name="Avatar"
+                       Height="{Binding Path=Height, FallbackValue=25}"
+                       MaxHeight="25"
+                       Margin="10,0,3,0"
+                       Width="{Binding RelativeSource={RelativeSource Mode=Self},Path=ActualHeight}" 
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top" >
+            <Border DataContext="{Binding Peer}"
                     CornerRadius="0, 5, 5, 5"
-                 BorderBrush="Gray" 
-                 Margin="10,0,3,0"
-                 BorderThickness="0.5" 
-                 MaxHeight="25" 
-                 Height="{Binding Path=Height, FallbackValue=25}" 
-                 Width="{Binding RelativeSource={RelativeSource Mode=Self},Path=ActualHeight}" 
-                 Opacity="0.8"
-                    HorizontalAlignment="Left"
-                 VerticalAlignment="Top"
-                 UseLayoutRounding="False"
-                 SnapsToDevicePixels="False"
+                    BorderBrush="Gray" 
+                    BorderThickness="0.5" 
+                    Opacity="0.8"
+                    UseLayoutRounding="False"
+                    SnapsToDevicePixels="False"
                     Style="{StaticResource Avatar}">
             </Border>
+                </Grid>
             </Grid>
         </StackPanel>
     </Grid>

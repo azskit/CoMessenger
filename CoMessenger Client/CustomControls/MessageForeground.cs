@@ -76,6 +76,8 @@ namespace COMessengerClient.CustomControls
             }
         }
 
+        public ClientPeer Peer { get; private set; }
+
         public MessageDirection Direction { get; private set; }
 
         public DateTime MessageTime { get; set; }
@@ -173,7 +175,7 @@ namespace COMessengerClient.CustomControls
 
             TextPadding = new Thickness(3);
 
-
+            Peer = App.FoundPeer(message.Sender);
 
             //this.Background = new SolidColorBrush(new Color() { ScA = 0.1f, ScR = 1f, ScB = 0f, ScG = 0f });
         }
@@ -218,9 +220,9 @@ namespace COMessengerClient.CustomControls
             //if (conView == null)
             //    throw new ArgumentNullException("conView");
 
-            ClientPeer sender = App.FoundPeer(Message.Sender);
+            //ClientPeer sender = App.FoundPeer(Message.Sender);
 
-            Direction = sender.Peer.PeerId == App.ThisApp.CurrentPeer.Peer.PeerId ? MessageDirection.Outcome : MessageDirection.Income;
+            Direction = Peer.Peer.PeerId == App.ThisApp.CurrentPeer.Peer.PeerId ? MessageDirection.Outcome : MessageDirection.Income;
 
             switch (Direction)
             {
@@ -246,7 +248,7 @@ namespace COMessengerClient.CustomControls
 
             MessageTime = Message.SendTime;
 
-            this.SetBinding(MessageForeground.SenderNameProperty, new Binding("Peer.DisplayName") { Source = sender });
+            this.SetBinding(MessageForeground.SenderNameProperty, new Binding("Peer.DisplayName") { Source = Peer });
 
             SetHeader();
 
@@ -262,7 +264,6 @@ namespace COMessengerClient.CustomControls
         private void SetHeader()
         {
 
-            ClientPeer reciever = App.FoundPeer(Message.Receiver);
 
             this.Blocks.Add(new BlockUIContainer(ParagraphHeaderBegin));
 
@@ -283,6 +284,7 @@ namespace COMessengerClient.CustomControls
                 EditPanel.EditButton.Click += (a, b) => { OnEditClick(); };
             }
 
+            ClientPeer reciever = App.FoundPeer(Message.Receiver);
             if (reciever.Peer.PeerType == PeerType.Person || Direction == MessageDirection.Outcome)
             {
                 SetHeaderInvisible();

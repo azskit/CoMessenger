@@ -39,11 +39,16 @@
 
 
             <!--Отступы-->
-            <Label  Grid.Column="0" Grid.Row="4"  Margin="3" Content="{Binding Path=Locally.LocaleStrings[Contact List Row Height], FallbackValue=Contact List Row Height}"></Label>
+            <!--<Label  Grid.Column="0" Grid.Row="4"  Margin="3" Content="{Binding Path=Locally.LocaleStrings[Contact List Row Height], FallbackValue=Contact List Row Height}"></Label>
             <StackPanel Orientation="Horizontal" Margin="3" Grid.Column="1" Grid.Row="4">
                 <TextBox Text="{Binding Source={x:Static props:Settings.Default}, Path=ContactListRowHeight, Mode=TwoWay}" VerticalAlignment="Center"/>
-            </StackPanel>
+            </StackPanel>-->
 
+            <Label  Grid.Column="0" Grid.Row="0"  Margin="3" Content="{Binding Path=Locally.LocaleStrings[Avatar size], FallbackValue=Avatar size}"></Label>
+            <StackPanel Orientation="Horizontal" Margin="3" Grid.Column="1" Grid.Row="0">
+                <Slider Width="200" Minimum="20" Maximum="50" Value="{Binding Source={x:Static props:Settings.Default}, Path=AvatarHeightContactList, Mode=TwoWay}" SmallChange="1" IsSnapToTickEnabled="True" />
+                <TextBox Text="{Binding Source={x:Static props:Settings.Default}, Path=AvatarHeightContactList, Mode=TwoWay}" VerticalAlignment="Center"/>
+            </StackPanel>
             <!--<Ellipse Height="50" Name="ellipse1" Stroke="Black" Width="50" >
                 <Ellipse.Fill>
                     <ImageBrush ImageSource="C:\Users\Юля\OneDrive\C Sharp\Projects\SimpleChat DOTNET4\CoMessenger Client\Resources\Images\MaleDefaultAvatar.png"></ImageBrush>

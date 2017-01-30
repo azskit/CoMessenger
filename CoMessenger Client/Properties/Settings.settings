@@ -80,5 +80,8 @@
     <Setting Name="ContactListWidth" Type="System.Windows.GridLength" Scope="User">
       <Value Profile="(Default)">150</Value>
     </Setting>
+    <Setting Name="AvatarHeightContactList" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">20</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -21,8 +21,28 @@
             </ResourceDictionary.MergedDictionaries>
 
 
+            <Style x:Key="PetalCorners" TargetType="Border">
+                <Setter Property="CornerRadius">
+                    <Setter.Value>
+                        <!--<Binding RelativeSource="{RelativeSource Self}, Path=ActualWidth}"/>-->
+                        <Binding RelativeSource="{RelativeSource Self}" Path="ActualWidth" Converter="{StaticResource petalCorners}" ConverterParameter="0.3"/>
+                    </Setter.Value>
+                </Setter>
 
-            <Style x:Key="Avatar" TargetType="Border">
+            </Style>
+            
+            <Style x:Key="ProportionalCorners" TargetType="Border">
+                <Setter Property="CornerRadius">
+                    <Setter.Value>
+                        <!--<Binding RelativeSource="{RelativeSource Self}, Path=ActualWidth}"/>-->
+                        <Binding RelativeSource="{RelativeSource Self}" Path="ActualWidth" Converter="{StaticResource proportionalRadius}" ConverterParameter="0.3"/>
+                    </Setter.Value>
+                </Setter>
+
+            </Style>
+
+
+            <Style x:Key="Avatar" TargetType="Border" BasedOn="{StaticResource PetalCorners}">
 
                 <Style.Setters>
                     <Setter Property="Height">

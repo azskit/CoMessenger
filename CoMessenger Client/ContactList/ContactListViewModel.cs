@@ -8,6 +8,7 @@ using System.Windows.Data;
 //using System.Collections.ObjectModel;
 using CorporateMessengerLibrary;
 using System.Collections.ObjectModel;
+using CorporateMessengerLibrary.Messaging;
 
 namespace COMessengerClient.ContactList
 {
@@ -58,6 +59,39 @@ namespace COMessengerClient.ContactList
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public static ContactListViewModel DesignTimeParticipants;
+
+
+        static ContactListViewModel()
+        {
+
+            ClientPeer DesignTimeRoomPeer = new ClientPeer();
+
+            DesignTimeRoomPeer.UpdatePeer(new RoomPeer()
+            {
+                DisplayName = "Design Time Room",
+                PeerType = PeerType.Room,
+                State = PeerStatus.Common
+            });
+
+            ClientPeer DesignTimePersonPeer = new ClientPeer();
+
+            DesignTimePersonPeer.UpdatePeer(new PersonPeer()
+            {
+                DisplayName = "Design Time Person",
+                PeerType = PeerType.Person,
+                State = PeerStatus.Online
+            });
+
+
+            DesignTimeParticipants = new ContactListViewModel()
+            {
+                participants = new CollectionViewSource()
+                {
+                    Source = new List<ClientPeer> { DesignTimeRoomPeer, DesignTimePersonPeer }
+                }.View
+            };
+        }
 
     }
 }

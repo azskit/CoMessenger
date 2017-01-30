@@ -15,12 +15,6 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_4F2CB68E368593BFF8B673AA6B16ACE2"
-        "OwnerKey" = "8:_B0FB506C4ED745808397DC1DE44101A3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_50EE204DCF2030B4AA2D84FD74C8645F"
         "OwnerKey" = "8:_B0FB506C4ED745808397DC1DE44101A3"
         "MsmSig" = "8:_UNDEFINED"
@@ -46,7 +40,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_50EE204DCF2030B4AA2D84FD74C8645F"
+        "OwnerKey" = "8:_B0FB506C4ED745808397DC1DE44101A3"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -58,13 +52,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_B0FB506C4ED745808397DC1DE44101A3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_4F2CB68E368593BFF8B673AA6B16ACE2"
+        "OwnerKey" = "8:_50EE204DCF2030B4AA2D84FD74C8645F"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -117,6 +105,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
     }
     "Deployable"
@@ -146,37 +142,6 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_4F2CB68E368593BFF8B673AA6B16ACE2"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Microsoft.VisualStudio.Profiler, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=x86"
-                "ScatterAssemblies"
-                {
-                    "_4F2CB68E368593BFF8B673AA6B16ACE2"
-                    {
-                    "Name" = "8:Microsoft.VisualStudio.Profiler.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Microsoft.VisualStudio.Profiler.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_7812EE3B9AEA45F8B703CD26472C9AF8"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_50EE204DCF2030B4AA2D84FD74C8645F"
             {
             "AssemblyRegister" = "3:1"
@@ -284,15 +249,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Petal"
-        "ProductCode" = "8:{9620886E-F7E1-4B88-9376-731C600CD1F3}"
-        "PackageCode" = "8:{F715C92A-CF3D-4B9E-B59A-4250B7AEB76B}"
+        "ProductCode" = "8:{470EB774-B113-47F4-B0CF-BACA3E08BB14}"
+        "PackageCode" = "8:{4A461E05-E9B7-489B-9085-117917A726BF}"
         "UpgradeCode" = "8:{9DCB7CAE-95B9-40FE-BD99-D2EC7E175AEF}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.3"
+        "ProductVersion" = "8:1.0.4"
         "Manufacturer" = "8:azskit studio"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://azskit.com"

@@ -27,4 +27,79 @@
             </GeometryDrawing>
         </DrawingImage.Drawing>
     </DrawingImage>
+
+
+    <DrawingGroup x:Key="PetalGeometry">
+        <GeometryDrawing Brush="Gray">
+        <GeometryDrawing.Geometry>
+            <PathGeometry>
+                M14  ,14
+                                         14  ,135
+                                        C14  ,151
+                                         27  ,165
+                                         43  ,165
+                                        L135 ,165
+                                        C151 ,165
+                                         165 ,151
+                                         165 ,135
+                                        L165 ,43
+                                        C165 ,27
+                                         151 ,14
+                                         135 ,14
+                                        z
+
+                                        M1   ,1
+                                        L138 ,1
+                                        C160 ,1
+                                         178 ,18
+                                         178 ,40
+                                        L178 ,138
+                                        C178 ,160
+                                         160 ,178
+                                         138 ,178
+                                        L40  ,178
+                                        C18  ,178
+                                         1   ,160
+                                         1   ,138
+                                        z
+            </PathGeometry>
+        </GeometryDrawing.Geometry>
+    </GeometryDrawing>
+        <GeometryDrawing Brush="#FF33E25B">
+            <GeometryDrawing.Pen>
+                <Pen Brush="White" Thickness="20"/>
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+            <PathGeometry>
+                M 24, 24 
+                                        L135, 24 
+                                        C146, 24   
+                                         156, 33 
+                                         156, 44 
+                                        L156,135 
+                                        C156,146 
+                                         146,156 
+                                         135,156 
+                                        L 44,156 
+                                        C 33,156   
+                                          24,146 
+                                          24,135 
+                                        Z
+
+            </PathGeometry>
+        </GeometryDrawing.Geometry>
+    </GeometryDrawing>
+
+    </DrawingGroup>
+
+    <DrawingImage x:Key="PetalImage" Drawing="{StaticResource PetalGeometry}">
+    </DrawingImage>
+
+
+
+
+
+
+
+
 </ResourceDictionary>

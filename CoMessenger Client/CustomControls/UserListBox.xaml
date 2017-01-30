@@ -6,6 +6,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:converters="clr-namespace:COMessengerClient.CustomControls.CustomConverters"
              xmlns:props="clr-namespace:COMessengerClient.Properties"
+             xmlns:cl="clr-namespace:COMessengerClient.ContactList"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -27,6 +28,7 @@
 
         <!--<ListBox ItemsSource="{Binding Source={x:Static application:App.ThisApp}, Path=UsersList}" >-->
         <ListBox ItemsSource="{Binding Path=Participants}" 
+                 d:DataContext="{x:Static cl:ContactListViewModel.DesignTimeParticipants}"
                  VirtualizingStackPanel.IsVirtualizing="True" 
                  BorderThickness="0"
                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
@@ -52,31 +54,52 @@
 
                         <!--<StackPanel Height="{Binding Source={x:Static props:Settings.Default}, Path=ContactListRowHeight}" Margin="1" Orientation="Horizontal" Background="Transparent" Loaded="StackPanel_Loaded" Width="150">-->
                         <!--Аватар-->
-                        <Border Grid.Column="0"
-                                 BorderBrush="#48808080"                                  
-                                 BorderThickness="0.5" 
-                                 CornerRadius="0, 5, 5, 5"
-                                 Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}},Path=ActualHeight}"
-                                 VerticalAlignment="Stretch" 
-                                 HorizontalAlignment="Stretch" 
-                                 Visibility="{Binding Path=ViewModel.HasAvatar, Converter={StaticResource visibilityConverter}}">
-                            <Border.Background>
-                                <ImageBrush ImageSource="{Binding Peer.Avatar, Converter={StaticResource nullImageConverter}}"></ImageBrush>
-                            </Border.Background>
+                        <Border x:Name="Avatar"
+                                Grid.Column="0"
+                                BorderBrush="#48808080"                                  
+                                BorderThickness="0.5" 
+                                VerticalAlignment="Stretch" 
+                                HorizontalAlignment="Stretch" 
+                                Width="{Binding Source={x:Static props:Settings.Default}, Path=AvatarHeightContactList, FallbackValue=20}"
+                                Style="{StaticResource Avatar}"
+                                Margin="0,0,4,4"
+                                >
+                            <!--Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}},Path=ActualHeight}"-->
+
                         </Border>
+
+                        <!--Индикатор статуса (пока выпилен, так как получился каким то дерьмовым-->
+                        <!--<Image Grid.Column="0" 
+                               Height="{Binding ElementName=Avatar, Path=ActualHeight, Converter={StaticResource proportional}, ConverterParameter='0.4'}"
+                               Source="{StaticResource PetalImage}"
+                               VerticalAlignment="Bottom"
+                               HorizontalAlignment="Right"
+                               SnapsToDevicePixels="False"
+                               UseLayoutRounding="False"
+                                Visibility="Collapsed"
+                               ></Image>-->
+
+
+
                         <!--Индикатор статуса-->
-                        <Border Grid.Column="1"
+                        <Border Background="White"
+                                Grid.Column="0"
                                 UseLayoutRounding="False"
                                 SnapsToDevicePixels="False"
-                                Height="15" Width="{Binding RelativeSource={RelativeSource Mode=Self},Path=ActualHeight}"
-                                CornerRadius="5" 
+                                Height="{Binding ElementName=Avatar, Path=ActualHeight, Converter={StaticResource proportional}, ConverterParameter='0.5'}"
+                                Width="{Binding RelativeSource={RelativeSource Mode=Self},Path=ActualHeight}"
+                                Style="{StaticResource ProportionalCorners}"
                                 BorderBrush="#48000000"
-                                 BorderThickness="1" Margin="2" 
-                                 VerticalAlignment="Center"  >
-                            <Border  Margin="1"
+                                BorderThickness="1" Margin="2" 
+                                VerticalAlignment="Bottom"
+                                HorizontalAlignment="Right"
+                                >
+                            <Border  Margin="{Binding RelativeSource={RelativeSource Mode=Self}, Path=ActualHeight, Converter={StaticResource proportionalThickness}, ConverterParameter='0.15'}"
                                  BorderThickness="0" 
+                                UseLayoutRounding="False"
+                                SnapsToDevicePixels="False"
                                  
-                                 CornerRadius="4" 
+                                 Style="{StaticResource ProportionalCorners}"
                                  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TargetUpdated="StatusUpdated">
                                 <Border.Background>
                                     <SolidColorBrush Color="{Binding ViewModel.StatusColor, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
@@ -86,12 +109,12 @@
                                 <Border Background="Orange" 
                                         VerticalAlignment="Stretch" 
                                         HorizontalAlignment="Stretch" 
-                                        CornerRadius="4"
+                                        CornerRadius="1"
                                         BorderThickness="0" 
                                         Name="indicator"
                                         Visibility="{Binding Path=ViewModel.HasUnreadMessages, Converter={StaticResource visibilityConverter}, Mode=TwoWay}">
                                     <Border.Style>
-                                        <Style>
+                                        <Style BasedOn="{StaticResource PetalCorners}" TargetType="Border">
                                             <Style.Triggers>
                                                 <Trigger Property="Control.IsVisible" Value="True">
                                                     <Trigger.EnterActions>
@@ -108,6 +131,9 @@
                             </Border>
                         </Border>
                         <!--Собственно - имя контакта-->
+
+                        
+                        
                         <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{Binding Peer.DisplayName}" TextWrapping="WrapWithOverflow" />
                         </Grid>
                 </DataTemplate>
