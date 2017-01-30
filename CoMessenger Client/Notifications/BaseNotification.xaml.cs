@@ -28,9 +28,15 @@ namespace COMessengerClient.Notifications
             var primaryMonitorArea = SystemParameters.WorkArea;
             Left = primaryMonitorArea.Right - Width - 10;
             Top = primaryMonitorArea.Bottom - Height - 10;
+
+
             popups.ForEach((a) =>
             {
-                (a.Resources["LiftUp"] as Storyboard).Begin();
+                DoubleAnimation liftUp = a.Resources["LiftUp"] as DoubleAnimation;
+
+                liftUp.To = a.Top - a.Height - 5;
+
+                a.BeginAnimation(TopProperty, liftUp);
             });
 
             popups.Add(this);
@@ -46,24 +52,45 @@ namespace COMessengerClient.Notifications
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Timer timer = new Timer();
-            timer.AutoReset = false;
+            timer.AutoReset = true;
 
-            timer.Interval = 5000;
+            timer.Interval = 500;
             DateTime startTime = DateTime.Now;
+
+            Storyboard disappearing = Resources["Disappearing"] as Storyboard;
+
+            //disappearing.FillBehavior = FillBehavior.Stop;
+            //disappearing.Completed += (c, d) => { popups.Remove(this); Close(); };
 
             timer.Elapsed += (a, b) =>
             {
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    Timer.Text = (b.SignalTime- startTime).ToString();
-                    Storyboard disappearing = Resources["Disappearing"] as Storyboard;
-
-                    disappearing.Completed += (c, d) => { popups.Remove(this); Close(); };
-
-                    BeginStoryboard(disappearing);
+                    Timer.Text = (b.SignalTime - startTime).ToString();
                 }));
+                if ((b.SignalTime - startTime) > TimeSpan.FromSeconds(5))
+                {
+                    timer.Stop();
+
+
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        disappearing.Begin(this, true);
+                        //BeginStoryboard(disappearing);
+                    }));
+
+                    
+                }
             };
             timer.Start();
+
+            MouseEnter += (a, b) => 
+            {
+                
+                disappearing.Stop(this);
+                timer.Stop();
+            };
+            MouseLeave += (a, b) => { startTime = DateTime.Now; timer.Start(); };
         }
 
         private void Storyboard_Completed(object sender, EventArgs e)

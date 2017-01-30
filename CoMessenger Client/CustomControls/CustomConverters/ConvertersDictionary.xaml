@@ -11,4 +11,5 @@
     <converters:PetalCornerRadiusPropotional x:Key="petalCorners"/>
     <converters:ProportionalCornerRadius     x:Key="proportionalRadius"/>
     <converters:ThicknessProportional        x:Key="proportionalThickness"/>
+    <converters:MathConverter                x:Key="math" />
 </ResourceDictionary>

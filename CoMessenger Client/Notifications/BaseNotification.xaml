@@ -18,29 +18,33 @@
                 <EasingThicknessKeyFrame KeyTime="0:0:1" Value="0,0,10,0"/>
             </ThicknessAnimationUsingKeyFrames>
         </Storyboard>
-        <Storyboard x:Key="Disappearing">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="grid">
+        <Storyboard x:Key="Disappearing" FillBehavior="Stop">
+            <DoubleAnimationUsingKeyFrames FillBehavior="Stop" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="grid">
                 <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
             </DoubleAnimationUsingKeyFrames>
-            <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="grid">
-                <EasingThicknessKeyFrame KeyTime="0" Value="0,0,10,0"/>
+            <ThicknessAnimationUsingKeyFrames FillBehavior="Stop" Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="grid">
+                <!--<EasingThicknessKeyFrame KeyTime="0" Value="0,0,10,0"/>-->
                 <EasingThicknessKeyFrame KeyTime="0:0:1" Value="10,0,0,0"/>
             </ThicknessAnimationUsingKeyFrames>
         </Storyboard>
-        <Storyboard x:Key="LiftUp">
-            <DoubleAnimation  Storyboard.TargetProperty="(Canvas.Top)" Duration="00:00:00.090" From="{Binding ElementName=window, Path=Top}" 
+        <!--<Storyboard x:Key="LiftUp">-->
+            <DoubleAnimation  x:Key="LiftUp" Storyboard.TargetProperty="(Canvas.Top)" Duration="00:00:00.090" From="{Binding ElementName=window, Path=Top}" 
                                                                                            To="{Binding ElementName=window, Path=Top, Converter={StaticResource math}, ConverterParameter='-50'}" Storyboard.TargetName="window"/>
             <!--<DoubleAnimation  Storyboard.TargetProperty="(Canvas.Top)" Duration="00:00:01" By="-50" Storyboard.TargetName="window"/>-->
             <!--<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Canvas.Top)" RepeatBehavior="1" IsAdditive="True" Storyboard.TargetName="window">
                 <EasingDoubleKeyFrame KeyTime="0:0:1" Value="-50"/>
             </DoubleAnimationUsingKeyFrames>-->
-        </Storyboard>
+        <!--</Storyboard>-->
     </Window.Resources>
     <Window.Triggers>
         <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-            <BeginStoryboard Storyboard="{StaticResource Appearing}"/>
+            <BeginStoryboard  Storyboard="{StaticResource Appearing}"/>
         </EventTrigger>
+        <!--<EventTrigger RoutedEvent="MouseEnter">
+            <SeekStoryboard  Offset="0"/>
+        </EventTrigger>-->
+
     </Window.Triggers>
     <Grid x:Name="grid" Margin ="10,0,0,0" Opacity="1">
         <Border x:Name="border"  BorderThickness="1" BorderBrush="Red" CornerRadius="5" Background="White">
