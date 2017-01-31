@@ -20,7 +20,6 @@ namespace COMessengerClient.Notifications
     /// </summary>
     public partial class BaseNotification : Window
     {
-        public static List<BaseNotification> popups = new List<BaseNotification>();
 
         public BaseNotification()
         {
@@ -30,7 +29,7 @@ namespace COMessengerClient.Notifications
             Top = primaryMonitorArea.Bottom - Height - 10;
 
             //Поднимаем все уже созданные оповещения чтобы освободить место для нового
-            popups.ForEach((a) =>
+            NotificationTemplate.OpenedNotifications.ForEach((a) =>
             {
                 DoubleAnimation liftUp = a.Resources["LiftUp"] as DoubleAnimation;
 
@@ -44,13 +43,13 @@ namespace COMessengerClient.Notifications
             //disappearing.CreateClock().Completed += (c, d) => { popups.Remove(this); Close(); };
 
 
-            
+
 
             //IsVisibleChanged += (a, b) => { MessageBox.Show("New visibility = " + IsVisible.ToString()); };
 
 
 
-            popups.Add(this);
+            NotificationTemplate.OpenedNotifications.Add(this);
         }
 
         public void CloseButtonClick(object sender, RoutedEventArgs e)
@@ -58,67 +57,7 @@ namespace COMessengerClient.Notifications
             Close();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            Timer timer = new Timer();
-            timer.AutoReset = true;
 
-            timer.Interval = 500;
-            DateTime startTime = DateTime.Now;
-
-            Storyboard disappearing = Template.Resources["Disappearing"] as Storyboard;
-
-            //disappearing.Clone().Completed += (c, d) => { popups.Remove(this); Close(); };
-            //try
-            //{
-            //    disappearing.Completed += (c, d) => { popups.Remove(this); Close(); };
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.Message);
-            //}
-
-            //Clock clock = disappearing.CreateClock(true);
-
-            //clock.
-
-            timer.Elapsed += (a, b) =>
-            {
-                //Dispatcher.BeginInvoke(new Action(() =>
-                //{
-                //    Timer.Text = (disappearing.GetCurrentState(this)).ToString();
-                //}));
-                if ((b.SignalTime - startTime) > TimeSpan.FromSeconds(5))
-                {
-                    timer.Stop();
-
-                    //if (disappearing.GetCurrentState == ClockState.)
-                    Dispatcher.BeginInvoke(new Action(() =>
-                    {
-                        //disappearing.CreateClock().Completed += (c, d) => { popups.Remove(this); Close(); };
-                        //disappearing.CreateClock()
-                        disappearing.Begin(this, Template, true);
-                    }));
-
-                    
-                }
-            };
-            timer.Start();
-
-            //Останавливаем оповещение при наведении мыши
-            MouseEnter += (a, b) => 
-            {
-                disappearing.Stop(this);
-                timer.Stop();
-            };
-
-            //После выхода запускаем таймер заново
-            MouseLeave += (a, b) => 
-            {
-                startTime = DateTime.Now;
-                timer.Start();
-            };
-        }
         //private void Storyboard_Completed(object sender, EventArgs e)
         //{
         //    Close();

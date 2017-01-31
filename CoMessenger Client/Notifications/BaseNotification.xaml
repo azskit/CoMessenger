@@ -13,7 +13,6 @@
         WindowStyle="None" 
         ResizeMode="NoResize" 
         Topmost="True" 
-        Loaded="Window_Loaded" 
         ShowInTaskbar="False" 
         Background="AliceBlue"
         BorderBrush="Red"

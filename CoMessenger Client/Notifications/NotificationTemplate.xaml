@@ -5,7 +5,7 @@
 
     <ControlTemplate x:Key="templ" TargetType="{x:Type Window}">
         <ControlTemplate.Resources>
-            <Storyboard x:Key="Appearing" RemoveRequested="DesappearingCompleted">
+            <Storyboard x:Key="Appearing">
                 <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="grid">
                     <EasingThicknessKeyFrame KeyTime="0" Value="10,0,0,0"/>
                     <EasingThicknessKeyFrame KeyTime="0:0:1" Value="0,0,10,0">
@@ -23,10 +23,13 @@
                     </EasingDoubleKeyFrame>
                 </DoubleAnimationUsingKeyFrames>
             </Storyboard>
-            <Storyboard x:Key="Disappearing" Completed="DesappearingCompleted">
+            <Storyboard BeginTime="00:00:05" x:Key="Disappearing">
                 <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="grid">
                     <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
                     <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:03" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="border">
+                    <DiscreteDoubleKeyFrame KeyTime="0" Value="0"/>
                 </DoubleAnimationUsingKeyFrames>
                 <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="grid">
                     <EasingThicknessKeyFrame KeyTime="0" Value="0,0,10,0"/>
@@ -39,7 +42,7 @@
             </Storyboard>
         </ControlTemplate.Resources>
         <Grid x:Name="grid" Margin ="0,0,10,0" Opacity="1" >
-            <Border x:Name="border"  BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="3" Background="{TemplateBinding Background}">
+            <Border x:Name="border" Opacity ="1" IsVisibleChanged="VisibleChanged" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="3" Background="{TemplateBinding Background}">
                 <AdornerDecorator>
                     <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" RenderTransformOrigin="0.5,0.5">
                     </ContentPresenter>
@@ -58,8 +61,18 @@
         <ControlTemplate.Triggers>
             <EventTrigger RoutedEvent="FrameworkElement.Loaded">
                 <BeginStoryboard Storyboard="{StaticResource Appearing}"/>
+                <BeginStoryboard x:Name="startDisappearing" Storyboard="{StaticResource Disappearing}" HandoffBehavior="Compose"/>
             </EventTrigger>
-        </ControlTemplate.Triggers>
+            <Trigger Property="Opacity" SourceName="border" Value="0">
+                <Setter Property="Visibility" TargetName="border" Value="Hidden"/>
+            </Trigger>
+            <EventTrigger RoutedEvent="Window.MouseEnter">
+                <PauseStoryboard BeginStoryboardName="startDisappearing"/>
+                <SeekStoryboard BeginStoryboardName="startDisappearing" Offset="00:00:00"/>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="Window.MouseLeave">
+                <ResumeStoryboard BeginStoryboardName="startDisappearing"/>
+            </EventTrigger>        </ControlTemplate.Triggers>
 
         <!--<Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
 
