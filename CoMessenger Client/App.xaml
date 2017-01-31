@@ -17,6 +17,7 @@
                 <ResourceDictionary Source="CustomControls\CustomConverters\ConvertersDictionary.xaml"></ResourceDictionary>
                 <!--Оповещения-->
                 <ResourceDictionary Source="Notifications\NotificationStyles.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Notifications\NotificationTemplate.xaml"/>
 
 
 

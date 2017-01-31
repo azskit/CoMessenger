@@ -29,7 +29,7 @@ namespace COMessengerClient.Notifications
             Left = primaryMonitorArea.Right - Width - 10;
             Top = primaryMonitorArea.Bottom - Height - 10;
 
-
+            //Поднимаем все уже созданные оповещения чтобы освободить место для нового
             popups.ForEach((a) =>
             {
                 DoubleAnimation liftUp = a.Resources["LiftUp"] as DoubleAnimation;
@@ -39,13 +39,22 @@ namespace COMessengerClient.Notifications
                 a.BeginAnimation(TopProperty, liftUp);
             });
 
+            //Storyboard disappearing = Template.Resources["Disappearing"] as Storyboard;
+
+            //disappearing.CreateClock().Completed += (c, d) => { popups.Remove(this); Close(); };
+
+
+            
+
+            //IsVisibleChanged += (a, b) => { MessageBox.Show("New visibility = " + IsVisible.ToString()); };
+
+
+
             popups.Add(this);
         }
 
-        public void Button_Click(object sender, RoutedEventArgs e)
+        public void CloseButtonClick(object sender, RoutedEventArgs e)
         {
-            //Window window = ((FrameworkElement)sender).TemplatedParent as Window;
-            //if (window != null) window.Close();
             Close();
         }
 
@@ -57,26 +66,38 @@ namespace COMessengerClient.Notifications
             timer.Interval = 500;
             DateTime startTime = DateTime.Now;
 
-            Storyboard disappearing = Resources["Disappearing"] as Storyboard;
+            Storyboard disappearing = Template.Resources["Disappearing"] as Storyboard;
 
-            //disappearing.FillBehavior = FillBehavior.Stop;
-            //disappearing.Completed += (c, d) => { popups.Remove(this); Close(); };
+            //disappearing.Clone().Completed += (c, d) => { popups.Remove(this); Close(); };
+            //try
+            //{
+            //    disappearing.Completed += (c, d) => { popups.Remove(this); Close(); };
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
+
+            //Clock clock = disappearing.CreateClock(true);
+
+            //clock.
 
             timer.Elapsed += (a, b) =>
             {
-                Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    Timer.Text = (b.SignalTime - startTime).ToString();
-                }));
+                //Dispatcher.BeginInvoke(new Action(() =>
+                //{
+                //    Timer.Text = (disappearing.GetCurrentState(this)).ToString();
+                //}));
                 if ((b.SignalTime - startTime) > TimeSpan.FromSeconds(5))
                 {
                     timer.Stop();
 
-
+                    //if (disappearing.GetCurrentState == ClockState.)
                     Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        disappearing.Begin(this, true);
-                        //BeginStoryboard(disappearing);
+                        //disappearing.CreateClock().Completed += (c, d) => { popups.Remove(this); Close(); };
+                        //disappearing.CreateClock()
+                        disappearing.Begin(this, Template, true);
                     }));
 
                     
@@ -84,33 +105,38 @@ namespace COMessengerClient.Notifications
             };
             timer.Start();
 
+            //Останавливаем оповещение при наведении мыши
             MouseEnter += (a, b) => 
             {
-                
                 disappearing.Stop(this);
                 timer.Stop();
             };
-            MouseLeave += (a, b) => { startTime = DateTime.Now; timer.Start(); };
-        }
 
-        private void Storyboard_Completed(object sender, EventArgs e)
-        {
-            Close();
+            //После выхода запускаем таймер заново
+            MouseLeave += (a, b) => 
+            {
+                startTime = DateTime.Now;
+                timer.Start();
+            };
         }
+        //private void Storyboard_Completed(object sender, EventArgs e)
+        //{
+        //    Close();
+        //}
     }
 
-    public static class BaseNotificationHandlers
-    {
+    //public static class BaseNotificationHandlers
+    //{
 
 
         
-        public static void Disappeared(this BaseNotificationResources res, object sender, EventArgs e)
-        {
-            MessageBox.Show("Disappeared!");
-            Window window = ((FrameworkElement)sender).TemplatedParent as Window;
-            if (window != null) window.Close();
+    //    public static void Disappeared(this BaseNotificationResources res, object sender, EventArgs e)
+    //    {
+    //        MessageBox.Show("Disappeared!");
+    //        Window window = ((FrameworkElement)sender).TemplatedParent as Window;
+    //        if (window != null) window.Close();
 
-        }
-    }
+    //    }
+    //}
 
 }

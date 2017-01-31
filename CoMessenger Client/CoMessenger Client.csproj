@@ -184,6 +184,7 @@
     <Compile Include="Notifications\BaseNotification.xaml.cs">
       <DependentUpon>BaseNotification.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Notifications\NotificationTemplate.cs" />
     <Compile Include="Options\Sections\AppearanceView.xaml.cs">
       <DependentUpon>AppearanceView.xaml</DependentUpon>
     </Compile>
@@ -310,6 +311,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Notifications\NotificationStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Notifications\NotificationTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

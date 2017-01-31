@@ -1,0 +1,109 @@
+﻿<ResourceDictionary x:Class="COMessengerClient.Notifications.NotificationTemplate"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:COMessengerClient">
+
+    <ControlTemplate x:Key="templ" TargetType="{x:Type Window}">
+        <ControlTemplate.Resources>
+            <Storyboard x:Key="Appearing" RemoveRequested="DesappearingCompleted">
+                <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="grid">
+                    <EasingThicknessKeyFrame KeyTime="0" Value="10,0,0,0"/>
+                    <EasingThicknessKeyFrame KeyTime="0:0:1" Value="0,0,10,0">
+                        <EasingThicknessKeyFrame.EasingFunction>
+                            <QuinticEase EasingMode="EaseOut"/>
+                        </EasingThicknessKeyFrame.EasingFunction>
+                    </EasingThicknessKeyFrame>
+                </ThicknessAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="grid">
+                    <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:1" Value="1">
+                        <EasingDoubleKeyFrame.EasingFunction>
+                            <QuinticEase EasingMode="EaseOut"/>
+                        </EasingDoubleKeyFrame.EasingFunction>
+                    </EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+            <Storyboard x:Key="Disappearing" Completed="DesappearingCompleted">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="grid">
+                    <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
+                </DoubleAnimationUsingKeyFrames>
+                <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="grid">
+                    <EasingThicknessKeyFrame KeyTime="0" Value="0,0,10,0"/>
+                    <EasingThicknessKeyFrame KeyTime="0:0:1" Value="10,0,0,0">
+                        <EasingThicknessKeyFrame.EasingFunction>
+                            <QuarticEase EasingMode="EaseIn"/>
+                        </EasingThicknessKeyFrame.EasingFunction>
+                    </EasingThicknessKeyFrame>
+                </ThicknessAnimationUsingKeyFrames>
+            </Storyboard>
+        </ControlTemplate.Resources>
+        <Grid x:Name="grid" Margin ="0,0,10,0" Opacity="1" >
+            <Border x:Name="border"  BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="3" Background="{TemplateBinding Background}">
+                <AdornerDecorator>
+                    <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" RenderTransformOrigin="0.5,0.5">
+                    </ContentPresenter>
+                </AdornerDecorator>
+
+
+            </Border>
+            <Button Height="15" Width="15"
+                                x:Name="button" 
+                                VerticalAlignment="Top" 
+                                HorizontalAlignment="Right" 
+                                Margin="4"
+                                Style="{StaticResource CloseButton}" 
+                                Click="CloseButtonClick" Foreground="{TemplateBinding Foreground}"  />
+        </Grid>
+        <ControlTemplate.Triggers>
+            <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                <BeginStoryboard Storyboard="{StaticResource Appearing}"/>
+            </EventTrigger>
+        </ControlTemplate.Triggers>
+
+        <!--<Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+
+                    </Border>-->
+    </ControlTemplate>
+
+
+
+
+
+
+
+
+    <!--<Style x:Key="NotificationTemplate" TargetType="{x:Type Window}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+        <Setter Property="Template" Value="{StaticResource templ}"/>-->
+        <!--<Style.Triggers>
+            <Trigger Property="ResizeMode" Value="CanResizeWithGrip">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Window}">
+                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                                <Grid>
+                                    <AdornerDecorator>
+                                        <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}"/>
+                                    </AdornerDecorator>
+                                    <ResizeGrip x:Name="WindowResizeGrip" HorizontalAlignment="Right" IsTabStop="False" Visibility="Collapsed" VerticalAlignment="Bottom"/>
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="ResizeMode" Value="CanResizeWithGrip"/>
+                                        <Condition Property="WindowState" Value="Normal"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Visibility" TargetName="WindowResizeGrip" Value="Visible"/>
+                                </MultiTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>-->
+        <!--</Trigger>-->
+        <!--</Style.Triggers>-->
+    <!--</Style>-->
+
+</ResourceDictionary>
