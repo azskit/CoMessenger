@@ -83,5 +83,11 @@
     <Setting Name="AvatarHeightContactList" Type="System.Double" Scope="User">
       <Value Profile="(Default)">20</Value>
     </Setting>
+    <Setting Name="MessageNotificationBackgroundColor" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#FFF0F8FF</Value>
+    </Setting>
+    <Setting Name="MessageNotificationTextFont" Type="COMessengerClient.Properties.FontInfo" Scope="User">
+      <Value Profile="(Default)">Calibri,9,96,96,96</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -59,6 +59,10 @@ namespace COMessengerClient.ContactList
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+
+
+#if DEBUG
+
         public static ContactListViewModel DesignTimeParticipants;
 
 
@@ -91,7 +95,8 @@ namespace COMessengerClient.ContactList
                     Source = new List<ClientPeer> { DesignTimeRoomPeer, DesignTimePersonPeer }
                 }.View
             };
-        }
+        } 
+#endif
 
     }
 }

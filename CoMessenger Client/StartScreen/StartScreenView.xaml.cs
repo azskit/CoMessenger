@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Globalization;
 using System;
 using COMessengerClient.Notifications;
+using COMessengerClient.Notifications.MessageNotification;
 
 namespace COMessengerClient.StartScreen
 {
@@ -107,7 +108,7 @@ namespace COMessengerClient.StartScreen
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            BaseNotification newNotification = new BaseNotification();
+            MessageNotification newNotification = new MessageNotification();
 
             newNotification.Show();
         }

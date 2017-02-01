@@ -122,4 +122,9 @@
     <Translation>Скрывать в трей при закрытии</Translation>
   </LocalizationEntry>
 
+  <LocalizationEntry Remark="MessageNotification">
+    <Original>Quick response</Original>
+    <Translation>Быстрый ответ</Translation>
+  </LocalizationEntry>
+
 </ArrayOfLocalizationEntry>

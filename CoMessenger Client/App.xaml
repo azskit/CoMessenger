@@ -15,8 +15,7 @@
                 <ResourceDictionary Source="Resources\Images\XamlImages.xaml"></ResourceDictionary>
                 <!--Векторные изображения-->
                 <ResourceDictionary Source="CustomControls\CustomConverters\ConvertersDictionary.xaml"></ResourceDictionary>
-                <!--Оповещения-->
-                <ResourceDictionary Source="Notifications\NotificationStyles.xaml"></ResourceDictionary>
+                <!--Всплывающие сообщения-->
                 <ResourceDictionary Source="Notifications\NotificationTemplate.xaml"/>
 
 

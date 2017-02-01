@@ -28,6 +28,8 @@ using CorporateMessengerLibrary.Messaging;
 using COMessengerClient.CustomControls.CustomConverters;
 using COMessengerClient.Tools;
 using CorporateMessengerLibrary.Tools;
+using COMessengerClient.Notifications.MessageNotification;
+using COMessengerClient.StartScreen;
 
 namespace COMessengerClient.Conversation
 {
@@ -94,7 +96,7 @@ namespace COMessengerClient.Conversation
             //Нажали Ctrl+Enter
             if (((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control) && (e.Key == Key.Enter))
             {
-                SendMessage(Peer);
+                SendTypedMessage();
 
                 NewMessageBox.NewMessageTextBox.UndoLimit = 0;
                 NewMessageBox.NewMessageTextBox.UndoLimit = 10;
@@ -587,7 +589,7 @@ namespace COMessengerClient.Conversation
 
         }
 
-        private void SendMessage(ClientPeer Receiver)
+        private void SendTypedMessage()
         {
 
             FlowDocument source = NewMessageBox.NewMessageTextBox.Document;
@@ -618,7 +620,7 @@ namespace COMessengerClient.Conversation
                 }
                 else
                 {
-                    newMessage.Receiver = Receiver.Peer.PeerId;
+                    newMessage.Receiver = Peer.Peer.PeerId;
                     newMessage.Sender = App.ThisApp.CurrentUserId;
                     newMessage.SendTime = DateTime.UtcNow;
                     newMessage.MessageId = Guid.NewGuid().ToString("N");
@@ -665,17 +667,7 @@ namespace COMessengerClient.Conversation
 
                 newMessage.Values.Add(newValue.Version, newValue);
 
-                //Сообщения комнат сохраняем когда получим ответ от сервера
-                if (Receiver.Peer.PeerType == PeerType.Person)
-                {
-                    newMessage.PreviousMessageId = App.ThisApp.History.GetLastMessageBetween(newMessage.Sender, newMessage.Receiver, newMessage.SendTime);
-                    App.ThisApp.History.Save(newMessage);
-                    newMessage.PreviousMessageId = null;
-                }
-
-                ConnectionManager.Client.PutOutgoingMessage(new CMMessage() { Kind = MessageKind.RoutedMessage, Message = newMessage });
-
-                AddNewMessage(newMessage);
+                SendMessage(newMessage);
 
                 source.Blocks.Clear();
                 NewMessageBox.CurrentEditingMessage = null;
@@ -685,6 +677,48 @@ namespace COMessengerClient.Conversation
 
             }
 
+        }
+
+        private void SendMessage(RoutedMessage newMessage)
+        {
+            //Сообщения комнат сохраняем когда получим ответ от сервера
+            if (Peer.Peer.PeerType == PeerType.Person)
+            {
+                newMessage.PreviousMessageId = App.ThisApp.History.GetLastMessageBetween(newMessage.Sender, newMessage.Receiver, newMessage.SendTime);
+                App.ThisApp.History.Save(newMessage);
+                newMessage.PreviousMessageId = null;
+            }
+
+            ConnectionManager.Client.PutOutgoingMessage(new CMMessage() { Kind = MessageKind.RoutedMessage, Message = newMessage });
+
+            AddNewMessage(newMessage);
+        }
+
+        private void SendPlainText(string messageText)
+        {
+
+            if (!string.IsNullOrEmpty(messageText))
+            {
+
+                RoutedMessage newMessage = new RoutedMessage();
+                MessageValue newValue = new MessageValue();
+
+                newMessage.Receiver = Peer.Peer.PeerId;
+                newMessage.Sender = App.ThisApp.CurrentUserId;
+                newMessage.SendTime = DateTime.UtcNow;
+                newMessage.MessageId = Guid.NewGuid().ToString("N");
+
+                newValue.Version = 0;
+                newValue.ChangeTime = newMessage.SendTime;
+
+
+                newValue.Kind = RoutedMessageKind.Plaintext;
+                newValue.Text = messageText;
+
+                newMessage.Values.Add(newValue.Version, newValue);
+
+                SendMessage(newMessage);
+            }
         }
 
         internal void ProcessNewMessage(RoutedMessage newMessage)
@@ -722,6 +756,14 @@ namespace COMessengerClient.Conversation
                     //Пиликнуть
                     App.ThisApp.Sound.Play("NewMessage");
 
+                    //Показать всплывающее сообщение
+                    MessageNotification.Emit(
+                        App.FoundPeer(newMessage.Sender), 
+                        newMessage.Values.Last().Value,
+                        quickResponse => SendPlainText(quickResponse),
+                        () => SetOnTop()  
+                        );
+
                     //И поморгать
                     var helper = new FlashWindowHelper(Application.Current);
                     helper.FlashApplicationWindow();
@@ -733,6 +775,29 @@ namespace COMessengerClient.Conversation
 
             //App.ThisApp.Client.ViewModel.ConnectionStatus = App.ThisApp.Client.ViewModel.ConnectionStatus + " Обработка окончена через:" + App.sw.ElapsedMilliseconds;
             //App.sw.Reset();
+        }
+
+        private void SetOnTop()
+        {
+            StartScreenView StartScreen = ParentWindow as StartScreenView;
+
+            foreach (ConversationView view in StartScreen.ConversationsHost.Children)
+            {
+                view.Visibility = Visibility.Hidden;
+            }
+
+            //Еще нигде не открыт
+            if (Parent == null)
+                StartScreen.ConversationsHost.Children.Add(this);
+
+            Visibility = Visibility.Visible;
+
+            Peer.ViewModel.HasUnreadMessages = false;
+
+            if (StartScreen.WindowState == WindowState.Minimized)
+                StartScreen.WindowState = WindowState.Normal;
+
+            StartScreen.Activate();
         }
     }
 

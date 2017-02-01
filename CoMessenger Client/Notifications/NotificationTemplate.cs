@@ -16,17 +16,13 @@ namespace COMessengerClient.Notifications
         public NotificationTemplate()
         {
             InitializeComponent();
-
-            //Storyboard disappearing = Resources["Disappearing"] as Storyboard;
         }
 
         public void CloseButtonClick(object sender, EventArgs e)
         {
-            //MessageBox.Show("Disappeared!");
             Window window = ((FrameworkElement)sender).TemplatedParent as Window;
             if (window != null && OpenedNotifications.Contains(window))
             {
-                OpenedNotifications.Remove(window);
                 window.Close();
             }
         }
@@ -36,77 +32,100 @@ namespace COMessengerClient.Notifications
             Window window = ((FrameworkElement)sender).TemplatedParent as Window;
             if (window != null && OpenedNotifications.Contains(window))
             {
-                OpenedNotifications.Remove(window);
                 window.Close();
             }
-            //MessageBox.Show("Window closed!");
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        public void OnLoaded(object sender, RoutedEventArgs e)
         {
-            Window window = ((FrameworkElement)sender).TemplatedParent as Window;
+            Window window = sender as Window;
 
-            Timer timer = new Timer();
-            timer.AutoReset = true;
+            //window.Owner = App.ThisApp.MainWindow;
 
-            timer.Interval = 500;
-            DateTime startTime = DateTime.Now;
+            //window.Owner = HidingHelper; // Okey, this will result to disappear icon for main window.
+            //HidingHelper.Hide(); // Hide helper window just in case
 
-            
 
-            //Storyboard disappearing = Template.Resources["Disappearing"] as Storyboard;
-            Storyboard disappearing = window.Template.Resources["Disappearing"] as Storyboard;
+            //Window window = ((FrameworkElement)sender).TemplatedParent as Window;
 
-            //disappearing.Clone().Completed += (c, d) => { popups.Remove(this); Close(); };
-            //try
+            window.Closing += (a, b) => { OpenedNotifications.Remove(window); };
+
+            var primaryMonitorArea = SystemParameters.WorkArea;
+            window.Left = primaryMonitorArea.Right - window.Width - 10;
+            window.Top = primaryMonitorArea.Bottom - window.Height - 10;
+
+            OpenedNotifications.ForEach((a) =>
+            {
+                DoubleAnimation liftUp = a.Template.Resources["LiftUp"] as DoubleAnimation;
+
+                liftUp.To = a.Top - window.Height - 5;
+
+                a.BeginAnimation(Window.TopProperty, liftUp);
+            });
+
+            OpenedNotifications.Add(window);
+
+            //Timer timer = new Timer();
+            //timer.AutoReset = true;
+
+            //timer.Interval = 500;
+            //DateTime startTime = DateTime.Now;
+
+
+
+            ////Storyboard disappearing = Template.Resources["Disappearing"] as Storyboard;
+            //Storyboard disappearing = window.Template.Resources["Disappearing"] as Storyboard;
+
+            ////disappearing.Clone().Completed += (c, d) => { popups.Remove(this); Close(); };
+            ////try
+            ////{
+            ////    disappearing.Completed += (c, d) => { popups.Remove(this); Close(); };
+            ////}
+            ////catch (Exception ex)
+            ////{
+            ////    MessageBox.Show(ex.Message);
+            ////}
+
+            ////Clock clock = disappearing.CreateClock(true);
+
+            ////clock.
+
+            //timer.Elapsed += (a, b) =>
             //{
-            //    disappearing.Completed += (c, d) => { popups.Remove(this); Close(); };
-            //}
-            //catch (Exception ex)
+            //    //Dispatcher.BeginInvoke(new Action(() =>
+            //    //{
+            //    //    Timer.Text = (disappearing.GetCurrentState(this)).ToString();
+            //    //}));
+            //    if ((b.SignalTime - startTime) > TimeSpan.FromSeconds(5))
+            //    {
+            //        timer.Stop();
+
+            //        //if (disappearing.GetCurrentState == ClockState.)
+            //        window.Dispatcher.BeginInvoke(new Action(() =>
+            //        {
+            //            //disappearing.CreateClock().Completed += (c, d) => { popups.Remove(this); Close(); };
+            //            //disappearing.CreateClock()
+            //            disappearing.Begin(window, window.Template, true);
+            //        }));
+
+
+            //    }
+            //};
+            //timer.Start();
+
+            ////Останавливаем оповещение при наведении мыши
+            //window.MouseEnter += (a, b) =>
             //{
-            //    MessageBox.Show(ex.Message);
-            //}
+            //    disappearing.Stop(window);
+            //    timer.Stop();
+            //};
 
-            //Clock clock = disappearing.CreateClock(true);
-
-            //clock.
-
-            timer.Elapsed += (a, b) =>
-            {
-                //Dispatcher.BeginInvoke(new Action(() =>
-                //{
-                //    Timer.Text = (disappearing.GetCurrentState(this)).ToString();
-                //}));
-                if ((b.SignalTime - startTime) > TimeSpan.FromSeconds(5))
-                {
-                    timer.Stop();
-
-                    //if (disappearing.GetCurrentState == ClockState.)
-                    window.Dispatcher.BeginInvoke(new Action(() =>
-                    {
-                        //disappearing.CreateClock().Completed += (c, d) => { popups.Remove(this); Close(); };
-                        //disappearing.CreateClock()
-                        disappearing.Begin(window, window.Template, true);
-                    }));
-
-
-                }
-            };
-            timer.Start();
-
-            //Останавливаем оповещение при наведении мыши
-            window.MouseEnter += (a, b) =>
-            {
-                disappearing.Stop(window);
-                timer.Stop();
-            };
-
-            //После выхода запускаем таймер заново
-            window.MouseLeave += (a, b) =>
-            {
-                startTime = DateTime.Now;
-                timer.Start();
-            };
+            ////После выхода запускаем таймер заново
+            //window.MouseLeave += (a, b) =>
+            //{
+            //    startTime = DateTime.Now;
+            //    timer.Start();
+            //};
         }
     }
 }

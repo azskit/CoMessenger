@@ -72,7 +72,7 @@
 
                 <Grid x:Name="ConversationsHost" Visibility="{Binding IsLogonMode, Converter={StaticResource b2i}}"/>
 
-                <Button Click="Button_Click" >Show Notification</Button>
+                <!--<Button Click="Button_Click" >Show Notification</Button>-->
 
                 <GridSplitter Grid.Column="1"  Width="20" ShowsPreview="True" VerticalAlignment="Stretch" HorizontalAlignment="Center" Background="Transparent" Visibility="{Binding IsLogonMode, Converter={StaticResource b2i}}"/>
                 <ContactList:ContactListView 

@@ -346,5 +346,29 @@ namespace COMessengerClient.Properties {
                 this["AvatarHeightContactList"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FFF0F8FF")]
+        public global::System.Windows.Media.Color MessageNotificationBackgroundColor {
+            get {
+                return ((global::System.Windows.Media.Color)(this["MessageNotificationBackgroundColor"]));
+            }
+            set {
+                this["MessageNotificationBackgroundColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Calibri,9,96,96,96")]
+        public global::COMessengerClient.Properties.FontInfo MessageNotificationTextFont {
+            get {
+                return ((global::COMessengerClient.Properties.FontInfo)(this["MessageNotificationTextFont"]));
+            }
+            set {
+                this["MessageNotificationTextFont"] = value;
+            }
+        }
     }
 }

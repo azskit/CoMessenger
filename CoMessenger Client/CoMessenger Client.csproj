@@ -76,6 +76,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Expression.Controls, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="PresentationFramework.Classic" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -184,6 +185,10 @@
     <Compile Include="Notifications\BaseNotification.xaml.cs">
       <DependentUpon>BaseNotification.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Notifications\MessageNotification\MessageNotification.xaml.cs">
+      <DependentUpon>MessageNotification.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\MessageNotification\MessageNotificationVM.cs" />
     <Compile Include="Notifications\NotificationTemplate.cs" />
     <Compile Include="Options\Sections\AppearanceView.xaml.cs">
       <DependentUpon>AppearanceView.xaml</DependentUpon>
@@ -310,7 +315,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Notifications\NotificationStyles.xaml">
+    <Page Include="Notifications\MessageNotification\MessageNotification.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
