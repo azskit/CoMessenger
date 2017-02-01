@@ -15,14 +15,74 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_24F77645381797A467C4C521D46464BC"
+        "OwnerKey" = "8:_2A5C2CE4D75541F98FED55497B6AB3D1"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_24F77645381797A467C4C521D46464BC"
+        "OwnerKey" = "8:_7F87C4B1AF554BD7BDF3851B3146358E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_24F77645381797A467C4C521D46464BC"
+        "OwnerKey" = "8:_49EA530691116CD1F4F92D21829EDBD6"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_24F77645381797A467C4C521D46464BC"
+        "OwnerKey" = "8:_3E624F72364F4726ACC9803221946BCD"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_2A5C2CE4D75541F98FED55497B6AB3D1"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
+        "MsmKey" = "8:_30D9CF048D578F88A9A64116AA5437B6"
+        "OwnerKey" = "8:_2A5C2CE4D75541F98FED55497B6AB3D1"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_30D9CF048D578F88A9A64116AA5437B6"
+        "OwnerKey" = "8:_7F87C4B1AF554BD7BDF3851B3146358E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_30D9CF048D578F88A9A64116AA5437B6"
+        "OwnerKey" = "8:_3E624F72364F4726ACC9803221946BCD"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_30D9CF048D578F88A9A64116AA5437B6"
+        "OwnerKey" = "8:_49EA530691116CD1F4F92D21829EDBD6"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_3E624F72364F4726ACC9803221946BCD"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_49EA530691116CD1F4F92D21829EDBD6"
+        "OwnerKey" = "8:_3E624F72364F4726ACC9803221946BCD"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_49EA530691116CD1F4F92D21829EDBD6"
+        "OwnerKey" = "8:_7F87C4B1AF554BD7BDF3851B3146358E"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -39,66 +99,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_8C96D0E75E8A68784F746B9DFB3D5807"
-        "OwnerKey" = "8:_7F87C4B1AF554BD7BDF3851B3146358E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_8C96D0E75E8A68784F746B9DFB3D5807"
-        "OwnerKey" = "8:_3E624F72364F4726ACC9803221946BCD"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_8C96D0E75E8A68784F746B9DFB3D5807"
-        "OwnerKey" = "8:_2A5C2CE4D75541F98FED55497B6AB3D1"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_8C96D0E75E8A68784F746B9DFB3D5807"
-        "OwnerKey" = "8:_A3171D73AA23271E3117EF03085D58AE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A2D13A123D560B6506C210B451668138"
-        "OwnerKey" = "8:_A3171D73AA23271E3117EF03085D58AE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A2D13A123D560B6506C210B451668138"
-        "OwnerKey" = "8:_3E624F72364F4726ACC9803221946BCD"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A2D13A123D560B6506C210B451668138"
-        "OwnerKey" = "8:_2A5C2CE4D75541F98FED55497B6AB3D1"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A2D13A123D560B6506C210B451668138"
-        "OwnerKey" = "8:_7F87C4B1AF554BD7BDF3851B3146358E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A3171D73AA23271E3117EF03085D58AE"
-        "OwnerKey" = "8:_7F87C4B1AF554BD7BDF3851B3146358E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A3171D73AA23271E3117EF03085D58AE"
-        "OwnerKey" = "8:_3E624F72364F4726ACC9803221946BCD"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_4B1F4E2968EF4D7EAB84614579BFCBEC"
         "MsmSig" = "8:_UNDEFINED"
@@ -106,7 +106,19 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_7F87C4B1AF554BD7BDF3851B3146358E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_3E624F72364F4726ACC9803221946BCD"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_49EA530691116CD1F4F92D21829EDBD6"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -118,25 +130,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_7F87C4B1AF554BD7BDF3851B3146358E"
+        "OwnerKey" = "8:_24F77645381797A467C4C521D46464BC"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A3171D73AA23271E3117EF03085D58AE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A2D13A123D560B6506C210B451668138"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_8C96D0E75E8A68784F746B9DFB3D5807"
+        "OwnerKey" = "8:_30D9CF048D578F88A9A64116AA5437B6"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -157,6 +157,27 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.0,Profile=Client"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4 Client Profile (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.0,Profile=Client"
+                    }
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.4.5"
+                    {
+                    "Name" = "8:Windows Installer 4.5"
+                    "ProductCode" = "8:Microsoft.Windows.Installer.4.5"
+                    }
+                }
+            }
         }
         "Release"
         {
@@ -173,6 +194,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
     }
     "Deployable"
@@ -222,7 +251,7 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:.NETFramework,Version=v4.5"
+                "FrameworkVersion" = "8:.NETFramework,Version=v4.0,Profile=Client"
                 "AllowLaterVersions" = "11:FALSE"
                 "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=395269"
                 }
@@ -230,14 +259,14 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_8C96D0E75E8A68784F746B9DFB3D5807"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_24F77645381797A467C4C521D46464BC"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:CimPlugin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b9934a73f4b2bdb5, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_8C96D0E75E8A68784F746B9DFB3D5807"
+                    "_24F77645381797A467C4C521D46464BC"
                     {
                     "Name" = "8:CimPlugin.dll"
                     "Attributes" = "3:512"
@@ -257,18 +286,18 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A2D13A123D560B6506C210B451668138"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_30D9CF048D578F88A9A64116AA5437B6"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:Cml, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b9934a73f4b2bdb5, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_A2D13A123D560B6506C210B451668138"
+                    "_30D9CF048D578F88A9A64116AA5437B6"
                     {
                     "Name" = "8:Cml.dll"
                     "Attributes" = "3:512"
@@ -292,14 +321,14 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A3171D73AA23271E3117EF03085D58AE"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_49EA530691116CD1F4F92D21829EDBD6"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:CimServer, Version=0.0.0.1, Culture=neutral, PublicKeyToken=b9934a73f4b2bdb5, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
-                    "_A3171D73AA23271E3117EF03085D58AE"
+                    "_49EA530691116CD1F4F92D21829EDBD6"
                     {
                     "Name" = "8:CimServer.dll"
                     "Attributes" = "3:512"
@@ -319,7 +348,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -378,9 +407,9 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:CimServerSetup"
+        "ProductName" = "8:Cim Server"
         "ProductCode" = "8:{DE775A70-DB17-4E7B-9124-8CEDC79C0945}"
-        "PackageCode" = "8:{F0E26DE1-3F05-4B45-B720-0ED65FEE3D07}"
+        "PackageCode" = "8:{CECF260D-24E4-4753-86EE-E4A2A5C71C61}"
         "UpgradeCode" = "8:{0F4F4A0C-29E6-4478-80C8-03EE2CCAF230}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -1006,6 +1035,34 @@
             "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:Built"
             "OutputProjectGuid" = "8:{38A12852-FA13-4D5D-A968-F117A55C4698}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_FE44E54AC8BD4E36B111187ACADE9D71"
+            {
+            "SourcePath" = "8:"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_DE7C85A37D474B2E9A25CA7CB8A55F88"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:ContentFiles"
+            "OutputProjectGuid" = "8:{C8DA2570-FEEB-4F7E-966A-6927E421558E}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {
