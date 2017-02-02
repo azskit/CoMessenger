@@ -57,6 +57,7 @@
                  Template="{DynamicResource FlatTextBox}" 
                  TextWrapping="Wrap">
             <TextBox.Foreground>
+                <!--<SolidColorBrush Color="Black"/>-->
                 <SolidColorBrush Color="{Binding Source={x:Static props:Settings.Default}, Path=MessageNotificationTextFont.FontColor, Mode=OneWay}"/>
             </TextBox.Foreground>
         </TextBox>

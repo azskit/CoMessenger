@@ -13,6 +13,8 @@ namespace CimServerConsole
             Server.Instance.Start();
 
             Server.Instance.ProcessConsoleInput();
+
+            Server.Instance.Stop();
         }
     }
 }

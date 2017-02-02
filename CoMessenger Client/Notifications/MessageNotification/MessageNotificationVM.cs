@@ -62,10 +62,7 @@ namespace COMessengerClient.Notifications.MessageNotification
             {
                 Peer = DesignTimePersonPeer,
                 Message = new MessageValue() { Text =
-@"Hello world!
-I'm Nick
-I'm here to improve you
-Read this:
+@"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 안녕하세요~ 나는 많은 사람과 친구가되고 싶어요! 영어도 배우고 한국어도 잘 알려줄게요"
                 }
             };

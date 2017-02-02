@@ -83,8 +83,11 @@ namespace SimpleChat
         int port = 13000;
         TcpListener server;
 
-        internal static IndexedHistoryManager RoomsHistory = new IndexedHistoryManager("Storage\\History\\Rooms", true);
-        internal static IndexedHistoryManager TempHistory = new IndexedHistoryManager("Storage\\History\\Temporary", true);
+        internal static string StorageLocation { get; set; } = Environment.ExpandEnvironmentVariables(Properties.Settings.Default.StorageLocation);
+
+
+        internal static IndexedHistoryManager RoomsHistory = new IndexedHistoryManager(Path.Combine(StorageLocation,"History\\Rooms"), true);
+        internal static IndexedHistoryManager TempHistory = new IndexedHistoryManager(Path.Combine(StorageLocation, "History\\Temporary"), true);
 
         private Server()
         {
@@ -801,7 +804,7 @@ namespace SimpleChat
                         PeerId = user.UserId,
                         PeerType = PeerType.Person,
                         State = PeerStatus.Offline,
-                        Avatar = File.Exists(Path.Combine(@"Storage/Avatars", string.Concat(user.UserId, ".png"))) ? System.IO.File.ReadAllBytes(Path.Combine(@"Storage/Avatars", string.Concat(user.UserId, ".png"))) : null
+                        Avatar = File.Exists(Path.Combine(StorageLocation,"Avatars", string.Concat(user.UserId, ".png"))) ? System.IO.File.ReadAllBytes(Path.Combine(StorageLocation,"Avatars", string.Concat(user.UserId, ".png"))) : null
                     }
                 });
             }
