@@ -3,7 +3,7 @@
 "VSVersion" = "3:800"
 "ProjectType" = "8:{978C614F-708E-4E1A-B201-565925725DBA}"
 "IsWebType" = "8:FALSE"
-"ProjectName" = "8:PetalInstallation"
+"ProjectName" = "8:CimInstallation"
 "LanguageId" = "3:0"
 "CodePage" = "3:1252"
 "UILanguageId" = "3:0"
@@ -63,7 +63,7 @@
         "DisplayName" = "8:Debug"
         "IsDebugOnly" = "11:TRUE"
         "IsReleaseOnly" = "11:FALSE"
-        "OutputFilename" = "8:Debug\\PetalSetup.msi"
+        "OutputFilename" = "8:Debug\\CimSetup.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -86,6 +86,11 @@
                     {
                     "Name" = "8:Клиентский профиль Microsoft .NET Framework 4 (x86 и x64)"
                     "ProductCode" = "8:.NETFramework,Version=v4.0,Profile=Client"
+                    }
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.4.5"
+                    {
+                    "Name" = "8:Windows Installer 4.5"
+                    "ProductCode" = "8:Microsoft.Windows.Installer.4.5"
                     }
                 }
             }
@@ -112,6 +117,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.5 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.5"
+                    }
+                }
             }
         }
     }
@@ -169,7 +182,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -248,9 +261,9 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:Petal"
+        "ProductName" = "8:Cim"
         "ProductCode" = "8:{470EB774-B113-47F4-B0CF-BACA3E08BB14}"
-        "PackageCode" = "8:{4A461E05-E9B7-489B-9085-117917A726BF}"
+        "PackageCode" = "8:{6C17EC10-54AD-4F95-86C1-51DA993F4CB0}"
         "UpgradeCode" = "8:{9DCB7CAE-95B9-40FE-BD99-D2EC7E175AEF}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -261,7 +274,7 @@
         "Manufacturer" = "8:azskit studio"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://azskit.com"
-        "Title" = "8:Petal"
+        "Title" = "8:Cim"
         "Subject" = "8:"
         "ARPCONTACT" = "8:azskit studio"
         "Keywords" = "8:"
@@ -273,7 +286,7 @@
         "UseSystemSearchPath" = "11:TRUE"
         "TargetPlatform" = "3:0"
         "PreBuildEvent" = "8:"
-        "PostBuildEvent" = "8:"
+        "PostBuildEvent" = "8:\"C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v7.0A\\Bin\\signtool.exe\" sign /sha1 71DEB60511B9D43BB2C898706CA2384E915A8AFE /t http://timestamp.verisign.com/scripts/timstamp.dll /d \"Cim Server\" /du \"http://azskit.ru\" $(BuiltOuputPath)"
         "RunPostBuildEvent" = "3:0"
         }
         "Registry"
@@ -372,7 +385,7 @@
         {
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_58F01F22F4904BE8932680BB81BD063C"
             {
-            "Name" = "8:Petal"
+            "Name" = "8:Cim"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"

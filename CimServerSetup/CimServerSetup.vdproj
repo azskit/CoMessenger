@@ -201,6 +201,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.5 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.5"
+                    }
+                }
             }
         }
     }
@@ -409,7 +417,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Cim Server"
         "ProductCode" = "8:{DE775A70-DB17-4E7B-9124-8CEDC79C0945}"
-        "PackageCode" = "8:{CECF260D-24E4-4753-86EE-E4A2A5C71C61}"
+        "PackageCode" = "8:{1E6D88BE-C2C0-4B56-903D-E2EB8520A133}"
         "UpgradeCode" = "8:{0F4F4A0C-29E6-4478-80C8-03EE2CCAF230}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -432,7 +440,7 @@
         "UseSystemSearchPath" = "11:TRUE"
         "TargetPlatform" = "3:0"
         "PreBuildEvent" = "8:"
-        "PostBuildEvent" = "8:"
+        "PostBuildEvent" = "8:\"C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v7.0A\\Bin\\signtool.exe\" sign /sha1 71DEB60511B9D43BB2C898706CA2384E915A8AFE /t http://timestamp.verisign.com/scripts/timstamp.dll /d \"Cim Server\" /du \"http://azskit.ru\" $(BuiltOuputPath)"
         "RunPostBuildEvent" = "3:0"
         }
         "Registry"
@@ -548,7 +556,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_18B6B4D6925F424BA0A5C8CDD0BAA534"
                     {
                     "Sequence" = "3:100"
-                    "DisplayName" = "8:Welcome"
+                    "DisplayName" = "8:Добро пожаловать!"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdAdminWelcomeDlg.wid"
@@ -596,7 +604,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_23C5485B1FB8494BA266548196A66A85"
                     {
                     "Sequence" = "3:200"
-                    "DisplayName" = "8:Installation Folder"
+                    "DisplayName" = "8:Папка установки"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdAdminFolderDlg.wid"
@@ -618,7 +626,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_C79A6ADB24BE493E84289C4FEE7B90FF"
                     {
                     "Sequence" = "3:300"
-                    "DisplayName" = "8:Confirm Installation"
+                    "DisplayName" = "8:Подтверждение установки"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdAdminConfirmDlg.wid"
@@ -649,7 +657,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_2AB0534647A84E289C2331EF7415B1AA"
                     {
                     "Sequence" = "3:100"
-                    "DisplayName" = "8:Progress"
+                    "DisplayName" = "8:Ход выполнения"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdProgressDlg.wid"
@@ -693,7 +701,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_2229ABE2B7C04432804CEC97C1C4B218"
                     {
                     "Sequence" = "3:100"
-                    "DisplayName" = "8:Finished"
+                    "DisplayName" = "8:Готово"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdAdminFinishedDlg.wid"
@@ -730,7 +738,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_0353F631AA024AE78A2C9A67DF09ECAA"
                     {
                     "Sequence" = "3:100"
-                    "DisplayName" = "8:Welcome"
+                    "DisplayName" = "8:Добро пожаловать!"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdWelcomeDlg.wid"
@@ -778,7 +786,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_09027CCCF0D041498624AB6C2EA668C0"
                     {
                     "Sequence" = "3:300"
-                    "DisplayName" = "8:Confirm Installation"
+                    "DisplayName" = "8:Подтверждение установки"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdConfirmDlg.wid"
@@ -800,7 +808,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_C5932ABAB4EF4C79AE53E30BFCB5D12E"
                     {
                     "Sequence" = "3:200"
-                    "DisplayName" = "8:Installation Folder"
+                    "DisplayName" = "8:Папка установки"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdFolderDlg.wid"
@@ -844,7 +852,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_622B033CA7494502A8461D31D88FA8FC"
                     {
                     "Sequence" = "3:100"
-                    "DisplayName" = "8:Finished"
+                    "DisplayName" = "8:Готово"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdFinishedDlg.wid"
@@ -888,7 +896,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_6244F14F80984E368EFE716F93B15953"
                     {
                     "Sequence" = "3:100"
-                    "DisplayName" = "8:Progress"
+                    "DisplayName" = "8:Ход выполнения"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdAdminProgressDlg.wid"
