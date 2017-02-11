@@ -309,6 +309,7 @@ namespace COMessengerClient.Tools
                     new SerializableProperty(Image.WidthProperty  ),
                     new SerializableProperty(Image.HeightProperty ),
                     new SerializableProperty(Image.StretchProperty),
+                    new SerializableProperty(Image.HorizontalAlignmentProperty),
                     new SerializableProperty(BinaryCacheManager.BinarySourceProperty)
                 }.ToDictionary(s => s.Property.Name));
             #endregion
@@ -323,6 +324,7 @@ namespace COMessengerClient.Tools
                     new SerializableProperty(AnimatedImage.WidthProperty  ),
                     new SerializableProperty(AnimatedImage.HeightProperty ),
                     new SerializableProperty(AnimatedImage.StretchProperty),
+                    new SerializableProperty(AnimatedImage.HorizontalAlignmentProperty),
                     new SerializableProperty(BinaryCacheManager.BinarySourceProperty)
                 }.ToDictionary(s => s.Property.Name));
             #endregion
@@ -354,15 +356,15 @@ namespace COMessengerClient.Tools
 
         #region Serialize Methods
 
-        internal string Serialize(FlowDocument document)
-        {
-            MarkupObject markup = MarkupWriter.GetMarkupObjectFor(document);
+        //internal string Serialize(FlowDocument document)
+        //{
+        //    MarkupObject markup = MarkupWriter.GetMarkupObjectFor(document);
 
-            WriteMarkup(markup);
+        //    WriteMarkup(markup);
 
-            writer.Flush();
-            return sb.ToString();
-        }
+        //    writer.Flush();
+        //    return sb.ToString();
+        //}
 
         private void WriteMarkup(MarkupObject markup)
         {
@@ -448,6 +450,7 @@ namespace COMessengerClient.Tools
         {
             //writer.WriteStartElement(property.GetType().Name);
 
+            #region Paragraph
             Paragraph paragraph = property as Paragraph;
 
             if (paragraph != null)
@@ -465,6 +468,9 @@ namespace COMessengerClient.Tools
                 writer.WriteEndElement();
             }
 
+            #endregion
+
+            #region Table
             Table table = property as Table;
 
             if (table != null)
@@ -514,6 +520,19 @@ namespace COMessengerClient.Tools
                 writer.WriteEndElement();
 
             }
+
+            #endregion
+
+
+            #region BlockUIContainer
+            BlockUIContainer blockUIContainer = property as BlockUIContainer;
+
+            if (blockUIContainer != null)
+            {
+                WriteUIPart(blockUIContainer.Child);
+            }
+
+            #endregion
         }
 
         private void WriteAttributes(DependencyObject element, Type type)
@@ -602,49 +621,61 @@ namespace COMessengerClient.Tools
 
             if (inlineUiContainer != null)
             {
-                AnimatedImage animatedImage = inlineUiContainer.Child as AnimatedImage;
-
-                if (animatedImage != null)
-                {
-                    BinarySource imageSource = BinarySource.CreateFromAnimatedImage(animatedImage);
-
-                    BinaryCacheManager.SetCustomValue(animatedImage, imageSource);
-
-                    writer.WriteStartElement("AnimatedImage");
-                    WriteAttributes(animatedImage, typeof(AnimatedImage));
-
-                    binaries.Add(imageSource);
-
-                    writer.WriteEndElement();
-
-                    return;
-                }
-
-                Image image = inlineUiContainer.Child as Image;
-
-                if (image != null)
-                {
-                    BinarySource imageSource = BinarySource.CreateFromImage(image);
-
-                    BinaryCacheManager.SetCustomValue(image, imageSource);
-
-                    writer.WriteStartElement("Image");
-                    WriteAttributes(image, typeof(Image));
-
-
-                    //if (!BinaryCacheManager.BinaryCache.ContainsKey(imageSource.BinarySourceId))
-                    //    BinaryCacheManager.BinaryCache.Add(imageSource.BinarySourceId, imageSource.BinarySourceData);
-
-                    binaries.Add(imageSource);
-
-                    //writer.WriteAttributeString("BinarySource", binaryDataId);
-
-                    writer.WriteEndElement();
-
-                    return;
-                }
+                WriteUIPart(inlineUiContainer.Child);
             }
         } 
+
+        private void WriteUIPart(UIElement element)
+        {
+
+            AnimatedImage animatedImage = element as AnimatedImage;
+
+            if (animatedImage != null)
+            {
+                BinarySource imageSource = BinarySource.CreateFromAnimatedImage(animatedImage);
+
+                BinaryCacheManager.SetCustomValue(animatedImage, imageSource);
+
+                writer.WriteStartElement("AnimatedImage");
+                WriteAttributes(animatedImage, typeof(AnimatedImage));
+
+                binaries.Add(imageSource);
+
+                writer.WriteEndElement();
+
+                return;
+            }
+
+            Image image = element as Image;
+
+            if (image != null)
+            {
+                BinarySource imageSource = BinarySource.CreateFromImage(image);
+
+                BinaryCacheManager.SetCustomValue(image, imageSource);
+
+                writer.WriteStartElement("Image");
+                WriteAttributes(image, typeof(Image));
+
+
+                //if (!BinaryCacheManager.BinaryCache.ContainsKey(imageSource.BinarySourceId))
+                //    BinaryCacheManager.BinaryCache.Add(imageSource.BinarySourceId, imageSource.BinarySourceData);
+
+                binaries.Add(imageSource);
+
+                //writer.WriteAttributeString("BinarySource", binaryDataId);
+
+                writer.WriteEndElement();
+
+                return;
+            }
+
+            Viewbox viewbox = element as Viewbox;
+            if (viewbox != null)
+                WriteUIPart(viewbox.Child);
+        }
+
+
         #endregion
 
 
@@ -696,6 +727,30 @@ namespace COMessengerClient.Tools
                     collection.Add(paragraph);
 
                     break;
+
+
+                case "Image":
+                    Image image = new Image();
+
+                    ReadAttributes(image);
+
+                    controlsToLoadBinary.Add(image);
+
+                    collection.Add(new BlockUIContainer(image));
+
+                    break;
+
+                case "AnimatedImage":
+                    AnimatedImage animatedImage = new AnimatedImage();
+
+                    ReadAttributes(animatedImage);
+
+                    controlsToLoadBinary.Add(animatedImage);
+
+                    collection.Add(new BlockUIContainer(animatedImage));
+
+                    break;
+
                 default:
                     break;
             }

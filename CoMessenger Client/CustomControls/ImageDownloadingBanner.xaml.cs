@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -55,6 +56,20 @@ namespace COMessengerClient.CustomControls
             InitializeComponent();
 
             Loaded += Root_Loaded;
+            MouseDown += ImageDownloadingBanner_MouseDown;
+        }
+
+        private void ImageDownloadingBanner_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            //MessageBox.Show("My parent = " + Parent.ToString());
+            //throw new NotImplementedException();
+            
+            blockContainer.Child = null;
+
+            Section sec = blockContainer.Parent as Section;
+
+            sec.Blocks.Remove(blockContainer);
+            //sec.Blocks.Add(new BlockUIContainer(replacedImage));
         }
 
         internal ImageDownloadingBanner(Image image): this()
@@ -105,8 +120,7 @@ namespace COMessengerClient.CustomControls
 
                             imageSource.BinarySourceData = binary;
 
-
-                            Application.Current.Dispatcher.Invoke(new Action(() =>
+                            Application.Current.Dispatcher.BeginInvoke( System.Windows.Threading.DispatcherPriority.Render, new Action(() =>
                             {
                                 if (replacedImage is AnimatedImage)
                                     ((AnimatedImage)replacedImage).AnimatedBitmap = imageSource.ToBitmap();
@@ -116,8 +130,18 @@ namespace COMessengerClient.CustomControls
                                 if (inlineContainer != null)
                                     inlineContainer.Child = replacedImage;
 
+
+                                //don't know what is fucking wrong with this blockUiContaier, 
+                                //but it doesn't update visual tree if i just replace it's child. 
+                                //So i have to set it null, then invoke another one action to set it an image. Fucking wpf
                                 if (blockContainer != null)
-                                    blockContainer.Child = replacedImage;
+                                {
+                                    blockContainer.Child = null;
+                                    Application.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, new Action(() =>
+                                    {
+                                        blockContainer.Child = MessageForeground.ImageViewBox(replacedImage);
+                                    }));
+                                }
                             }));
                         }
                         else

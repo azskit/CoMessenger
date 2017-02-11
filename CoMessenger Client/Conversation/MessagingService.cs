@@ -210,11 +210,24 @@ namespace COMessengerClient.Conversation
                         }
                         else
                         {
-                            InlineUIContainer container = image.Parent as InlineUIContainer;
 
                             ImageDownloadingBanner banner = new ImageDownloadingBanner(image);
 
-                            container.Child = banner;
+                            {
+                                InlineUIContainer container = image.Parent as InlineUIContainer;
+                                if (container != null)
+                                {
+                                    container.Child = banner;
+                                }
+                            }
+
+                            {
+                                BlockUIContainer container = image.Parent as BlockUIContainer;
+                                if (container != null)
+                                {
+                                    container.Child = banner;
+                                }
+                            }
 
                             banner.Reload();
                         }
@@ -308,21 +321,21 @@ namespace COMessengerClient.Conversation
 
             CimSerializer serializer = new CimSerializer();
 
-            string xml = serializer.Serialize(fldoc);
+            //string xml = serializer.Serialize(fldoc);
 
             //using (FileStream fstream = new FileStream("debug_message2.txt", FileMode.Create))
             //{
             //    fstream.Write(Encoding.UTF8.GetBytes(outstr.ToString()), 0, outstr.Length);
             //}
-            using (FileStream fstream = new FileStream("debug_message2.txt", FileMode.Create))
-            {
-                fstream.Write(Encoding.UTF8.GetBytes(xml), 0, Encoding.UTF8.GetBytes(xml).Length);
-            }
-            serializer = new CimSerializer();
+            //using (FileStream fstream = new FileStream("debug_message2.txt", FileMode.Create))
+            //{
+            //    fstream.Write(Encoding.UTF8.GetBytes(xml), 0, Encoding.UTF8.GetBytes(xml).Length);
+            //}
+            //serializer = new CimSerializer();
 
             List<BinarySource> binaries;
 
-            xml = serializer.Serialize2(fldoc, out binaries);
+            string xml = serializer.Serialize2(fldoc, out binaries);
 
             //using (FileStream fstream = new FileStream("debug_message2.txt", FileMode.Create))
             //{

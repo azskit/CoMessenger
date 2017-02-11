@@ -343,23 +343,11 @@ namespace COMessengerClient.CustomControls
 
                                 if (img != null)
                                 {
-                                    img.Loaded += (a, b) =>
-                                    {
-                                        img.SnapToPixels();
-                                    };
+                                    imageContainer.Child = null;
 
+                                    //Viewbox imageBox = ImageViewBox(img);
 
-                                    Viewbox imageBox = new Viewbox();
-
-                                    imageContainer.Child = imageBox;
-
-                                    imageBox.Child = img;
-                                    imageBox.HorizontalAlignment = img.HorizontalAlignment;
-
-                                    img.UseLayoutRounding = true;
-                                    img.SnapsToDevicePixels = true;
-
-                                    imageBox.MaxWidth = img.Width * 1 / App.DpiXScalingFactor;
+                                    imageContainer.Child = ImageViewBox(img);
 
                                     //imageBox.MouseDown += (a, b) => { MessageBox.Show("SnapsToDevicePixels: " + tmp.SnapsToDevicePixels + " UseLayoutRounding: " + tmp.UseLayoutRounding + " X: " + tmp.PointToScreen(new Point(0d, 0d)).X + "Y: " + tmp.PointToScreen(new Point(0d, 0d)).Y); };
 
@@ -374,6 +362,27 @@ namespace COMessengerClient.CustomControls
             DisplayedVersion = Value.Version;
 
             versions[Value.Version].IsCurrent = true;
+        }
+
+        public static Viewbox ImageViewBox(Image img)
+        {
+            img.Loaded += (a, b) =>
+            {
+                img.SnapToPixels();
+            };
+
+
+            Viewbox imageBox = new Viewbox();
+
+
+            imageBox.Child = img;
+            imageBox.HorizontalAlignment = img.HorizontalAlignment;
+
+            img.UseLayoutRounding = true;
+            img.SnapsToDevicePixels = true;
+
+            imageBox.MaxWidth = img.Width * 1 / App.DpiXScalingFactor;
+            return imageBox;
         }
 
         public void Update(RoutedMessage message)
